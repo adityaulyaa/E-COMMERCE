@@ -50,7 +50,7 @@ Project ini menggunakan konsep single vendor, yaitu toko online milik satu perus
 | --- | --- |
 | Customer | Pengguna yang melakukan registrasi, login, melihat produk, dan lain sebagainya (untuk lebih jelasnya ada di bagian 6.ScopeCustomer di bawah ini) |
 
-Untuk tahap awal, implementasi difokuskan pada customer terlebih dahulu. Fitur admin akan dikerjakan setelah fitur product dan customer flow selesai.
+Untuk tahap awal, implementasi difokuskan pada customer terlebih dahulu. Fitur admin akan dikerjakan setelah semuanya selesai (kalo masih ada waktu).
 
 ## 6. Scope Customer
 
@@ -175,7 +175,7 @@ GET /orders/{id}
 
 ## 11. Payment Simulation
 
-Payment gateway menggunakan mock/simulation dan tidak terhubung ke payment gateway asli.
+Payment gateway menggunakan mock/simulation dan tidak terhubung ke payment gateway asli (untuk saat ini, nanti di akhir bisa saja akan kita integrasi dengan e-wallet).
 
 Metode pembayaran:
 
@@ -278,7 +278,7 @@ Fitur notification tahap awal:
 
 ## 15. Rancangan Database Awal
 
-Tabel minimal yang dibutuhkan:
+Tabel minimal yang dibutuhkan (baru gambaran aja yaa, masih bisa kita bahas kalo sampe backend nanti):
 
 - users
 - roles
@@ -294,7 +294,8 @@ Tabel minimal yang dibutuhkan:
 - flash_sale_products
 - notifications
 
-### Relasi Utama
+### Relasi Utama 
+(baru gambaran aja yaa, masih bisa kita bahas kalo sampe backend nanti)
 
 - users memiliki roles
 - users memiliki cart
@@ -424,7 +425,7 @@ Penjelasan singkat:
 
 ## 19. Urutan Implementasi Bertahap
 
-Urutan implementasi yang disarankan:
+Urutan implementasi project kita nanti (saran dari gua):
 
 1. Dokumentasi gambaran project
 2. Setup backend Spring Boot

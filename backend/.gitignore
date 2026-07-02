@@ -1,0 +1,17 @@
+# Backend .gitignore
+target/
+.classpath
+.project
+.settings/
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+.env
+.env.local
+application-local.properties

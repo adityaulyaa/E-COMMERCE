@@ -48,7 +48,7 @@ Project ini menggunakan konsep single vendor, yaitu toko online milik satu perus
 
 | Aktor | Deskripsi |
 | --- | --- |
-| Customer | Pengguna yang melakukan registrasi, login, melihat produk, berbelanja, melakukan pembayaran, mengikuti flash sale, menerima notifikasi, dan melihat riwayat pesanan. |
+| Customer | Pengguna yang melakukan registrasi, login, melihat produk, dan lain sebagainya (untuk lebih jelasnya ada di bagian 6.ScopeCustomer di bawah ini) |
 
 Untuk tahap awal, implementasi difokuskan pada customer terlebih dahulu. Fitur admin akan dikerjakan setelah fitur product dan customer flow selesai.
 

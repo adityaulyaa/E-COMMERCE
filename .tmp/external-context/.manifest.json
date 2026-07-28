@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-07-28T08:54:55.875Z",
+  "libraries": {
+    "lucide-react": {
+      "package_version": "1.27.0",
+      "files": [
+        {
+          "filename": "react-19-compatibility.md",
+          "topic": "React 19 compatibility and installation",
+          "tech_stack": "React 19.x",
+          "fetched": "2026-07-28T08:54:55.875Z",
+          "source": "Official NPM Registry & lucide.dev"
+        },
+        {
+          "filename": "getting-started.md",
+          "topic": "Getting started and basic usage",
+          "tech_stack": "React",
+          "fetched": "2026-07-28T08:54:55.875Z",
+          "source": "lucide.dev"
+        }
+      ]
+    }
+  }
+}

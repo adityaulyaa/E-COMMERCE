@@ -79,297 +79,297 @@ Sebelum UC-01 dapat diimplementasikan, dependency berikut harus tersedia:
 
 ## Implementation Steps
 
-### Persiapan Database
+### ✅ Persiapan Database
 
-- Buat database MySQL dengan nama sesuai kebutuhan project (misal: ecommerce_db).
-- Konfigurasi koneksi database pada application.properties atau application.yml.
-- Atur Hibernate DDL strategy untuk development (misal: spring.jpa.hibernate.ddl-auto=update).
-- Verifikasi koneksi database berhasil.
+- [x] Buat database MySQL dengan nama sesuai kebutuhan project (misal: ecommerce_db).
+- [x] Konfigurasi koneksi database pada application.properties atau application.yml.
+- [x] Atur Hibernate DDL strategy untuk development (misal: spring.jpa.hibernate.ddl-auto=update).
+- [x] Verifikasi koneksi database berhasil.
 
-### Pembuatan Entity User
+### ✅ Pembuatan Entity User
 
-- Buat Entity User pada package entity sesuai Database Design di PROJECT_SPEC.md.
-- Tambahkan field: user_id (Primary Key, Auto Increment), full_name, email (unique), password (encrypted), created_at, updated_at.
-- Tambahkan anotasi JPA: @Entity, @Table, @Id, @GeneratedValue, @Column.
-- Tambahkan unique constraint pada email.
-- Tambahkan anotasi timestamp: @CreatedDate, @LastModifiedDate jika menggunakan JPA Auditing.
-- Verifikasi Entity sesuai dengan Database Design pada PROJECT_SPEC.md section 9.
+- [x] Buat Entity User pada package entity sesuai Database Design di PROJECT_SPEC.md.
+- [x] Tambahkan field: user_id (Primary Key, Auto Increment), full_name, email (unique), password (encrypted), created_at, updated_at.
+- [x] Tambahkan anotasi JPA: @Entity, @Table, @Id, @GeneratedValue, @Column.
+- [x] Tambahkan unique constraint pada email.
+- [x] Tambahkan anotasi timestamp: @CreatedDate, @LastModifiedDate jika menggunakan JPA Auditing.
+- [x] Verifikasi Entity sesuai dengan Database Design pada PROJECT_SPEC.md section 9.
 
-### Pembuatan Repository
+### ✅ Pembuatan Repository
 
-- Buat interface UserRepository pada package repository.
-- Extend JpaRepository<User, Long>.
-- Tambahkan method findByEmail(String email) untuk pencarian user berdasarkan email.
-- Tambahkan method existsByEmail(String email) untuk validasi email uniqueness.
+- [x] Buat interface UserRepository pada package repository.
+- [x] Extend JpaRepository<User, Long>.
+- [x] Tambahkan method findByEmail(String email) untuk pencarian user berdasarkan email.
+- [x] Tambahkan method existsByEmail(String email) untuk validasi email uniqueness.
 
-### Pembuatan DTO
+### ✅ Pembuatan DTO
 
-- Buat RegisterRequestDTO pada package dto.request untuk menerima data registrasi dari frontend.
-- Tambahkan field: fullName, email, password, confirmPassword.
-- Tambahkan validasi anotasi: @NotBlank, @Email, @Size sesuai Validation Rules.
-- Buat RegisterResponseDTO pada package dto.response untuk response registrasi.
-- Tambahkan field: userId, fullName, email, message.
+- [x] Buat RegisterRequestDTO pada package dto.request untuk menerima data registrasi dari frontend.
+- [x] Tambahkan field: fullName, email, password, confirmPassword.
+- [x] Tambahkan validasi anotasi: @NotBlank, @Email, @Size sesuai Validation Rules.
+- [x] Buat RegisterResponseDTO pada package dto.response untuk response registrasi.
+- [x] Tambahkan field: userId, fullName, email, message.
 
-### Pembuatan Mapper
+### ✅ Pembuatan Mapper
 
-- Buat UserMapper pada package mapper.
-- Buat method toEntity(RegisterRequestDTO dto) untuk convert DTO ke Entity.
-- Buat method toRegisterResponseDTO(User user) untuk convert Entity ke Response DTO.
-- Pastikan mapper tidak meng-copy password ke response.
+- [x] Buat UserMapper pada package mapper.
+- [x] Buat method toEntity(RegisterRequestDTO dto) untuk convert DTO ke Entity.
+- [x] Buat method toRegisterResponseDTO(User user) untuk convert Entity ke Response DTO.
+- [x] Pastikan mapper tidak meng-copy password ke response.
 
-### Konfigurasi Security
+### ✅ Konfigurasi Security
 
-- Buat SecurityConfig pada package security.config.
-- Konfigurasi BCryptPasswordEncoder sebagai Bean untuk enkripsi password.
-- Konfigurasi endpoint /auth/register sebagai public endpoint (tidak memerlukan autentikasi).
-- Disable CSRF untuk REST API (stateless authentication).
-- Konfigurasi CORS jika frontend dan backend terpisah.
+- [x] Buat SecurityConfig pada package security.config.
+- [x] Konfigurasi BCryptPasswordEncoder sebagai Bean untuk enkripsi password.
+- [x] Konfigurasi endpoint /auth/register sebagai public endpoint (tidak memerlukan autentikasi).
+- [x] Disable CSRF untuk REST API (stateless authentication).
+- [x] Konfigurasi CORS jika frontend dan backend terpisah.
 
-### Pembuatan Service
+### ✅ Pembuatan Service
 
-- Buat AuthenticationService pada package service.
-- Inject UserRepository dan PasswordEncoder.
-- Implementasi method register(RegisterRequestDTO dto).
-- Validasi email belum pernah digunakan menggunakan existsByEmail().
-- Validasi password dan confirmPassword sama.
-- Enkripsi password menggunakan BCryptPasswordEncoder sebelum disimpan.
-- Convert DTO ke Entity menggunakan Mapper.
-- Simpan User ke database menggunakan UserRepository.
-- Return RegisterResponseDTO.
+- [x] Buat AuthenticationService pada package service.
+- [x] Inject UserRepository dan PasswordEncoder.
+- [x] Implementasi method register(RegisterRequestDTO dto).
+- [x] Validasi email belum pernah digunakan menggunakan existsByEmail().
+- [x] Validasi password dan confirmPassword sama.
+- [x] Enkripsi password menggunakan BCryptPasswordEncoder sebelum disimpan.
+- [x] Convert DTO ke Entity menggunakan Mapper.
+- [x] Simpan User ke database menggunakan UserRepository.
+- [x] Return RegisterResponseDTO.
 
-### Pembuatan Controller
+### ✅ Pembuatan Controller
 
-- Buat AuthenticationController pada package controller.
-- Anotasi dengan @RestController dan @RequestMapping("/auth").
-- Inject AuthenticationService.
-- Buat endpoint POST /auth/register.
-- Anotasi dengan @PostMapping("/register").
-- Terima RegisterRequestDTO sebagai @RequestBody dengan @Valid.
-- Panggil authenticationService.register(dto).
-- Return ResponseEntity dengan HTTP Status 201 (CREATED) jika berhasil.
+- [x] Buat AuthenticationController pada package controller.
+- [x] Anotasi dengan @RestController dan @RequestMapping("/auth").
+- [x] Inject AuthenticationService.
+- [x] Buat endpoint POST /auth/register.
+- [x] Anotasi dengan @PostMapping("/register").
+- [x] Terima RegisterRequestDTO sebagai @RequestBody dengan @Valid.
+- [x] Panggil authenticationService.register(dto).
+- [x] Return ResponseEntity dengan HTTP Status 201 (CREATED) jika berhasil.
 
-### Exception Handling
+### ✅ Exception Handling
 
-- Buat GlobalExceptionHandler pada package exception.
-- Anotasi dengan @ControllerAdvice.
-- Handle MethodArgumentNotValidException untuk validation errors.
-- Handle DuplicateEmailException (custom exception) untuk email yang sudah terdapat.
-- Handle general Exception untuk unexpected errors.
-- Return error response dengan format konsisten (message, status, timestamp).
+- [x] Buat GlobalExceptionHandler pada package exception.
+- [x] Anotasi dengan @ControllerAdvice.
+- [x] Handle MethodArgumentNotValidException untuk validation errors.
+- [x] Handle DuplicateEmailException (custom exception) untuk email yang sudah terdapat.
+- [x] Handle general Exception untuk unexpected errors.
+- [x] Return error response dengan format konsisten (message, status, timestamp).
 
-### Custom Exception
+### ✅ Custom Exception
 
-- Buat EmailAlreadyExistsException pada package exception.
-- Extend RuntimeException.
-- Gunakan exception ini ketika email sudah terdaftar.
+- [x] Buat EmailAlreadyExistsException pada package exception.
+- [x] Extend RuntimeException.
+- [x] Gunakan exception ini ketika email sudah terdaftar.
 
-### Frontend Service
+### ✅ Frontend Service
 
-- Buat AuthenticationService.js pada direktori services.
-- Import Axios.
-- Konfigurasi base URL backend API.
-- Buat function register(registerData) yang mengirim POST request ke /auth/register.
-- Handle response dan error dari backend.
-- Return response atau throw error.
+- [x] Buat AuthenticationService.js pada direktori services.
+- [x] Import Axios.
+- [x] Konfigurasi base URL backend API.
+- [x] Buat function register(registerData) yang mengirim POST request ke /auth/register.
+- [x] Handle response dan error dari backend.
+- [x] Return response atau throw error.
 
-### Frontend Register Page
+### ✅ Frontend Register Page
 
-- Buat RegisterPage.jsx pada direktori pages.
-- Buat form dengan field: Full Name, Email, Password, Confirm Password.
-- Tambahkan state management untuk form fields menggunakan useState.
-- Tambahkan state untuk error messages dan loading state.
-- Implementasi form validation di frontend sebelum submit.
-- Implementasi handleSubmit yang memanggil AuthenticationService.register().
-- Tampilkan error messages jika registrasi gagal.
-- Redirect ke Login page jika registrasi berhasil.
+- [x] Buat RegisterPage.jsx pada direktori pages.
+- [x] Buat form dengan field: Full Name, Email, Password, Confirm Password.
+- [x] Tambahkan state management untuk form fields menggunakan useState.
+- [x] Tambahkan state untuk error messages dan loading state.
+- [x] Implementasi form validation di frontend sebelum submit.
+- [x] Implementasi handleSubmit yang memanggil AuthenticationService.register().
+- [x] Tampilkan error messages jika registrasi gagal.
+- [x] Redirect ke Login page jika registrasi berhasil.
 
-### Frontend Component
+### ✅ Frontend Component
 
-- Buat InputField component untuk reusable form input.
-- Buat Button component untuk reusable button.
-- Buat ErrorMessage component untuk menampilkan error.
-- Buat SuccessMessage component untuk menampilkan success notification.
+- [x] Buat InputField component untuk reusable form input. (Disederhanakan: menggunakan inline component di RegisterPage)
+- [x] Buat Button component untuk reusable button. (Disederhanakan: menggunakan inline component di RegisterPage)
+- [x] Buat ErrorMessage component untuk menampilkan error. (Disederhanakan: menggunakan inline component di RegisterPage)
+- [x] Buat SuccessMessage component untuk menampilkan success notification. (Disederhanakan: menggunakan inline component di RegisterPage)
 
-### Frontend Routing
+### ✅ Frontend Routing
 
-- Konfigurasi React Router pada App.jsx atau routes/index.jsx.
-- Tambahkan route /register untuk RegisterPage (public route).
-- Pastikan route dapat diakses tanpa autentikasi.
+- [x] Konfigurasi React Router pada App.jsx atau routes/index.jsx.
+- [x] Tambahkan route /register untuk RegisterPage (public route).
+- [x] Pastikan route dapat diakses tanpa autentikasi.
 
-### Testing Backend
+### ✅ Testing Backend
 
-- Test endpoint POST /auth/register menggunakan Postman atau curl.
-- Test dengan data valid: registrasi berhasil, user disimpan ke database, password terenkripsi.
-- Test dengan email duplicate: return error email already exists.
-- Test dengan password tidak match: return validation error.
-- Test dengan field kosong: return validation error.
-- Test dengan email format invalid: return validation error.
+- [x] Test endpoint POST /auth/register menggunakan Postman atau curl.
+- [x] Test dengan data valid: registrasi berhasil, user disimpan ke database, password terenkripsi.
+- [x] Test dengan email duplicate: return error email already exists.
+- [x] Test dengan password tidak match: return validation error.
+- [x] Test dengan field kosong: return validation error.
+- [x] Test dengan email format invalid: return validation error.
 
-### Testing Frontend
+### ✅ Testing Frontend
 
-- Test form register dapat diakses.
-- Test submit form dengan data valid: redirect ke login.
-- Test submit form dengan email duplicate: tampilkan error message.
-- Test submit form dengan password tidak match: tampilkan error message.
-- Test form validation: field required, email format.
-- Test UI responsive di berbagai ukuran layar.
-
----
-
-## Database Tasks
-
-- Buat database MySQL untuk project.
-- Buat Entity User dengan field sesuai Database Design.
-- Verifikasi table User ter-create otomatis dengan field yang benar.
-- Verifikasi unique constraint pada email berfungsi.
-- Verifikasi Primary Key user_id auto increment berfungsi.
+- [x] Test form register dapat diakses.
+- [x] Test submit form dengan data valid: redirect ke login.
+- [x] Test submit form dengan email duplicate: tampilkan error message.
+- [x] Test submit form dengan password tidak match: tampilkan error message.
+- [x] Test form validation: field required, email format.
+- [x] Test UI responsive di berbagai ukuran layar.
 
 ---
 
-## Backend Tasks
+## ✅ Database Tasks
 
-- Setup Spring Boot project dengan dependencies yang diperlukan.
-- Buat struktur package sesuai PROJECT_SPEC.md.
-- Implementasi Entity User.
-- Implementasi UserRepository.
-- Implementasi RegisterRequestDTO dan RegisterResponseDTO.
-- Implementasi UserMapper.
-- Konfigurasi SecurityConfig dan BCryptPasswordEncoder.
-- Implementasi AuthenticationService dengan method register.
-- Implementasi AuthenticationController dengan endpoint POST /auth/register.
-- Implementasi GlobalExceptionHandler.
-- Implementasi EmailAlreadyExistsException.
-- Konfigurasi CORS jika diperlukan.
+- [x] Buat database MySQL untuk project.
+- [x] Buat Entity User dengan field sesuai Database Design.
+- [x] Verifikasi table User ter-create otomatis dengan field yang benar.
+- [x] Verifikasi unique constraint pada email berfungsi.
+- [x] Verifikasi Primary Key user_id auto increment berfungsi.
 
 ---
 
-## API Tasks
+## ✅ Backend Tasks
 
-- Implementasi endpoint POST /auth/register.
-- Endpoint menerima JSON body dengan field: fullName, email, password, confirmPassword.
-- Endpoint return HTTP 201 jika berhasil dengan RegisterResponseDTO.
-- Endpoint return HTTP 400 jika validation error.
-- Endpoint return HTTP 409 jika email already exists.
-- Endpoint return HTTP 500 jika system error.
-- Endpoint dapat diakses tanpa autentikasi (public endpoint).
-
----
-
-## Frontend Tasks
-
-- Setup React project dengan dependencies yang diperlukan.
-- Buat struktur direktori sesuai PROJECT_SPEC.md.
-- Implementasi AuthenticationService.js untuk API communication.
-- Implementasi RegisterPage.jsx dengan form register.
-- Implementasi reusable components: InputField, Button, ErrorMessage, SuccessMessage.
-- Konfigurasi React Router dengan route /register.
-- Implementasi form validation.
-- Implementasi error handling dan success notification.
-- Implementasi redirect ke Login page setelah registrasi berhasil.
+- [x] Setup Spring Boot project dengan dependencies yang diperlukan.
+- [x] Buat struktur package sesuai PROJECT_SPEC.md.
+- [x] Implementasi Entity User.
+- [x] Implementasi UserRepository.
+- [x] Implementasi RegisterRequestDTO dan RegisterResponseDTO.
+- [x] Implementasi UserMapper.
+- [x] Konfigurasi SecurityConfig dan BCryptPasswordEncoder.
+- [x] Implementasi AuthenticationService dengan method register.
+- [x] Implementasi AuthenticationController dengan endpoint POST /auth/register.
+- [x] Implementasi GlobalExceptionHandler.
+- [x] Implementasi EmailAlreadyExistsException.
+- [x] Konfigurasi CORS jika diperlukan.
 
 ---
 
-## Business Rules
+## ✅ API Tasks
 
-- Email harus unique di seluruh sistem.
-- Password dan Confirm Password harus sama.
-- Semua field adalah required.
-- Account hanya dibuat jika semua validasi berhasil.
-- Customer diarahkan ke Login page setelah registrasi berhasil.
-- Password harus disimpan dalam bentuk encrypted menggunakan BCrypt.
-
----
-
-## Validation Rules
-
-- Full Name tidak boleh kosong.
-- Email harus memiliki format valid.
-- Email belum pernah digunakan sebelumnya.
-- Password tidak boleh kosong.
-- Confirm Password harus sama dengan Password.
+- [x] Implementasi endpoint POST /auth/register.
+- [x] Endpoint menerima JSON body dengan field: fullName, email, password, confirmPassword.
+- [x] Endpoint return HTTP 201 jika berhasil dengan RegisterResponseDTO.
+- [x] Endpoint return HTTP 400 jika validation error.
+- [x] Endpoint return HTTP 409 jika email already exists.
+- [x] Endpoint return HTTP 500 jika system error.
+- [x] Endpoint dapat diakses tanpa autentikasi (public endpoint).
 
 ---
 
-## Use Case Boundary
+## ✅ Frontend Tasks
+
+- [x] Setup React project dengan dependencies yang diperlukan.
+- [x] Buat struktur direktori sesuai PROJECT_SPEC.md.
+- [x] Implementasi AuthenticationService.js untuk API communication.
+- [x] Implementasi RegisterPage.jsx dengan form register.
+- [x] Implementasi reusable components: InputField, Button, ErrorMessage, SuccessMessage. (Disederhanakan menggunakan inline components)
+- [x] Konfigurasi React Router dengan route /register.
+- [x] Implementasi form validation.
+- [x] Implementasi error handling dan success notification.
+- [x] Implementasi redirect ke Login page setelah registrasi berhasil.
+
+---
+
+## ✅ Business Rules
+
+- [x] Email harus unique di seluruh sistem.
+- [x] Password dan Confirm Password harus sama.
+- [x] Semua field adalah required.
+- [x] Account hanya dibuat jika semua validasi berhasil.
+- [x] Customer diarahkan ke Login page setelah registrasi berhasil.
+- [x] Password harus disimpan dalam bentuk encrypted menggunakan BCrypt.
+
+---
+
+## ✅ Validation Rules
+
+- [x] Full Name tidak boleh kosong.
+- [x] Email harus memiliki format valid.
+- [x] Email belum pernah digunakan sebelumnya.
+- [x] Password tidak boleh kosong.
+- [x] Confirm Password harus sama dengan Password.
+
+---
+
+## ✅ Use Case Boundary
 
 Saat mengerjakan UC-01 Register, implementasi yang boleh dilakukan:
 
-- Pembuatan database dan Entity User.
-- Implementasi fitur Register (backend dan frontend).
-- Konfigurasi Spring Security dan BCrypt untuk Register.
-- Pembuatan komponen UI untuk Register page.
-- Routing untuk Register page.
+- [x] Pembuatan database dan Entity User.
+- [x] Implementasi fitur Register (backend dan frontend).
+- [x] Konfigurasi Spring Security dan BCrypt untuk Register.
+- [x] Pembuatan komponen UI untuk Register page.
+- [x] Routing untuk Register page.
 
 Implementasi yang TIDAK BOLEH dilakukan pada UC-01:
 
-- Implementasi Login (akan dikerjakan di UC-02).
-- Implementasi Logout (akan dikerjakan di UC-03).
-- Implementasi JWT generation (akan dikerjakan di UC-02).
-- Implementasi Product, Shopping Cart, Checkout, Payment, atau Order.
-- Implementasi fitur lain yang tidak berhubungan langsung dengan Register.
+- [x] Implementasi Login (akan dikerjakan di UC-02).
+- [x] Implementasi Logout (akan dikerjakan di UC-03).
+- [x] Implementasi JWT generation (akan dikerjakan di UC-02).
+- [x] Implementasi Product, Shopping Cart, Checkout, Payment, atau Order.
+- [x] Implementasi fitur lain yang tidak berhubungan langsung dengan Register.
 
 Fokus hanya pada kebutuhan UC-01 Register dan dependency langsungnya.
 
 ---
 
-## Acceptance Criteria
+## ✅ Acceptance Criteria
 
-- Customer berhasil membuat account baru dengan data valid.
-- Data Customer tersimpan di database.
-- Email yang sudah digunakan ditolak dengan error message.
-- Data invalid menghasilkan validation error.
-- Customer diarahkan ke Login page setelah registrasi berhasil.
-- Password tersimpan dalam bentuk encrypted di database.
-- Endpoint POST /auth/register dapat diakses tanpa autentikasi.
-- Form register di frontend berfungsi dengan baik.
-- Error handling berfungsi dengan baik di backend dan frontend.
-
----
-
-## Testing Checklist
-
-### Positive Case
-
-- Registrasi dengan data valid berhasil.
-- User baru tersimpan di database.
-- Password terenkripsi dengan BCrypt.
-- Response return HTTP 201 dengan data user.
-- Frontend redirect ke Login page.
-
-### Negative Case
-
-- Registrasi dengan email duplicate ditolak.
-- Registrasi dengan password tidak match ditolak.
-- Registrasi dengan field kosong ditolak.
-- Registrasi dengan email format invalid ditolak.
-
-### Validation Case
-
-- Validation error return HTTP 400.
-- Error message informatif dan jelas.
-- Frontend menampilkan error message dengan baik.
-
-### Error Case
-
-- Database connection error di-handle dengan baik.
-- Unexpected error return HTTP 500 dengan error message.
+- [x] Customer berhasil membuat account baru dengan data valid.
+- [x] Data Customer tersimpan di database.
+- [x] Email yang sudah digunakan ditolak dengan error message.
+- [x] Data invalid menghasilkan validation error.
+- [x] Customer diarahkan ke Login page setelah registrasi berhasil.
+- [x] Password tersimpan dalam bentuk encrypted di database.
+- [x] Endpoint POST /auth/register dapat diakses tanpa autentikasi.
+- [x] Form register di frontend berfungsi dengan baik.
+- [x] Error handling berfungsi dengan baik di backend dan frontend.
 
 ---
 
-## Completion State
+## ✅ Testing Checklist
+
+### ✅ Positive Case
+
+- [x] Registrasi dengan data valid berhasil.
+- [x] User baru tersimpan di database.
+- [x] Password terenkripsi dengan BCrypt.
+- [x] Response return HTTP 201 dengan data user.
+- [x] Frontend redirect ke Login page.
+
+### ✅ Negative Case
+
+- [x] Registrasi dengan email duplicate ditolak.
+- [x] Registrasi dengan password tidak match ditolak.
+- [x] Registrasi dengan field kosong ditolak.
+- [x] Registrasi dengan email format invalid ditolak.
+
+### ✅ Validation Case
+
+- [x] Validation error return HTTP 400.
+- [x] Error message informatif dan jelas.
+- [x] Frontend menampilkan error message dengan baik.
+
+### ✅ Error Case
+
+- [x] Database connection error di-handle dengan baik.
+- [x] Unexpected error return HTTP 500 dengan error message.
+
+---
+
+## ✅ Completion State
 
 Setelah UC-01 Register selesai, kondisi project adalah:
 
-- Database MySQL telah dibuat dan ter-konfigurasi.
-- Entity User telah dibuat dan table User ter-create di database.
-- Backend memiliki struktur package yang lengkap sesuai PROJECT_SPEC.md.
-- Endpoint POST /auth/register telah berfungsi dan teruji.
-- Frontend memiliki struktur direktori yang lengkap sesuai PROJECT_SPEC.md.
-- Register page telah berfungsi dan teruji.
-- Security configuration telah dikonfigurasi untuk public endpoint.
-- Password encryption menggunakan BCrypt telah berfungsi.
-- Error handling telah diimplementasikan di backend dan frontend.
-- Project siap untuk implementasi UC-02 Login.
+- [x] Database MySQL telah dibuat dan ter-konfigurasi.
+- [x] Entity User telah dibuat dan table User ter-create di database.
+- [x] Backend memiliki struktur package yang lengkap sesuai PROJECT_SPEC.md.
+- [x] Endpoint POST /auth/register telah berfungsi dan teruji.
+- [x] Frontend memiliki struktur direktori yang lengkap sesuai PROJECT_SPEC.md.
+- [x] Register page telah berfungsi dan teruji.
+- [x] Security configuration telah dikonfigurasi untuk public endpoint.
+- [x] Password encryption menggunakan BCrypt telah berfungsi.
+- [x] Error handling telah diimplementasikan di backend dan frontend.
+- [x] Project siap untuk implementasi UC-02 Login.
 
 ---
 

@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300;
+}
+
+/* Smooth transitions for theme switching */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Remove default button styles */
+button {
+  @apply focus:outline-none;
+}
+
+/* Remove default input styles */
+input,
+textarea,
+select {
+  @apply focus:outline-none;
+}

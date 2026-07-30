@@ -1,6 +1,8 @@
 package com.ecommerce.controller;
 
+import com.ecommerce.dto.request.LoginRequestDTO;
 import com.ecommerce.dto.request.RegisterRequestDTO;
+import com.ecommerce.dto.response.LoginResponseDTO;
 import com.ecommerce.dto.response.RegisterResponseDTO;
 import com.ecommerce.service.AuthenticationService;
 import jakarta.validation.Valid;
@@ -34,6 +36,24 @@ public class AuthenticationController {
         
         log.info("Registration successful for email: {}", registerRequest.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
+     * Login with email and password
+     *
+     * @param loginRequest LoginRequestDTO with email and password
+     * @return ResponseEntity with LoginResponseDTO containing JWT token
+     */
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(
+            @Valid @RequestBody LoginRequestDTO loginRequest
+    ) {
+        log.info("Received login request for email: {}", loginRequest.getEmail());
+        
+        LoginResponseDTO response = authenticationService.login(loginRequest);
+        
+        log.info("Login successful for email: {}", loginRequest.getEmail());
+        return ResponseEntity.ok().body(response);
     }
 
 }

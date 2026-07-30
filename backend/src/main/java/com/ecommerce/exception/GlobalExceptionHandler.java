@@ -65,6 +65,27 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handle invalid credentials exception
+     *
+     * @param ex InvalidCredentialsException
+     * @return ResponseEntity with unauthorized error
+     */
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidCredentialsException(
+            InvalidCredentialsException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Invalid credentials: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    /**
      * Handle password mismatch or illegal arguments
      *
      * @param ex IllegalArgumentException

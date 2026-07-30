@@ -29,9 +29,18 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
+      // Unauthorized - clear token
       localStorage.removeItem('token')
-      window.location.href = '/login'
+      
+      // Only redirect to login if NOT already on public auth pages
+      const currentPath = window.location.pathname
+      const isAuthPage = currentPath === '/login' || currentPath === '/register'
+      
+      if (!isAuthPage) {
+        // User is on protected page, redirect to login
+        window.location.href = '/login'
+      }
+      // If already on /login or /register, let the component handle the error
     }
     return Promise.reject(error)
   }

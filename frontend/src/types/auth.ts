@@ -12,6 +12,25 @@ export interface RegisterResponse {
   message: string
 }
 
+export interface LoginRequest {
+  email: string
+  password: string
+}
+
+export interface LoginResponse {
+  userId: number
+  fullName: string
+  email: string
+  token: string
+  message: string
+}
+
+export interface User {
+  userId: number
+  fullName: string
+  email: string
+}
+
 export interface ErrorResponse {
   status: number
   message: string

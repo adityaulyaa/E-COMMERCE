@@ -1,11 +1,15 @@
 package com.ecommerce.service;
 
+import com.ecommerce.dto.request.LoginRequestDTO;
 import com.ecommerce.dto.request.RegisterRequestDTO;
+import com.ecommerce.dto.response.LoginResponseDTO;
 import com.ecommerce.dto.response.RegisterResponseDTO;
 import com.ecommerce.entity.User;
 import com.ecommerce.exception.EmailAlreadyExistsException;
+import com.ecommerce.exception.InvalidCredentialsException;
 import com.ecommerce.mapper.UserMapper;
 import com.ecommerce.repository.UserRepository;
+import com.ecommerce.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +24,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final JwtUtil jwtUtil;
 
     /**
      * Register a new customer account
@@ -57,6 +62,44 @@ public class AuthenticationService {
 
         // Convert Entity to Response DTO
         return userMapper.toRegisterResponseDTO(savedUser);
+    }
+
+    /**
+     * Login with email and password
+     *
+     * @param dto LoginRequestDTO containing email and password
+     * @return LoginResponseDTO with user information and JWT token
+     * @throws InvalidCredentialsException if email not found or password incorrect
+     */
+    @Transactional(readOnly = true)
+    public LoginResponseDTO login(LoginRequestDTO dto) {
+        log.info("Starting login process for email: {}", dto.getEmail());
+
+        // Find user by email
+        User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> {
+                    log.warn("Login failed: Email not found - {}", dto.getEmail());
+                    return new InvalidCredentialsException("Invalid email or password");
+                });
+
+        // Verify password
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            log.warn("Login failed: Incorrect password for email - {}", dto.getEmail());
+            throw new InvalidCredentialsException("Invalid email or password");
+        }
+
+        // Generate JWT token
+        String token = jwtUtil.generateToken(user.getEmail());
+        log.info("User logged in successfully: {}", user.getEmail());
+
+        // Build and return LoginResponseDTO
+        return LoginResponseDTO.builder()
+                .userId(user.getUserId())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .token(token)
+                .message("Login successful")
+                .build();
     }
 
 }

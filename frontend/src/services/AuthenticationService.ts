@@ -1,5 +1,5 @@
 import apiClient from './apiClient'
-import type { RegisterRequest, RegisterResponse } from '../types/auth'
+import type { RegisterRequest, RegisterResponse, LoginRequest, LoginResponse } from '../types/auth'
 
 /**
  * Authentication Service
@@ -35,6 +35,45 @@ class AuthenticationService {
         throw new Error('Registration failed. Please try again.')
       }
     }
+  }
+
+  /**
+   * Login with email and password
+   * 
+   * @param loginData - Login credentials
+   * @returns Promise with LoginResponse containing JWT token
+   * @throws Error if login fails
+   */
+  async login(loginData: LoginRequest): Promise<LoginResponse> {
+    try {
+      const response = await apiClient.post<LoginResponse>(
+        '/auth/login',
+        loginData
+      )
+      return response.data
+    } catch (error: any) {
+      // Re-throw with formatted error message
+      if (error.response?.data?.message) {
+        throw new Error(error.response.data.message)
+      } else if (error.response?.data?.errors) {
+        // Handle validation errors
+        const validationErrors = error.response.data.errors
+        const errorMessages = Object.values(validationErrors).join(', ')
+        throw new Error(errorMessages)
+      } else if (error.message) {
+        throw new Error(error.message)
+      } else {
+        throw new Error('Login failed. Please try again.')
+      }
+    }
+  }
+
+  /**
+   * Logout - Clear token from storage
+   * (For UC-03, currently just removes token)
+   */
+  logout(): void {
+    localStorage.removeItem('token')
   }
 }
 

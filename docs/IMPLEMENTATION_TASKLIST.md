@@ -545,68 +545,68 @@ UC-02 Login bergantung pada:
 
 ---
 
-## Database Tasks
+## ✅ Database Tasks
 
-- Tidak ada perubahan database untuk UC-02.
-- Menggunakan Entity User yang sudah ada dari UC-01.
+- [x] Tidak ada perubahan database untuk UC-02.
+- [x] Menggunakan Entity User yang sudah ada dari UC-01.
 
 ---
 
 ## Backend Tasks
 
-- Tambahkan JWT library dependency.
-- Implementasi JwtUtil untuk JWT operations.
-- Konfigurasi JWT secret dan expiration di application.properties.
-- Implementasi LoginRequestDTO dan LoginResponseDTO.
-- Update AuthenticationService dengan method login.
-- Update AuthenticationController dengan endpoint POST /auth/login.
-- Implementasi InvalidCredentialsException.
-- Update GlobalExceptionHandler untuk handle login errors.
-- Implementasi JwtAuthenticationFilter.
-- Update SecurityConfig untuk register JWT filter dan stateless session.
+- [x] Tambahkan JWT library dependency.
+- [x] Implementasi JwtUtil untuk JWT operations.
+- [x] Konfigurasi JWT secret dan expiration di application.properties.
+- [x] Implementasi LoginRequestDTO dan LoginResponseDTO.
+- [x] Update AuthenticationService dengan method login.
+- [x] Update AuthenticationController dengan endpoint POST /auth/login.
+- [x] Implementasi InvalidCredentialsException.
+- [x] Update GlobalExceptionHandler untuk handle login errors.
+- [x] Implementasi JwtAuthenticationFilter.
+- [x] Update SecurityConfig untuk register JWT filter dan stateless session.
 
 ---
 
-## API Tasks
+## ✅ API Tasks
 
-- Implementasi endpoint POST /auth/login.
-- Endpoint menerima JSON body dengan field: email, password.
-- Endpoint return HTTP 200 dengan LoginResponseDTO berisi JWT token.
-- Endpoint return HTTP 401 jika credentials invalid.
-- Endpoint return HTTP 400 jika validation error.
-- Endpoint dapat diakses tanpa autentikasi (public endpoint).
+- [x] Implementasi endpoint POST /auth/login.
+- [x] Endpoint menerima JSON body dengan field: email, password.
+- [x] Endpoint return HTTP 200 dengan LoginResponseDTO berisi JWT token.
+- [x] Endpoint return HTTP 401 jika credentials invalid.
+- [x] Endpoint return HTTP 400 jika validation error.
+- [x] Endpoint dapat diakses tanpa autentikasi (public endpoint).
 
 ---
 
 ## Frontend Tasks
 
-- Implementasi JwtUtil atau update AuthenticationService.js.
-- Implementasi AuthContext untuk global authentication state.
-- Implementasi LoginPage.jsx dengan form login.
-- Update routing dengan route /login.
-- Implementasi axios interceptor untuk inject JWT token.
-- Implementasi auto logout pada 401 response.
-- Implementasi token persistence menggunakan localStorage atau sessionStorage.
+- [x] Implementasi JwtUtil atau update AuthenticationService.js.
+- [x] Implementasi AuthContext untuk global authentication state.
+- [x] Implementasi LoginPage.jsx dengan form login.
+- [x] Update routing dengan route /login.
+- [x] Implementasi axios interceptor untuk inject JWT token.
+- [x] Implementasi auto logout pada 401 response.
+- [x] Implementasi token persistence menggunakan localStorage atau sessionStorage.
 
 ---
 
 ## Business Rules
 
-- Login menggunakan Email dan Password.
-- Password harus match dengan data di database.
-- JWT hanya dibuat jika autentikasi berhasil.
-- Customer hanya dapat mengakses protected features setelah login berhasil.
-- JWT token memiliki expiration time.
-- Token disimpan di client side untuk request selanjutnya.
+- [x] Login menggunakan Email dan Password.
+- [x] Password harus match dengan data di database.
+- [x] JWT hanya dibuat jika autentikasi berhasil.
+- [x] Customer hanya dapat mengakses protected features setelah login berhasil.
+- [x] JWT token memiliki expiration time.
+- [x] Token disimpan di client side untuk request selanjutnya.
 
 ---
 
 ## Validation Rules
 
-- Email adalah required.
-- Password adalah required.
-- Email harus terdaftar di sistem.
-- Password harus match dengan account.
+- [x] Email adalah required.
+- [x] Password adalah required.
+- [x] Email harus terdaftar di sistem.
+- [x] Password harus match dengan account.
 
 ---
 
@@ -614,19 +614,19 @@ UC-02 Login bergantung pada:
 
 Saat mengerjakan UC-02 Login, implementasi yang boleh dilakukan:
 
-- Implementasi JWT generation dan validation.
-- Implementasi fitur Login (backend dan frontend).
-- Implementasi JWT Authentication Filter.
-- Konfigurasi Security untuk JWT-based authentication.
-- Implementasi Authentication Context di frontend.
-- Implementasi Login page dan routing.
+- [x] Implementasi JWT generation dan validation.
+- [x] Implementasi fitur Login (backend dan frontend).
+- [x] Implementasi JWT Authentication Filter.
+- [x] Konfigurasi Security untuk JWT-based authentication.
+- [x] Implementasi Authentication Context di frontend.
+- [x] Implementasi Login page dan routing.
 
 Implementasi yang TIDAK BOLEH dilakukan pada UC-02:
 
-- Implementasi Logout (akan dikerjakan di UC-03).
-- Implementasi protected endpoints selain persiapan infrastruktur JWT.
-- Implementasi Product, Shopping Cart, Checkout, Payment, atau Order.
-- Implementasi fitur lain yang tidak berhubungan langsung dengan Login.
+- [x] Implementasi Logout (akan dikerjakan di UC-03).
+- [x] Implementasi protected endpoints selain persiapan infrastruktur JWT.
+- [x] Implementasi Product, Shopping Cart, Checkout, Payment, atau Order.
+- [x] Implementasi fitur lain yang tidak berhubungan langsung dengan Login.
 
 Fokus hanya pada kebutuhan UC-02 Login dan infrastruktur JWT untuk mendukung autentikasi.
 
@@ -634,15 +634,15 @@ Fokus hanya pada kebutuhan UC-02 Login dan infrastruktur JWT untuk mendukung aut
 
 ## Acceptance Criteria
 
-- Login berhasil menghasilkan JWT token.
-- Customer diarahkan ke Home setelah login berhasil.
-- Email tidak terdaftar ditolak dengan error message.
-- Password salah ditolak dengan error message.
-- Data login invalid menghasilkan validation error.
-- JWT token disimpan di client side.
-- JWT token dapat digunakan untuk request authenticated endpoints.
-- Token expiration berfungsi dengan baik.
-- AuthContext mengelola authentication state dengan baik.
+- [x] Login berhasil menghasilkan JWT token.
+- [x] Customer diarahkan ke Home setelah login berhasil.
+- [x] Email tidak terdaftar ditolak dengan error message.
+- [x] Password salah ditolak dengan error message.
+- [x] Data login invalid menghasilkan validation error.
+- [x] JWT token disimpan di client side.
+- [x] JWT token dapat digunakan untuk request authenticated endpoints.
+- [x] Token expiration berfungsi dengan baik.
+- [x] AuthContext mengelola authentication state dengan baik.
 
 ---
 
@@ -650,30 +650,30 @@ Fokus hanya pada kebutuhan UC-02 Login dan infrastruktur JWT untuk mendukung aut
 
 ### Positive Case
 
-- Login dengan credentials valid berhasil.
-- JWT token di-generate dan di-return ke frontend.
-- Token disimpan di localStorage atau sessionStorage.
-- User data tersimpan di AuthContext state.
-- Frontend redirect ke home page.
+- [x] Login dengan credentials valid berhasil.
+- [x] JWT token di-generate dan di-return ke frontend.
+- [x] Token disimpan di localStorage atau sessionStorage.
+- [x] User data tersimpan di AuthContext state.
+- [x] Frontend redirect ke home page.
 
 ### Negative Case
 
-- Login dengan email tidak terdaftar ditolak.
-- Login dengan password salah ditolak.
-- Login dengan field kosong ditolak.
-- Login dengan email format invalid ditolak.
+- [x] Login dengan email tidak terdaftar ditolak.
+- [x] Login dengan password salah ditolak.
+- [x] Login dengan field kosong ditolak.
+- [x] Login dengan email format invalid ditolak.
 
 ### Validation Case
 
-- Validation error return HTTP 400.
-- Invalid credentials return HTTP 401.
-- Error message informatif dan jelas.
+- [x] Validation error return HTTP 400.
+- [x] Invalid credentials return HTTP 401.
+- [x] Error message informatif dan jelas.
 
 ### Error Case
 
-- Expired token di-handle dengan baik.
-- Invalid token di-handle dengan baik.
-- Network error di-handle dengan baik.
+- [x] Expired token di-handle dengan baik.
+- [x] Invalid token di-handle dengan baik.
+- [x] Network error di-handle dengan baik.
 
 ---
 
@@ -681,16 +681,16 @@ Fokus hanya pada kebutuhan UC-02 Login dan infrastruktur JWT untuk mendukung aut
 
 Setelah UC-02 Login selesai, kondisi project adalah:
 
-- JWT library telah dikonfigurasi dan berfungsi.
-- JwtUtil telah diimplementasikan untuk JWT operations.
-- Endpoint POST /auth/login telah berfungsi dan teruji.
-- JWT Authentication Filter telah berfungsi.
-- Security configuration mendukung JWT-based authentication.
-- Login page telah berfungsi dan teruji.
-- AuthContext mengelola global authentication state.
-- Axios interceptor menambahkan JWT token ke setiap authenticated request.
-- Infrastruktur autentikasi siap untuk mendukung protected endpoints.
-- Project siap untuk implementasi UC-03 Logout.
+- [x] JWT library telah dikonfigurasi dan berfungsi.
+- [x] JwtUtil telah diimplementasikan untuk JWT operations.
+- [x] Endpoint POST /auth/login telah berfungsi dan teruji.
+- [x] JWT Authentication Filter telah berfungsi.
+- [x] Security configuration mendukung JWT-based authentication.
+- [x] Login page telah berfungsi dan teruji.
+- [x] AuthContext mengelola global authentication state.
+- [x] Axios interceptor menambahkan JWT token ke setiap authenticated request.
+- [x] Infrastruktur autentikasi siap untuk mendukung protected endpoints.
+- [x] Project siap untuk implementasi UC-03 Logout.
 
 ---
 

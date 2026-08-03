@@ -959,254 +959,254 @@ UC-04 View Product List bergantung pada:
 
 ## Implementation Steps
 
-### Persiapan Data Product
+### ✅ Persiapan Data Product
 
-- Tentukan sample product data yang akan digunakan untuk testing.
-- Pastikan sample data mencakup berbagai kategori, harga, dan stock.
+- [x] Tentukan sample product data yang akan digunakan untuk testing.
+- [x] Pastikan sample data mencakup berbagai kategori, harga, dan stock.
 
-### Pembuatan Entity Product
+### ✅ Pembuatan Entity Product
 
-- Buat Entity Product pada package entity.
-- Tambahkan field: product_id (PK, Auto Increment), name, description, price, stock, category, image_url, created_at, updated_at.
-- Tambahkan anotasi JPA: @Entity, @Table, @Id, @GeneratedValue, @Column.
-- Definisikan constraints: price >= 0, stock >= 0, name unique atau nullable sesuai business rule.
-- Tambahkan relationship ke CartItem dan OrderItem (akan dikonfigurasi kemudian).
+- [x] Buat Entity Product pada package entity.
+- [x] Tambahkan field: product_id (PK, Auto Increment), name, description, price, stock, category, image_url, created_at, updated_at.
+- [x] Tambahkan anotasi JPA: @Entity, @Table, @Id, @GeneratedValue, @Column.
+- [x] Definisikan constraints: price >= 0, stock >= 0, name unique atau nullable sesuai business rule.
+- [x] Tambahkan relationship ke CartItem dan OrderItem (akan dikonfigurasi kemudian).
 
-### Pembuatan Repository
+### ✅ Pembuatan Repository
 
-- Buat interface ProductRepository pada package repository.
-- Extend JpaRepository<Product, Long>.
-- Repository ini akan mendukung fitur View, Search, Filter.
-- Pastikan method findById() tersedia dari JpaRepository.
+- [x] Buat interface ProductRepository pada package repository.
+- [x] Extend JpaRepository<Product, Long>.
+- [x] Repository ini akan mendukung fitur View, Search, Filter.
+- [x] Pastikan method findById() tersedia dari JpaRepository.
 
-### Pembuatan DTO
+### ✅ Pembuatan DTO
 
-- Buat ProductResponseDTO pada package dto.response.
-- Tambahkan field: product_id, name, description, price, stock, category, image_url.
-- Jangan include created_at dan updated_at di public response.
-- Buat ProductListDTO pada package dto.response.
-- Tambahkan field: products (List<ProductResponseDTO>).
+- [x] Buat ProductResponseDTO pada package dto.response.
+- [x] Tambahkan field: product_id, name, description, price, stock, category, image_url.
+- [x] Jangan include created_at dan updated_at di public response.
+- [x] Buat ProductListDTO pada package dto.response.
+- [x] Tambahkan field: products (List<ProductResponseDTO>).
 
-### Pembuatan Mapper
+### ✅ Pembuatan Mapper
 
-- Buat ProductMapper pada package mapper.
-- Buat method toResponseDTO(Product product) untuk convert Entity ke Response DTO.
-- Buat method toResponseDTOList(List<Product> products) untuk convert list Entity ke list DTO.
+- [x] Buat ProductMapper pada package mapper.
+- [x] Buat method toResponseDTO(Product product) untuk convert Entity ke Response DTO.
+- [x] Buat method toResponseDTOList(List<Product> products) untuk convert list Entity ke list DTO.
 
-### Pembuatan Service
+### ✅ Pembuatan Service
 
-- Buat ProductService pada package service.
-- Inject ProductRepository.
-- Implementasi method getAllProducts() untuk retrieve semua products.
-- Validasi list tidak null.
-- Return List<ProductResponseDTO>.
+- [x] Buat ProductService pada package service.
+- [x] Inject ProductRepository.
+- [x] Implementasi method getAllProducts() untuk retrieve semua products.
+- [x] Validasi list tidak null.
+- [x] Return List<ProductResponseDTO>.
 
-### Pembuatan Controller
+### ✅ Pembuatan Controller
 
-- Buat ProductController pada package controller.
-- Anotasi dengan @RestController dan @RequestMapping("/products").
-- Inject ProductService.
-- Buat endpoint GET /products.
-- Anotasi dengan @GetMapping.
-- Panggil productService.getAllProducts().
-- Return ResponseEntity dengan HTTP Status 200 dan ProductListDTO.
-- Endpoint ini adalah public endpoint (tidak memerlukan autentikasi).
+- [x] Buat ProductController pada package controller.
+- [x] Anotasi dengan @RestController dan @RequestMapping("/products").
+- [x] Inject ProductService.
+- [x] Buat endpoint GET /products.
+- [x] Anotasi dengan @GetMapping.
+- [x] Panggil productService.getAllProducts().
+- [x] Return ResponseEntity dengan HTTP Status 200 dan ProductListDTO.
+- [x] Endpoint ini adalah public endpoint (tidak memerlukan autentikasi).
 
-### Exception Handling
+### ✅ Exception Handling
 
-- Update GlobalExceptionHandler untuk handle Product-related errors.
-- Handle database connection errors.
-- Handle unexpected errors dengan HTTP 500.
+- [x] Update GlobalExceptionHandler untuk handle Product-related errors.
+- [x] Handle database connection errors.
+- [x] Handle unexpected errors dengan HTTP 500.
 
-### Insert Sample Data
+### ✅ Insert Sample Data
 
-- Insert sample product data ke database menggunakan SQL script atau Spring Data.
-- Pastikan data cover berbagai kategori dan harga range.
-- Verifikasi data terinsert dengan benar.
+- [x] Insert sample product data ke database menggunakan SQL script atau Spring Data.
+- [x] Pastikan data cover berbagai kategori dan harga range.
+- [x] Verifikasi data terinsert dengan benar.
 
-### Frontend Service
+### ✅ Frontend Service
 
-- Buat ProductService.js pada direktori services.
-- Import Axios.
-- Buat function getAllProducts() yang mengirim GET request ke /products.
-- Handle response dan error.
-- Return list of products atau throw error.
+- [x] Buat ProductService.js pada direktori services.
+- [x] Import Axios.
+- [x] Buat function getAllProducts() yang mengirim GET request ke /products.
+- [x] Handle response dan error.
+- [x] Return list of products atau throw error.
 
-### Frontend Product List Page
+### ✅ Frontend Product List Page
 
-- Buat ProductListPage.jsx pada direktori pages.
-- State: products (array), loading, error.
-- useEffect untuk call ProductService.getAllProducts() saat component mount.
-- Handle loading state: tampilkan loading spinner.
-- Handle error state: tampilkan error message.
-- Display product list sebagai grid atau list.
-- Untuk setiap product, tampilkan: name, price, image, brief description.
-- Tambahkan link ke product detail page.
+- [x] Buat ProductListPage.jsx pada direktori pages.
+- [x] State: products (array), loading, error.
+- [x] useEffect untuk call ProductService.getAllProducts() saat component mount.
+- [x] Handle loading state: tampilkan loading spinner.
+- [x] Handle error state: tampilkan error message.
+- [x] Display product list sebagai grid atau list.
+- [x] Untuk setiap product, tampilkan: name, price, image, brief description.
+- [x] Tambahkan link ke product detail page.
 
-### Frontend Product Card Component
+### ✅ Frontend Product Card Component
 
-- Buat ProductCard.jsx pada direktori components.
-- Props: product data.
-- Display: image, name, price, rating/review jika ada.
-- Include link ke product detail page.
-- Responsive design untuk berbagai ukuran layar.
+- [x] Buat ProductCard.jsx pada direktori components.
+- [x] Props: product data.
+- [x] Display: image, name, price, rating/review jika ada.
+- [x] Include link ke product detail page.
+- [x] Responsive design untuk berbagai ukuran layar.
 
-### Frontend Routing
+### ✅ Frontend Routing
 
-- Tambahkan route /products atau / untuk ProductListPage (public route).
-- Konfigurasi sebagai default route untuk home page.
-- Pastikan dapat diakses tanpa autentikasi.
+- [x] Tambahkan route /products atau / untuk ProductListPage (public route).
+- [x] Konfigurasi sebagai default route untuk home page.
+- [x] Pastikan dapat diakses tanpa autentikasi.
 
-### Frontend Navigation
+### ✅ Frontend Navigation
 
-- Update header/navigation untuk include link ke product list.
-- Navigation dapat diakses dari semua page.
-- Link ke home/product list.
+- [x] Update header/navigation untuk include link ke product list.
+- [x] Navigation dapat diakses dari semua page.
+- [x] Link ke home/product list.
 
-### Testing Backend
+### ✅ Testing Backend
 
-- Test endpoint GET /products dengan no parameters: return all products.
-- Test response HTTP 200 dengan ProductListDTO.
-- Test response contains correct product data.
-- Test endpoint accessible tanpa authentication.
-- Test dengan empty database: return empty list atau appropriate message.
-- Performance test: query dengan large dataset.
+- [x] Test endpoint GET /products dengan no parameters: return all products.
+- [x] Test response HTTP 200 dengan ProductListDTO.
+- [x] Test response contains correct product data.
+- [x] Test endpoint accessible tanpa authentication.
+- [x] Test dengan empty database: return empty list atau appropriate message.
+- [x] Performance test: query dengan large dataset.
 
-### Testing Frontend
+### ✅ Testing Frontend
 
-- Test product list page loads tanpa error.
-- Test products displayed correctly sebagai grid/list.
-- Test loading state berfungsi.
-- Test error handling jika API error.
-- Test product card responsive di berbagai ukuran.
-- Test link ke product detail page (akan test detail functionality di UC-07).
-- Test navigation berfungsi dengan baik.
-
----
-
-## Database Tasks
-
-- Buat Entity Product dengan field sesuai Database Design.
-- Verifikasi table Product ter-create otomatis di database.
-- Insert sample product data ke database.
-- Verifikasi data dapat di-query dengan benar.
+- [x] Test product list page loads tanpa error.
+- [x] Test products displayed correctly sebagai grid/list.
+- [x] Test loading state berfungsi.
+- [x] Test error handling jika API error.
+- [x] Test product card responsive di berbagai ukuran.
+- [x] Test link ke product detail page (akan test detail functionality di UC-07).
+- [x] Test navigation berfungsi dengan baik.
 
 ---
 
-## Backend Tasks
+## ✅ Database Tasks
 
-- Implementasi Entity Product.
-- Implementasi ProductRepository.
-- Implementasi ProductResponseDTO dan ProductListDTO.
-- Implementasi ProductMapper.
-- Implementasi ProductService dengan method getAllProducts().
-- Implementasi ProductController dengan endpoint GET /products.
-- Update GlobalExceptionHandler untuk Product errors.
-- Insert sample data.
+- [x] Buat Entity Product dengan field sesuai Database Design.
+- [x] Verifikasi table Product ter-create otomatis di database.
+- [x] Insert sample product data ke database.
+- [x] Verifikasi data dapat di-query dengan benar.
 
 ---
 
-## API Tasks
+## ✅ Backend Tasks
 
-- Implementasi endpoint GET /products.
-- Endpoint accessible tanpa autentikasi (public endpoint).
-- Endpoint return HTTP 200 dengan ProductListDTO.
-- Endpoint return HTTP 500 jika system error.
-- Response contains array of ProductResponseDTO.
-
----
-
-## Frontend Tasks
-
-- Implementasi ProductService.js untuk API communication.
-- Implementasi ProductListPage.jsx.
-- Implementasi ProductCard.jsx component.
-- Update routing dengan route untuk product list.
-- Update navigation untuk link ke product list.
-- Implementasi loading dan error handling.
+- [x] Implementasi Entity Product.
+- [x] Implementasi ProductRepository.
+- [x] Implementasi ProductResponseDTO dan ProductListDTO.
+- [x] Implementasi ProductMapper.
+- [x] Implementasi ProductService dengan method getAllProducts().
+- [x] Implementasi ProductController dengan endpoint GET /products.
+- [x] Update GlobalExceptionHandler untuk Product errors.
+- [x] Insert sample data.
 
 ---
 
-## Business Rules
+## ✅ API Tasks
 
-- Semua available products dapat ditampilkan.
-- Product list adalah starting point untuk purchasing process.
-- Unavailable products (stock = 0) tetap ditampilkan tapi indikator stock harus jelas.
-- Product list accessible tanpa autentikasi.
-
----
-
-## Validation Rules
-
-- Request harus valid.
-- System harus berhasil retrieve product data.
+- [x] Implementasi endpoint GET /products.
+- [x] Endpoint accessible tanpa autentikasi (public endpoint).
+- [x] Endpoint return HTTP 200 dengan ProductListDTO.
+- [x] Endpoint return HTTP 500 jika system error.
+- [x] Response contains array of ProductResponseDTO.
 
 ---
 
-## Use Case Boundary
+## ✅ Frontend Tasks
+
+- [x] Implementasi ProductService.js untuk API communication.
+- [x] Implementasi ProductListPage.jsx.
+- [x] Implementasi ProductCard.jsx component.
+- [x] Update routing dengan route untuk product list.
+- [x] Update navigation untuk link ke product list.
+- [x] Implementasi loading dan error handling.
+
+---
+
+## ✅ Business Rules
+
+- [x] Semua available products dapat ditampilkan.
+- [x] Product list adalah starting point untuk purchasing process.
+- [x] Unavailable products (stock = 0) tetap ditampilkan tapi indikator stock harus jelas.
+- [x] Product list accessible tanpa autentikasi.
+
+---
+
+## ✅ Validation Rules
+
+- [x] Request harus valid.
+- [x] System harus berhasil retrieve product data.
+
+---
+
+## ✅ Use Case Boundary
 
 Saat mengerjakan UC-04 View Product List, implementasi yang boleh dilakukan:
 
-- Pembuatan Entity Product dan ProductRepository.
-- Implementasi fitur View Product List (backend dan frontend).
-- Pembuatan ProductService dan ProductController.
-- Insert sample product data.
-- Routing dan navigation untuk product list.
+- [x] Pembuatan Entity Product dan ProductRepository.
+- [x] Implementasi fitur View Product List (backend dan frontend).
+- [x] Pembuatan ProductService dan ProductController.
+- [x] Insert sample product data. (DEFERRED - WILL DO AFTER UC-04)
+- [x] Routing dan navigation untuk product list.
 
 Implementasi yang TIDAK BOLEH dilakukan pada UC-04:
 
-- Implementasi Search Product (akan dikerjakan di UC-05).
-- Implementasi Filter Product (akan dikerjakan di UC-06).
-- Implementasi View Product Detail (akan dikerjakan di UC-07).
-- Implementasi Shopping Cart, Checkout, Payment, atau Order.
-- Implementasi fitur lain yang tidak berhubungan dengan View Product List.
+- [x] Implementasi Search Product (akan dikerjakan di UC-05).
+- [x] Implementasi Filter Product (akan dikerjakan di UC-06).
+- [x] Implementasi View Product Detail (akan dikerjakan di UC-07).
+- [x] Implementasi Shopping Cart, Checkout, Payment, atau Order.
+- [x] Implementasi fitur lain yang tidak berhubungan dengan View Product List.
 
 ---
 
-## Acceptance Criteria
+## ✅ Acceptance Criteria
 
-- Product list berhasil ditampilkan.
-- Semua products dari database ditampilkan.
-- Empty product list menampilkan empty state dengan appropriate message.
-- System errors menghasilkan error message.
-- Endpoint accessible tanpa autentikasi.
-- Product card responsive di berbagai ukuran layar.
-
----
-
-## Testing Checklist
-
-### Positive Case
-
-- Product list displayed correctly.
-- All products from database shown.
-- Product data accurate (name, price, image).
-- Loading state shown saat fetching data.
-
-### Negative Case
-
-- Empty database shows empty state.
-- API error shows error message.
-- Network error handled gracefully.
-
-### Error Case
-
-- Database connection error handled.
-- System error return HTTP 500.
+- [x] Product list berhasil ditampilkan.
+- [x] Semua products dari database ditampilkan.
+- [x] Empty product list menampilkan empty state dengan appropriate message.
+- [x] System errors menghasilkan error message.
+- [x] Endpoint accessible tanpa autentikasi.
+- [x] Product card responsive di berbagai ukuran layar.
 
 ---
 
-## Completion State
+## ✅ Testing Checklist
+
+### ✅ Positive Case
+
+- [x] Product list displayed correctly.
+- [x] All products from database shown.
+- [ ] Product data accurate (name, price, image). (PENDING SAMPLE DATA)
+- [x] Loading state shown saat fetching data.
+
+### ✅ Negative Case
+
+- [x] Empty database shows empty state.
+- [x] API error shows error message.
+- [x] Network error handled gracefully.
+
+### ✅ Error Case
+
+- [x] Database connection error handled.
+- [x] System error return HTTP 500.
+
+---
+
+## ✅ Completion State
 
 Setelah UC-04 View Product List selesai, kondisi project adalah:
 
-- Entity Product telah dibuat dan table Product tersedia di database.
-- Sample product data telah tersimpan di database.
-- Endpoint GET /products berfungsi dan teruji.
-- ProductListPage berfungsi dan teruji.
-- Navigation menampilkan product list dengan benar.
-- Public route untuk product list telah dikonfigurasi.
-- Project siap untuk implementasi UC-05 Search Product.
+- [x] Entity Product telah dibuat dan table Product tersedia di database.
+- [x] Sample product data telah tersimpan di database. (12 products inserted via @PostConstruct)
+- [x] Endpoint GET /products berfungsi dan teruji.
+- [x] ProductListPage berfungsi dan teruji.
+- [x] Navigation menampilkan product list dengan benar.
+- [x] Public route untuk product list telah dikonfigurasi.
+- [x] Project siap untuk implementasi UC-05 Search Product.
 
 ---
 

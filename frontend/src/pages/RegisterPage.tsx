@@ -136,7 +136,7 @@ export default function RegisterPage() {
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-8 h-8 text-gray-900 dark:text-white" />
             <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white" style={{ letterSpacing: '-0.5px' }}>
-              Aladin
+              Aladin.
             </h1>
           </div>
           <button

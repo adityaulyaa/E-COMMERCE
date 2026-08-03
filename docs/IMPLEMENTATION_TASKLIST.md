@@ -406,142 +406,142 @@ UC-02 Login bergantung pada:
 - JWT Library untuk generate token.
 - Spring Security configuration.
 
----
+--
 
 ## Implementation Steps
 
-### Konfigurasi JWT
-
-- Tambahkan dependency JWT library (io.jsonwebtoken:jjwt) pada pom.xml atau build.gradle.
-- Buat JwtUtil class pada package security.jwt.
-- Konfigurasi JWT secret key pada application.properties.
-- Konfigurasi JWT expiration time (misal: 24 jam).
-- Implementasi method generateToken(String email) untuk generate JWT.
-- Implementasi method extractEmail(String token) untuk extract email dari JWT.
-- Implementasi method validateToken(String token) untuk validasi JWT.
-- Implementasi method isTokenExpired(String token) untuk check expiration.
-
-### Pembuatan DTO
-
-- Buat LoginRequestDTO pada package dto.request.
-- Tambahkan field: email, password.
-- Tambahkan validasi anotasi: @NotBlank, @Email.
-- Buat LoginResponseDTO pada package dto.response.
-- Tambahkan field: userId, fullName, email, token, message.
-
-### Update AuthenticationService
-
-- Tambahkan method login(LoginRequestDTO dto) pada AuthenticationService.
-- Inject JwtUtil.
-- Validasi email terdaftar menggunakan UserRepository.findByEmail().
-- Throw exception jika email tidak ditemukan.
-- Verifikasi password menggunakan PasswordEncoder.matches().
-- Throw exception jika password tidak match.
-- Generate JWT token menggunakan JwtUtil.generateToken().
-- Buat LoginResponseDTO dengan user data dan token.
-- Return LoginResponseDTO.
-
-### Custom Exception
-
-- Buat InvalidCredentialsException pada package exception.
-- Extend RuntimeException.
-- Gunakan exception ini ketika email tidak ditemukan atau password salah.
-
-### Update AuthenticationController
-
-- Tambahkan endpoint POST /auth/login pada AuthenticationController.
-- Anotasi dengan @PostMapping("/login").
-- Terima LoginRequestDTO sebagai @RequestBody dengan @Valid.
-- Panggil authenticationService.login(dto).
-- Return ResponseEntity dengan HTTP Status 200 (OK) dan LoginResponseDTO.
-
-### Update GlobalExceptionHandler
-
-- Tambahkan handler untuk InvalidCredentialsException.
-- Return HTTP 401 (UNAUTHORIZED) dengan error message.
-
-### Update Security Configuration
-
-- Tambahkan endpoint /auth/login sebagai public endpoint.
-- Pastikan endpoint dapat diakses tanpa autentikasi.
-
-### JWT Authentication Filter
-
-- Buat JwtAuthenticationFilter pada package security.filter.
-- Extend OncePerRequestFilter.
-- Extract JWT token dari Authorization header (Bearer token).
-- Validasi token menggunakan JwtUtil.
-- Extract email dari token.
-- Load UserDetails dari database.
-- Set authentication ke SecurityContext jika token valid.
-- Chain filter untuk request processing.
-
-### Update Security Configuration untuk JWT Filter
-
-- Register JwtAuthenticationFilter ke security filter chain.
-- Tambahkan filter sebelum UsernamePasswordAuthenticationFilter.
-- Konfigurasi stateless session management (SessionCreationPolicy.STATELESS).
-
-### Frontend Service
-
-- Update AuthenticationService.js.
-- Tambahkan function login(loginData) yang mengirim POST request ke /auth/login.
-- Handle response dan simpan JWT token ke localStorage atau sessionStorage.
-- Return response atau throw error.
-
-### Frontend Authentication Context
-
-- Buat AuthContext.jsx pada direktori contexts.
-- Buat Context untuk manage authentication state.
-- Tambahkan state: user, token, isAuthenticated, loading.
-- Implementasi function login yang memanggil AuthenticationService.login().
-- Implementasi function logout yang menghapus token dari storage.
-- Implementasi function untuk load user dari token saat aplikasi dibuka.
-- Provide context ke seluruh aplikasi via Context Provider.
-
-### Frontend Login Page
-
-- Buat LoginPage.jsx pada direktori pages.
-- Buat form dengan field: Email, Password.
-- Tambahkan state management untuk form fields.
-- Tambahkan state untuk error messages dan loading state.
-- Implementasi form validation di frontend.
-- Implementasi handleSubmit yang memanggil login dari AuthContext.
-- Tampilkan error messages jika login gagal.
-- Redirect ke Home/Product List page jika login berhasil.
-- Tambahkan link ke Register page.
-
-### Frontend Routing
-
-- Update routing configuration.
-- Tambahkan route /login untuk LoginPage (public route).
-- Konfigurasi redirect dari / ke /login jika user belum authenticated.
-
-### Axios Interceptor
-
-- Buat axios instance dengan interceptor pada services/axiosConfig.js.
-- Tambahkan request interceptor untuk inject JWT token ke Authorization header.
-- Format header: Authorization: Bearer {token}.
-- Tambahkan response interceptor untuk handle 401 error (auto logout).
-
-### Testing Backend
-
-- Test endpoint POST /auth/login menggunakan Postman atau curl.
-- Test dengan credentials valid: return JWT token dan user data.
-- Test dengan email tidak terdaftar: return HTTP 401 error.
-- Test dengan password salah: return HTTP 401 error.
-- Test dengan field kosong: return validation error.
-- Test JWT token: gunakan token untuk access protected endpoint (akan dikonfigurasi di UC berikutnya).
-- Verify token dapat di-decode dan berisi email user.
-
-### Testing Frontend
-
-- Test form login dapat diakses.
-- Test submit form dengan credentials valid: simpan token, redirect ke home.
-- Test submit form dengan credentials invalid: tampilkan error message.
-- Test form validation: field required, email format.
-- Test token disimpan di localStorage atau sessionStorage.
-- Test UI responsive di berbagai ukuran layar.
+### ✅ Konfigurasi JWT
+ 
+ - [x] Tambahkan dependency JWT library (io.jsonwebtoken:jjwt) pada pom.xml atau build.gradle.
+ - [x] Buat JwtUtil class pada package security.jwt.
+ - [x] Konfigurasi JWT secret key pada application.properties.
+ - [x] Konfigurasi JWT expiration time (misal: 24 jam).
+ - [x] Implementasi method generateToken(String email) untuk generate JWT.
+ - [x] Implementasi method extractEmail(String token) untuk extract email dari JWT.
+ - [x] Implementasi method validateToken(String token) untuk validasi JWT.
+ - [x] Implementasi method isTokenExpired(String token) untuk check expiration.
+ 
+ ### ✅ Pembuatan DTO
+ 
+ - [x] Buat LoginRequestDTO pada package dto.request.
+ - [x] Tambahkan field: email, password.
+ - [x] Tambahkan validasi anotasi: @NotBlank, @Email.
+ - [x] Buat LoginResponseDTO pada package dto.response.
+ - [x] Tambahkan field: userId, fullName, email, token, message.
+ 
+ ### ✅ Update AuthenticationService
+ 
+ - [x] Tambahkan method login(LoginRequestDTO dto) pada AuthenticationService.
+ - [x] Inject JwtUtil.
+ - [x] Validasi email terdaftar menggunakan UserRepository.findByEmail().
+ - [x] Throw exception jika email tidak ditemukan.
+ - [x] Verifikasi password menggunakan PasswordEncoder.matches().
+ - [x] Throw exception jika password tidak match.
+ - [x] Generate JWT token menggunakan JwtUtil.generateToken().
+ - [x] Buat LoginResponseDTO dengan user data dan token.
+ - [x] Return LoginResponseDTO.
+ 
+ ### ✅ Custom Exception
+ 
+ - [x] Buat InvalidCredentialsException pada package exception.
+ - [x] Extend RuntimeException.
+ - [x] Gunakan exception ini ketika email tidak ditemukan atau password salah.
+ 
+ ### ✅ Update AuthenticationController
+ 
+ - [x] Tambahkan endpoint POST /auth/login pada AuthenticationController.
+ - [x] Anotasi dengan @PostMapping("/login").
+ - [x] Terima LoginRequestDTO sebagai @RequestBody dengan @Valid.
+ - [x] Panggil authenticationService.login(dto).
+ - [x] Return ResponseEntity dengan HTTP Status 200 (OK) dan LoginResponseDTO.
+ 
+ ### ✅ Update GlobalExceptionHandler
+ 
+ - [x] Tambahkan handler untuk InvalidCredentialsException.
+ - [x] Return HTTP 401 (UNAUTHORIZED) dengan error message.
+ 
+ ### ✅ Update Security Configuration
+ 
+ - [x] Tambahkan endpoint /auth/login sebagai public endpoint.
+ - [x] Pastikan endpoint dapat diakses tanpa autentikasi.
+ 
+ ### ✅ JWT Authentication Filter
+ 
+ - [x] Buat JwtAuthenticationFilter pada package security.filter.
+ - [x] Extend OncePerRequestFilter.
+ - [x] Extract JWT token dari Authorization header (Bearer token).
+ - [x] Validasi token menggunakan JwtUtil.
+ - [x] Extract email dari token.
+ - [x] Load UserDetails dari database.
+ - [x] Set authentication ke SecurityContext jika token valid.
+ - [x] Chain filter untuk request processing.
+ 
+ ### ✅ Update Security Configuration untuk JWT Filter
+ 
+ - [x] Register JwtAuthenticationFilter ke security filter chain.
+ - [x] Tambahkan filter sebelum UsernamePasswordAuthenticationFilter.
+ - [x] Konfigurasi stateless session management (SessionCreationPolicy.STATELESS).
+ 
+ ### ✅ Frontend Service
+ 
+ - [x] Update AuthenticationService.js.
+ - [x] Tambahkan function login(loginData) yang mengirim POST request ke /auth/login.
+ - [x] Handle response dan simpan JWT token ke localStorage atau sessionStorage.
+ - [x] Return response atau throw error.
+ 
+ ### ✅ Frontend Authentication Context
+ 
+ - [x] Buat AuthContext.jsx pada direktori contexts.
+ - [x] Buat Context untuk manage authentication state.
+ - [x] Tambahkan state: user, token, isAuthenticated, loading.
+ - [x] Implementasi function login yang memanggil AuthenticationService.login().
+ - [x] Implementasi function logout yang menghapus token dari storage.
+ - [x] Implementasi function untuk load user dari token saat aplikasi dibuka.
+ - [x] Provide context ke seluruh aplikasi via Context Provider.
+ 
+ ### ✅ Frontend Login Page
+ 
+ - [x] Buat LoginPage.jsx pada direktori pages.
+ - [x] Buat form dengan field: Email, Password.
+ - [x] Tambahkan state management untuk form fields.
+ - [x] Tambahkan state untuk error messages dan loading state.
+ - [x] Implementasi form validation di frontend.
+ - [x] Implementasi handleSubmit yang memanggil login dari AuthContext.
+ - [x] Tampilkan error messages jika login gagal.
+ - [x] Redirect ke Home/Product List page jika login berhasil.
+ - [x] Tambahkan link ke Register page.
+ 
+ ### ✅ Frontend Routing
+ 
+ - [x] Update routing configuration.
+ - [x] Tambahkan route /login untuk LoginPage (public route).
+ - [x] Konfigurasi redirect dari / ke /login jika user belum authenticated.
+ 
+ ### ✅ Axios Interceptor
+ 
+ - [x] Buat axios instance dengan interceptor pada services/axiosConfig.js.
+ - [x] Tambahkan request interceptor untuk inject JWT token ke Authorization header.
+ - [x] Format header: Authorization: Bearer {token}.
+ - [x] Tambahkan response interceptor untuk handle 401 error (auto logout).
+ 
+ ### ✅ Testing Backend
+ 
+ - [x] Test endpoint POST /auth/login menggunakan Postman atau curl.
+ - [x] Test dengan credentials valid: return JWT token dan user data.
+ - [x] Test dengan email tidak terdaftar: return HTTP 401 error.
+ - [x] Test dengan password salah: return HTTP 401 error.
+ - [x] Test dengan field kosong: return validation error.
+ - [x] Test JWT token: gunakan token untuk access protected endpoint (akan dikonfigurasi di UC berikutnya).
+ - [x] Verify token dapat di-decode dan berisi email user.
+ 
+ ### ✅ Testing Frontend
+ 
+ - [x] Test form login dapat diakses.
+ - [x] Test submit form dengan credentials valid: simpan token, redirect ke home.
+ - [x] Test submit form dengan credentials invalid: tampilkan error message.
+ - [x] Test form validation: field required, email format.
+ - [x] Test token disimpan di localStorage atau sessionStorage.
+ - [x] Test UI responsive di berbagai ukuran layar.
 
 ---
 

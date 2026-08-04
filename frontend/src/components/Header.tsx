@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Search, Heart, ShoppingCart, User, Sun, Moon, Menu, X } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
@@ -20,6 +20,20 @@ export default function Header() {
   })
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false)
+  const [searchKeyword, setSearchKeyword] = useState('')
+
+  // Real-time search with debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchKeyword.trim()) {
+        navigate(`/products?keyword=${encodeURIComponent(searchKeyword.trim())}`)
+      } else {
+        navigate('/products')
+      }
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [searchKeyword, navigate])
 
   const toggleDarkMode = () => {
     const html = document.documentElement
@@ -87,8 +101,9 @@ export default function Header() {
               <input
                 type="text"
                 placeholder="Search products..."
-                disabled
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-not-allowed opacity-60"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
             </div>
           </div>
@@ -259,8 +274,9 @@ export default function Header() {
                 <input
                   type="text"
                   placeholder="Search products..."
-                  disabled
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 cursor-not-allowed opacity-60"
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all"
                 />
               </div>
             </div>

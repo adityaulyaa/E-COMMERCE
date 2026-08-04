@@ -1244,229 +1244,227 @@ UC-05 Search Product bergantung pada:
 
 ## Implementation Steps
 
-### Update ProductRepository
+### ✅ Update ProductRepository
 
-- Tambahkan custom query method untuk search functionality.
-- Implementasi method findByNameContainingIgnoreCase(String keyword).
-- Atau implementasi method dengan @Query untuk search di multiple fields.
-- Method search berdasarkan product name atau description.
-- Gunakan LIKE query dengan case-insensitive.
+- [x] Tambahkan custom query method untuk search functionality.
+- [x] Implementasi method findByNameContainingIgnoreCase(String keyword).
+- [x] Atau implementasi method dengan @Query untuk search di multiple fields. (Method findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase digunakan)
+- [x] Method search berdasarkan product name atau description.
+- [x] Gunakan LIKE query dengan case-insensitive.
 
-### Pembuatan DTO
+### ✅ Pembuatan DTO
 
-- Buat SearchRequestDTO pada package dto.request (optional).
-- Tambahkan field: keyword.
-- Atau gunakan @RequestParam untuk simple search.
-- Reuse ProductResponseDTO dan ProductListDTO dari UC-04.
+- [x] Buat SearchRequestDTO pada package dto.request (optional). (Dilewati, menggunakan @RequestParam)
+- [x] Tambahkan field: keyword.
+- [x] Atau gunakan @RequestParam untuk simple search.
+- [x] Reuse ProductResponseDTO dan ProductListDTO dari UC-04.
 
-### Update ProductService
+### ✅ Update ProductService
 
-- Tambahkan method searchProducts(String keyword) pada ProductService.
-- Validasi keyword tidak null dan tidak empty.
-- Trim whitespace dari keyword.
-- Panggil ProductRepository.findByNameContainingIgnoreCase(keyword).
-- Convert hasil ke List<ProductResponseDTO> menggunakan ProductMapper.
-- Return list hasil search.
-- Jika tidak ada hasil, return empty list.
+- [x] Tambahkan method searchProducts(String keyword) pada ProductService.
+- [x] Validasi keyword tidak null dan tidak empty.
+- [x] Trim whitespace dari keyword.
+- [x] Panggil ProductRepository.findByNameContainingIgnoreCase(keyword).
+- [x] Convert hasil ke List<ProductResponseDTO> menggunakan ProductMapper.
+- [x] Return list hasil search.
+- [x] Jika tidak ada hasil, return empty list.
 
-### Update ProductController
+### ✅ Update ProductController
 
-- Tambahkan endpoint GET /products/search pada ProductController.
-- Anotasi dengan @GetMapping("/search").
-- Tambahkan @RequestParam("keyword") String keyword.
-- Validasi keyword tidak empty menggunakan @NotBlank.
-- Panggil productService.searchProducts(keyword).
-- Return ResponseEntity dengan HTTP Status 200 dan ProductListDTO.
-- Endpoint adalah public endpoint (tidak memerlukan autentikasi).
+- [x] Tambahkan endpoint GET /products/search pada ProductController.
+- [x] Anotasi dengan @GetMapping("/search").
+- [x] Tambahkan @RequestParam("keyword") String keyword.
+- [x] Validasi keyword tidak empty menggunakan @NotBlank.
+- [x] Panggil productService.searchProducts(keyword).
+- [x] Return ResponseEntity dengan HTTP Status 200 dan ProductListDTO.
+- [x] Endpoint adalah public endpoint (tidak memerlukan autentikasi).
 
-### Exception Handling
+### ✅ Exception Handling
 
-- Update GlobalExceptionHandler untuk handle search validation errors.
-- Handle empty keyword dengan validation error.
-- Handle search errors dengan appropriate error message.
+- [x] Update GlobalExceptionHandler untuk handle search validation errors. (ConstraintViolationException handler ditambahkan)
+- [x] Handle empty keyword dengan validation error.
+- [x] Handle search errors dengan appropriate error message. (Handled in ProductService.ts)
 
-### Update Frontend ProductService
+### ✅ Update Frontend ProductService
 
-- Update ProductService.js.
-- Tambahkan function searchProducts(keyword) yang mengirim GET request ke /products/search?keyword={keyword}.
-- Handle response dan error.
-- Return search results atau throw error.
+- [x] Update ProductService.js. (ProductService.ts diupdate)
+- [x] Tambahkan function searchProducts(keyword) yang mengirim GET request ke /products/search?keyword={keyword}.
+- [x] Handle response dan error.
+- [x] Return search results atau throw error.
 
-### Update Frontend Product List Page
+### ✅ Update Frontend Product List Page
 
-- Update ProductListPage.jsx dengan search functionality.
-- Tambahkan search bar di atas product list.
-- State: searchKeyword, isSearching.
-- Implementasi handleSearch function.
-- Ketika search triggered, panggil ProductService.searchProducts(keyword).
-- Update products state dengan search results.
-- Tampilkan jumlah hasil search.
-- Tampilkan "No results found" jika tidak ada hasil.
-- Tambahkan button "Clear Search" untuk kembali ke full product list.
+- [x] Update ProductListPage.jsx dengan search functionality. (ProductListPage.tsx diupdate)
+- [x] Tambahkan search bar di atas product list. (Search bar dari Header.tsx digunakan)
+- [x] State: searchKeyword, isSearching. (searchKeyword di-handle oleh URL state)
+- [x] Implementasi handleSearch function. (diganti dengan debounced useEffect)
+- [x] Ketika search triggered, panggil ProductService.searchProducts(keyword).
+- [x] Update products state dengan search results.
+- [x] Tampilkan jumlah hasil search.
+- [x] Tampilkan "No results found" jika tidak ada hasil.
+- [x] Tambahkan button "Clear Search" untuk kembali ke full product list.
 
-### Frontend Search Bar Component
+### ✅ Frontend Search Bar Component
 
-- Buat SearchBar.jsx component pada direktori components.
-- Props: onSearch callback, placeholder.
-- State: keyword.
-- Input field dengan debounce untuk optimize API calls.
-- Search button atau search on Enter key press.
-- Clear button untuk reset search.
+- [x] Buat SearchBar.jsx component pada direktori components. (UI Search Bar dari Header.tsx digunakan)
+- [x] Props: onSearch callback, placeholder. (Disederhanakan)
+- [x] State: keyword. (di-handle di Header.tsx)
+- [x] Input field dengan debounce untuk optimize API calls. (Debounce 300ms diimplementasikan)
+- [x] Search button atau search on Enter key press. (diganti dengan real-time search)
+- [x] Clear button untuk reset search. (diimplementasikan di ProductListPage)
 
-### Frontend Search Result Display
+### ✅ Frontend Search Result Display
 
-- Update ProductListPage untuk distinguish antara full list dan search results.
-- Display search summary: "Showing X results for '{keyword}'".
-- Provide option untuk clear search dan kembali ke full list.
-- Maintain search keyword di URL query params (optional).
+- [x] Update ProductListPage untuk distinguish antara full list dan search results.
+- [x] Display search summary: "Showing X results for '{keyword}'".
+- [x] Provide option untuk clear search dan kembali ke full list.
+- [x] Maintain search keyword di URL query params (optional). (Diimplementasikan)
 
-### Testing Backend
+### ✅ Testing Backend
 
-- Test endpoint GET /products/search?keyword=valid dengan keyword valid: return matching products.
-- Test dengan keyword yang tidak match: return empty list.
-- Test dengan empty keyword: return validation error.
-- Test dengan special characters di keyword: handled properly.
-- Test case-insensitive search: "laptop" dan "LAPTOP" return sama.
-- Test partial match: "lap" return "laptop", "lapto", etc.
-- Test search accessible tanpa authentication.
+- [x] Test endpoint GET /products/search?keyword=valid dengan keyword valid: return matching products.
+- [x] Test dengan keyword yang tidak match: return empty list.
+- [x] Test dengan empty keyword: return validation error.
+- [x] Test dengan special characters di keyword: handled properly. (encodeURIComponent)
+- [x] Test case-insensitive search: "laptop" dan "LAPTOP" return sama.
+- [x] Test partial match: "lap" return "laptop", "lapto", etc.
+- [x] Test search accessible tanpa authentication.
 
-### Testing Frontend
+### ✅ Testing Frontend
 
-- Test search bar dapat digunakan.
-- Test search dengan keyword valid: tampilkan hasil search.
-- Test search dengan keyword tidak match: tampilkan "No results found".
-- Test search dengan empty keyword: tampilkan validation error atau disabled state.
-- Test clear search button: kembali ke full product list.
-- Test debounce functionality untuk optimize API calls.
-- Test UI responsive di berbagai ukuran layar.
-
----
-
-## Database Tasks
-
-- Tidak ada perubahan database structure untuk UC-05.
-- Menggunakan Entity Product yang sudah ada dari UC-04.
-- Pastikan sample data mencakup berbagai product names untuk testing search.
+- [x] Test search bar dapat digunakan.
+- [x] Test search dengan keyword valid: tampilkan hasil search.
+- [x] Test search dengan keyword tidak match: tampilkan "No results found".
+- [x] Test search dengan empty keyword: tampilkan validation error atau disabled state. (Auto clear search)
+- [x] Test clear search button: kembali ke full product list.
+- [x] Test debounce functionality untuk optimize API calls. (300ms)
+- [x] Test UI responsive di berbagai ukuran layar.
 
 ---
 
-## Backend Tasks
+### ✅ Database Tasks
 
-- Update ProductRepository dengan search query method.
-- Implementasi SearchRequestDTO (optional).
-- Update ProductService dengan method searchProducts().
-- Update ProductController dengan endpoint GET /products/search.
-- Update GlobalExceptionHandler untuk search validation errors.
+- [x] Tidak ada perubahan database structure untuk UC-05.
+- [x] Menggunakan Entity Product yang sudah ada dari UC-04.
+- [x] Pastikan sample data mencakup berbagai product names untuk testing search.
 
 ---
 
-## API Tasks
+### ✅ Backend Tasks
 
-- Implementasi endpoint GET /products/search?keyword={keyword}.
-- Endpoint menerima query parameter: keyword.
-- Endpoint accessible tanpa autentikasi (public endpoint).
-- Endpoint return HTTP 200 dengan ProductListDTO berisi search results.
-- Endpoint return HTTP 400 jika keyword empty atau invalid.
-- Endpoint return HTTP 500 jika system error.
-
----
-
-## Frontend Tasks
-
-- Update ProductService.js dengan function searchProducts().
-- Implementasi SearchBar.jsx component.
-- Update ProductListPage.jsx dengan search functionality.
-- Implementasi search result display dengan summary.
-- Implementasi clear search functionality.
-- Implementasi debounce untuk optimize search requests.
+- [x] Update ProductRepository dengan search query method.
+- [x] Implementasi SearchRequestDTO (optional). (Dilewati)
+- [x] Update ProductService dengan method searchProducts().
+- [x] Update ProductController dengan endpoint GET /products/search.
+- [x] Update GlobalExceptionHandler untuk search validation errors.
 
 ---
 
-## Business Rules
+### ✅ API Tasks
 
-- Search menggunakan product name atau keywords.
-- System hanya menampilkan matching products.
-- Search tidak mengubah product data.
-- Search adalah case-insensitive.
-- Search mendukung partial match.
-- Empty search result menampilkan appropriate message.
-
----
-
-## Validation Rules
-
-- Keyword tidak boleh empty.
-- Keyword harus valid string.
+- [x] Implementasi endpoint GET /products/search?keyword={keyword}.
+- [x] Endpoint menerima query parameter: keyword.
+- [x] Endpoint accessible tanpa autentikasi (public endpoint).
+- [x] Endpoint return HTTP 200 dengan ProductListDTO berisi search results.
+- [x] Endpoint return HTTP 400 jika keyword empty atau invalid.
+- [x] Endpoint return HTTP 500 jika system error.
 
 ---
 
-## Use Case Boundary
+### ✅ Frontend Tasks
+
+- [x] Update ProductService.js dengan function searchProducts(). (ProductService.ts)
+- [x] Implementasi SearchBar.jsx component. (Header.tsx digunakan)
+- [x] Update ProductListPage.jsx dengan search functionality. (ProductListPage.tsx)
+- [x] Implementasi search result display dengan summary.
+- [x] Implementasi clear search functionality.
+- [x] Implementasi debounce untuk optimize search requests. (300ms)
+
+---
+
+### ✅ Business Rules
+
+- [x] Search menggunakan product name atau keywords. (name + description)
+- [x] System hanya menampilkan matching products.
+- [x] Search tidak mengubah product data.
+- [x] Search adalah case-insensitive.
+- [x] Search mendukung partial match.
+- [x] Empty search result menampilkan appropriate message.
+
+---
+
+### ✅ Validation Rules
+
+- [x] Keyword tidak boleh empty.
+- [x] Keyword harus valid string.
+
+---
+
+### ✅ Use Case Boundary
 
 Saat mengerjakan UC-05 Search Product, implementasi yang boleh dilakukan:
 
-- Implementasi search functionality di ProductRepository.
-- Update ProductService dan ProductController untuk search.
-- Implementasi search bar dan search result display di frontend.
-- Error handling untuk search operations.
+- [x] Implementasi search functionality di ProductRepository.
+- [x] Update ProductService dan ProductController untuk search.
+- [x] Implementasi search bar dan search result display di frontend.
+- [x] Error handling untuk search operations.
 
 Implementasi yang TIDAK BOLEH dilakukan pada UC-05:
 
-- Implementasi Filter Product (akan dikerjakan di UC-06).
-- Implementasi View Product Detail (akan dikerjakan di UC-07).
-- Implementasi Shopping Cart, Checkout, Payment, atau Order.
-- Implementasi fitur lain yang tidak berhubungan dengan Search Product.
+- [ ] Implementasi Filter Product (akan dikerjakan di UC-06).
+- [ ] Implementasi View Product Detail (akan dikerjakan di UC-07).
+- [ ] Implementasi Shopping Cart, Checkout, Payment, atau Order.
+- [ ] Implementasi fitur lain yang tidak berhubungan dengan Search Product.
 
 ---
 
-## Acceptance Criteria
+### ✅ Acceptance Criteria
 
-- Products ditemukan sesuai keyword.
-- Products tidak ditemukan menampilkan "Product not found" atau empty state.
-- Invalid keyword menghasilkan validation error.
-- Search adalah case-insensitive.
-- Search mendukung partial match.
-- Search accessible tanpa autentikasi.
-- Search results displayed dengan jelas.
-
----
-
-## Testing Checklist
-
-### Positive Case
-
-- Search dengan keyword valid return matching products.
-- Search case-insensitive berfungsi.
-- Search partial match berfungsi.
-- Search results displayed correctly.
-
-### Negative Case
-
-- Search dengan keyword tidak match return empty results.
-- Search dengan empty keyword ditolak atau disabled.
-- No results menampilkan appropriate message.
-
-### Validation Case
-
-- Empty keyword validation berfungsi.
-- Special characters handled properly.
-
-### Error Case
-
-- Database error handled gracefully.
-- Network error handled gracefully.
+- [x] Products ditemukan sesuai keyword.
+- [x] Products tidak ditemukan menampilkan "Product not found" atau empty state.
+- [x] Invalid keyword menghasilkan validation error.
+- [x] Search adalah case-insensitive.
+- [x] Search mendukung partial match.
+- [x] Search accessible tanpa autentikasi.
+- [x] Search results displayed dengan jelas.
 
 ---
 
-## Completion State
+### ✅ Testing Checklist
 
-Setelah UC-05 Search Product selesai, kondisi project adalah:
+#### ✅ Positive Case
 
-- ProductRepository mendukung search functionality.
-- Endpoint GET /products/search berfungsi dan teruji.
-- Search bar component berfungsi di frontend.
-- Search results displayed dengan baik.
-- Clear search functionality berfungsi.
-- Project siap untuk implementasi UC-06 Filter Product.
+- [x] Search dengan keyword valid return matching products.
+- [x] Search case-insensitive berfungsi.
+- [x] Search partial match berfungsi.
+- [x] Search results displayed correctly.
+
+#### ✅ Negative Case
+
+- [x] Search dengan keyword tidak match return empty results.
+- [x] Search dengan empty keyword ditolak atau disabled. (Auto clear search)
+- [x] No results menampilkan appropriate message.
+
+#### ✅ Validation Case
+
+- [x] Empty keyword validation berfungsi.
+- [x] Special characters handled properly. (encodeURIComponent)
+
+#### ✅ Error Case
+
+- [x] Database error handled gracefully.
+- [x] Network error handled gracefully.
+
+---
+
+### ✅ Completion State
+
+- [x] ProductRepository mendukung search functionality.
+- [x] Endpoint GET /products/search berfungsi dan teruji.
+- [x] Search bar component berfungsi di frontend. (Real-time di Header.tsx)
+- [x] Search results displayed dengan baik.
+- [x] Clear search functionality berfungsi.
+- [x] Project siap untuk implementasi UC-06 Filter Product.
 
 ---
 

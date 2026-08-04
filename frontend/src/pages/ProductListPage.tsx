@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react'
-import { ChevronDown, Grid3x3, List } from 'lucide-react'
+import { useSearchParams, Link } from 'react-router-dom'
+import { ChevronDown, Grid3x3, List, X } from 'lucide-react'
 import Header from '../components/Header'
 import ProductCard from '../components/ProductCard'
 import ProductService from '../services/ProductService'
 import type { Product } from '../types/product'
 
 export default function ProductListPage() {
+  const [searchParams] = useSearchParams()
+  const keyword = searchParams.get('keyword') || ''
+  
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -13,13 +17,15 @@ export default function ProductListPage() {
 
   useEffect(() => {
     fetchProducts()
-  }, [])
+  }, [keyword])
 
   const fetchProducts = async () => {
     setLoading(true)
     setError(null)
     try {
-      const data = await ProductService.getAllProducts()
+      const data = keyword.trim()
+        ? await ProductService.searchProducts(keyword.trim())
+        : await ProductService.getAllProducts()
       setProducts(data)
     } catch (err: any) {
       setError(err.message || 'Failed to load products')
@@ -161,8 +167,8 @@ export default function ProductListPage() {
 
           {/* Main Content - Right Column */}
           <main className="lg:col-span-3">
-            {/* Render based on state */}
-            {loading ? <LoadingState /> : error ? <ErrorState error={error} onRetry={handleRetry} /> : products.length === 0 ? <EmptyState /> : <ProductGrid products={products} viewMode={viewMode} />}
+          {/* Render based on state */}
+          {loading ? <LoadingState /> : error ? <ErrorState error={error} onRetry={handleRetry} /> : products.length === 0 ? <EmptyState keyword={keyword} /> : <ProductGrid products={products} viewMode={viewMode} keyword={keyword} />}
           </main>
         </div>
       </div>
@@ -206,7 +212,27 @@ function LoadingState() {
 }
 
 /* Empty State Component */
-function EmptyState() {
+function EmptyState({ keyword }: { keyword?: string }) {
+  if (keyword) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="text-6xl mb-4">🔍</div>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          No products found for "{keyword}"
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          Try different keywords or browse all products
+        </p>
+        <Link
+          to="/products"
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Clear Search
+        </Link>
+      </div>
+    )
+  }
+  
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <div className="text-6xl mb-4">📦</div>
@@ -242,9 +268,27 @@ function ErrorState({ error, onRetry }: { error: string; onRetry: () => void }) 
 }
 
 /* Product Grid Component */
-function ProductGrid({ products, viewMode }: { products: Product[]; viewMode: 'grid' | 'list' }) {
+function ProductGrid({ products, viewMode, keyword }: { products: Product[]; viewMode: 'grid' | 'list'; keyword?: string }) {
   return (
     <div>
+      {/* Search Summary */}
+      {keyword && (
+        <div className="mb-6 flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-4 py-3">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              Showing <span className="font-bold text-blue-600 dark:text-blue-400">{products.length}</span> results for "<span className="font-semibold">{keyword}</span>"
+            </span>
+          </div>
+          <Link
+            to="/products"
+            className="flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+          >
+            <X className="w-4 h-4" />
+            Clear Search
+          </Link>
+        </div>
+      )}
+
       {/* Category Chips Row */}
       <div className="flex gap-2 mb-6 overflow-x-auto pb-2 animate-fade-in" style={{ animationDelay: '0.1s' }}>
         {[

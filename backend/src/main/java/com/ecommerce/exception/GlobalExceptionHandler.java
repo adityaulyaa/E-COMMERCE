@@ -1,6 +1,7 @@
 package com.ecommerce.exception;
 
 import com.ecommerce.dto.response.ErrorResponseDTO;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -103,6 +104,33 @@ public class GlobalExceptionHandler {
                 .build();
 
         log.warn("Bad request: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    /**
+     * Handle constraint violation exception from @NotBlank on @RequestParam
+     *
+     * @param ex ConstraintViolationException
+     * @return ResponseEntity with validation error
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleConstraintViolationException(
+            ConstraintViolationException ex
+    ) {
+        Map<String, String> errors = new HashMap<>();
+        
+        ex.getConstraintViolations().forEach(violation ->
+                errors.put(violation.getPropertyPath().toString(), violation.getMessage())
+        );
+
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Validation failed")
+                .timestamp(LocalDateTime.now())
+                .errors(errors)
+                .build();
+
+        log.warn("Constraint violation: {}", errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 

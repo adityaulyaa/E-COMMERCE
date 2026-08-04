@@ -29,4 +29,24 @@ public class ProductService {
 
         return productMapper.toResponseDTOList(products);
     }
+
+    @Transactional(readOnly = true)
+    public List<ProductResponseDTO> searchProducts(String keyword) {
+        log.info("Searching products with keyword: {}", keyword);
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            log.warn("Search keyword is null or empty");
+            return List.of();
+        }
+
+        String trimmedKeyword = keyword.trim();
+        
+        List<Product> products = productRepository
+                .findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                        trimmedKeyword, trimmedKeyword);
+        
+        log.info("Found {} products matching keyword: {}", products.size(), trimmedKeyword);
+
+        return productMapper.toResponseDTOList(products);
+    }
 }

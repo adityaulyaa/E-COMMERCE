@@ -1501,232 +1501,232 @@ UC-06 Filter Product bergantung pada:
 
 ## Implementation Steps
 
-### Update ProductRepository
+### ✅ Update ProductRepository
 
-- Tambahkan query method untuk filter functionality.
-- Implementasi method findByCategory(String category).
-- Implementasi method findByPriceBetween(Double minPrice, Double maxPrice).
-- Implementasi method dengan multiple criteria menggunakan @Query atau Specification API.
-- Support kombinasi filter: category + price range.
+- [x] Tambahkan query method untuk filter functionality.
+- [x] Implementasi method findByCategory(String category).
+- [x] Implementasi method findByPriceBetween(Double minPrice, Double maxPrice).
+- [x] Implementasi method dengan multiple criteria menggunakan @Query atau Specification API.
+- [x] Support kombinasi filter: category + price range.
 
-### Pembuatan DTO
+### ✅ Pembuatan DTO
 
-- Buat FilterRequestDTO pada package dto.request.
-- Tambahkan field: category (optional), minPrice (optional), maxPrice (optional).
-- Tambahkan validation untuk price range: minPrice <= maxPrice.
-- Reuse ProductResponseDTO dan ProductListDTO.
+- [x] Buat FilterRequestDTO pada package dto.request.
+- [x] Tambahkan field: category (optional), minPrice (optional), maxPrice (optional).
+- [x] Tambahkan validation untuk price range: minPrice <= maxPrice.
+- [x] Reuse ProductResponseDTO dan ProductListDTO.
 
-### Update ProductService
+### ✅ Update ProductService
 
-- Tambahkan method filterProducts(FilterRequestDTO filterRequest) pada ProductService.
-- Validasi filter criteria.
-- Jika category provided, filter by category.
-- Jika price range provided, filter by price.
-- Jika keduanya provided, apply both filters.
-- Jika tidak ada filter, return all products (sama seperti getAllProducts).
-- Convert hasil ke List<ProductResponseDTO>.
-- Return filtered results.
+- [x] Tambahkan method filterProducts(FilterRequestDTO filterRequest) pada ProductService.
+- [x] Validasi filter criteria.
+- [x] Jika category provided, filter by category.
+- [x] Jika price range provided, filter by price.
+- [x] Jika keduanya provided, apply both filters.
+- [x] Jika tidak ada filter, return all products (sama seperti getAllProducts).
+- [x] Convert hasil ke List<ProductResponseDTO>.
+- [x] Return filtered results.
 
-### Update ProductController
+### ✅ Update ProductController
 
-- Tambahkan endpoint GET /products/filter pada ProductController.
-- Anotasi dengan @GetMapping("/filter").
-- Tambahkan @RequestParam(required=false) untuk category, minPrice, maxPrice.
-- Panggil productService.filterProducts(filterRequest).
-- Return ResponseEntity dengan HTTP Status 200 dan ProductListDTO.
-- Endpoint adalah public endpoint.
+- [x] Tambahkan endpoint GET /products/filter pada ProductController.
+- [x] Anotasi dengan @GetMapping("/filter").
+- [x] Tambahkan @RequestParam(required=false) untuk category, minPrice, maxPrice.
+- [x] Panggil productService.filterProducts(filterRequest).
+- [x] Return ResponseEntity dengan HTTP Status 200 dan ProductListDTO.
+- [x] Endpoint adalah public endpoint.
 
-### Exception Handling
+### ✅ Exception Handling
 
-- Handle invalid filter criteria (misal: minPrice > maxPrice).
-- Handle invalid category.
-- Return appropriate error messages.
+- [x] Handle invalid filter criteria (misal: minPrice > maxPrice).
+- [x] Handle invalid category.
+- [x] Return appropriate error messages.
 
-### Update Frontend ProductService
+### ✅ Update Frontend ProductService
 
-- Update ProductService.js.
-- Tambahkan function filterProducts(filterCriteria) yang mengirim GET request ke /products/filter dengan query params.
-- Handle response dan error.
-- Return filtered results atau throw error.
+- [x] Update ProductService.js. (ProductService.ts)
+- [x] Tambahkan function filterProducts(filterCriteria) yang mengirim GET request ke /products/filter dengan query params.
+- [x] Handle response dan error.
+- [x] Return filtered results atau throw error.
 
-### Frontend Filter Component
+### ✅ Frontend Filter Component
 
-- Buat ProductFilter.jsx component pada direktori components.
-- Props: onFilter callback, availableCategories.
-- State: selectedCategory, minPrice, maxPrice.
-- Implementasi category dropdown atau checkbox list.
-- Implementasi price range input (min dan max).
-- Apply filter button.
-- Clear filter button.
-- Validasi min <= max sebelum apply filter.
+- [x] Buat ProductFilter.jsx component pada direktori components. (Terintegrasi di ProductListPage dan Header)
+- [x] Props: onFilter callback, availableCategories. (Menggunakan FilterContext)
+- [x] State: selectedCategory, minPrice, maxPrice. (Global state di FilterContext)
+- [x] Implementasi category dropdown atau checkbox list.
+- [x] Implementasi price range input (min dan max).
+- [x] Apply filter button.
+- [x] Clear filter button.
+- [x] Validasi min <= max sebelum apply filter.
 
-### Update Frontend Product List Page
+### ✅ Update Frontend Product List Page
 
-- Update ProductListPage.jsx dengan filter functionality.
-- Integrate ProductFilter component.
-- State: activeFilters.
-- Ketika filter applied, panggil ProductService.filterProducts(filterCriteria).
-- Update products state dengan filtered results.
-- Display active filters dengan badge atau chips.
-- Provide option untuk remove individual filter atau clear all filters.
-- Support kombinasi search dan filter.
+- [x] Update ProductListPage.jsx dengan filter functionality.
+- [x] Integrate ProductFilter component.
+- [x] State: activeFilters. (Via FilterContext)
+- [x] Ketika filter applied, panggil ProductService.filterProducts(filterCriteria).
+- [x] Update products state dengan filtered results.
+- [x] Display active filters dengan badge atau chips.
+- [x] Provide option untuk remove individual filter atau clear all filters.
+- [x] Support kombinasi search dan filter.
 
 ### Filter Persistence (Optional)
 
-- Simpan active filters di URL query params.
-- Load filters dari URL saat page mount.
-- Allow sharing filtered results via URL.
+- [ ] Simpan active filters di URL query params.
+- [ ] Load filters dari URL saat page mount.
+- [ ] Allow sharing filtered results via URL.
 
-### Testing Backend
+### ✅ Testing Backend
 
-- Test endpoint GET /products/filter?category=electronics: return filtered products.
-- Test endpoint GET /products/filter?minPrice=100&maxPrice=500: return products in price range.
-- Test kombinasi filters: category + price range.
-- Test dengan invalid filter (minPrice > maxPrice): return validation error.
-- Test dengan no filters: return all products.
-- Test dengan category tidak exist: return empty results.
-- Test filter accessible tanpa authentication.
+- [x] Test endpoint GET /products/filter?category=electronics: return filtered products.
+- [x] Test endpoint GET /products/filter?minPrice=100&maxPrice=500: return products in price range.
+- [x] Test kombinasi filters: category + price range.
+- [x] Test dengan invalid filter (minPrice > maxPrice): return validation error.
+- [x] Test dengan no filters: return all products.
+- [x] Test dengan category tidak exist: return empty results.
+- [x] Test filter accessible tanpa authentication.
 
-### Testing Frontend
+### ✅ Testing Frontend
 
-- Test filter component dapat digunakan.
-- Test filter by category: tampilkan filtered results.
-- Test filter by price range: tampilkan filtered results.
-- Test kombinasi filters: tampilkan correctly filtered results.
-- Test clear filter: kembali ke full list atau search results.
-- Test validation minPrice <= maxPrice.
-- Test display active filters dengan jelas.
-- Test kombinasi search dan filter berfungsi.
-
----
-
-## Database Tasks
-
-- Tidak ada perubahan database structure untuk UC-06.
-- Pastikan Entity Product memiliki field category dan price.
-- Pastikan sample data mencakup berbagai categories dan price ranges.
+- [x] Test filter component dapat digunakan.
+- [x] Test filter by category: tampilkan filtered results.
+- [x] Test filter by price range: tampilkan filtered results.
+- [x] Test kombinasi filters: tampilkan correctly filtered results.
+- [x] Test clear filter: kembali ke full list atau search results.
+- [x] Test validation minPrice <= maxPrice.
+- [x] Test display active filters dengan jelas.
+- [x] Test kombinasi search dan filter berfungsi.
 
 ---
 
-## Backend Tasks
+## ✅ Database Tasks
 
-- Update ProductRepository dengan filter query methods.
-- Implementasi FilterRequestDTO.
-- Update ProductService dengan method filterProducts().
-- Update ProductController dengan endpoint GET /products/filter.
-- Implementasi validation untuk filter criteria.
-- Update GlobalExceptionHandler untuk filter errors.
+- [x] Tidak ada perubahan database structure untuk UC-06.
+- [x] Pastikan Entity Product memiliki field category dan price.
+- [x] Pastikan sample data mencakup berbagai categories dan price ranges.
 
 ---
 
-## API Tasks
+## ✅ Backend Tasks
 
-- Implementasi endpoint GET /products/filter.
-- Endpoint menerima query parameters: category, minPrice, maxPrice (all optional).
-- Endpoint accessible tanpa autentikasi (public endpoint).
-- Endpoint return HTTP 200 dengan ProductListDTO berisi filtered results.
-- Endpoint return HTTP 400 jika filter criteria invalid.
-- Endpoint return HTTP 500 jika system error.
-
----
-
-## Frontend Tasks
-
-- Update ProductService.js dengan function filterProducts().
-- Implementasi ProductFilter.jsx component.
-- Update ProductListPage.jsx dengan filter functionality.
-- Implementasi active filters display.
-- Implementasi clear filter functionality.
-- Support kombinasi search dan filter.
+- [x] Update ProductRepository dengan filter query methods.
+- [x] Implementasi FilterRequestDTO.
+- [x] Update ProductService dengan method filterProducts().
+- [x] Update ProductController dengan endpoint GET /products/filter.
+- [x] Implementasi validation untuk filter criteria.
+- [x] Update GlobalExceptionHandler untuk filter errors.
 
 ---
 
-## Business Rules
+## ✅ API Tasks
 
-- Filter hanya mempengaruhi display results.
-- Product data tidak berubah.
-- Hanya products yang memenuhi filter criteria yang ditampilkan.
-- Multiple filters dapat di-apply bersamaan.
-- Empty filter results menampilkan appropriate message.
-
----
-
-## Validation Rules
-
-- Filter harus valid.
-- Filter criteria harus recognized by system.
-- minPrice tidak boleh lebih besar dari maxPrice.
-- Price values harus non-negative.
+- [x] Implementasi endpoint GET /products/filter.
+- [x] Endpoint menerima query parameters: category, minPrice, maxPrice (all optional).
+- [x] Endpoint accessible tanpa autentikasi (public endpoint).
+- [x] Endpoint return HTTP 200 dengan ProductListDTO berisi filtered results.
+- [x] Endpoint return HTTP 400 jika filter criteria invalid.
+- [x] Endpoint return HTTP 500 jika system error.
 
 ---
 
-## Use Case Boundary
+## ✅ Frontend Tasks
+
+- [x] Update ProductService.js dengan function filterProducts().
+- [x] Implementasi ProductFilter.jsx component.
+- [x] Update ProductListPage.jsx dengan filter functionality.
+- [x] Implementasi active filters display.
+- [x] Implementasi clear filter functionality.
+- [x] Support kombinasi search dan filter.
+
+---
+
+## ✅ Business Rules
+
+- [x] Filter hanya mempengaruhi display results.
+- [x] Product data tidak berubah.
+- [x] Hanya products yang memenuhi filter criteria yang ditampilkan.
+- [x] Multiple filters dapat di-apply bersamaan.
+- [x] Empty filter results menampilkan appropriate message.
+
+---
+
+## ✅ Validation Rules
+
+- [x] Filter harus valid.
+- [x] Filter criteria harus recognized by system.
+- [x] minPrice tidak boleh lebih besar dari maxPrice.
+- [x] Price values harus non-negative.
+
+---
+
+## ✅ Use Case Boundary
 
 Saat mengerjakan UC-06 Filter Product, implementasi yang boleh dilakukan:
 
-- Implementasi filter functionality di ProductRepository.
-- Update ProductService dan ProductController untuk filter.
-- Implementasi filter component dan integration di frontend.
-- Support kombinasi search dan filter.
+- [x] Implementasi filter functionality di ProductRepository.
+- [x] Update ProductService dan ProductController untuk filter.
+- [x] Implementasi filter component dan integration di frontend.
+- [x] Support kombinasi search dan filter.
 
 Implementasi yang TIDAK BOLEH dilakukan pada UC-06:
 
-- Implementasi View Product Detail (akan dikerjakan di UC-07).
-- Implementasi Shopping Cart, Checkout, Payment, atau Order.
-- Implementasi fitur lain yang tidak berhubungan dengan Filter Product.
+- [x] Implementasi View Product Detail (akan dikerjakan di UC-07).
+- [x] Implementasi Shopping Cart, Checkout, Payment, atau Order.
+- [x] Implementasi fitur lain yang tidak berhubungan dengan Filter Product.
 
 ---
 
-## Acceptance Criteria
+## ✅ Acceptance Criteria
 
-- Products matching filter ditampilkan dengan benar.
-- No matching products menampilkan "No matching products" atau empty state.
-- Invalid filter menghasilkan validation error.
-- Multiple filters dapat di-apply bersamaan.
-- Filter accessible tanpa autentikasi.
-- Active filters displayed dengan jelas.
-- Clear filter functionality berfungsi.
-
----
-
-## Testing Checklist
-
-### Positive Case
-
-- Filter by category berfungsi.
-- Filter by price range berfungsi.
-- Kombinasi filters berfungsi.
-- Clear filter berfungsi.
-
-### Negative Case
-
-- Invalid filter criteria ditolak.
-- minPrice > maxPrice ditolak.
-- No matching results menampilkan appropriate message.
-
-### Validation Case
-
-- Price range validation berfungsi.
-- Filter criteria validation berfungsi.
-
-### Error Case
-
-- Database error handled gracefully.
-- Network error handled gracefully.
+- [x] Products matching filter ditampilkan dengan benar.
+- [x] No matching products menampilkan "No matching products" atau empty state.
+- [x] Invalid filter menghasilkan validation error.
+- [x] Multiple filters dapat di-apply bersamaan.
+- [x] Filter accessible tanpa autentikasi.
+- [x] Active filters displayed dengan jelas.
+- [x] Clear filter functionality berfungsi.
 
 ---
 
-## Completion State
+## ✅ Testing Checklist
+
+### ✅ Positive Case
+
+- [x] Filter by category berfungsi.
+- [x] Filter by price range berfungsi.
+- [x] Kombinasi filters berfungsi.
+- [x] Clear filter berfungsi.
+
+### ✅ Negative Case
+
+- [x] Invalid filter criteria ditolak.
+- [x] minPrice > maxPrice ditolak.
+- [x] No matching results menampilkan appropriate message.
+
+### ✅ Validation Case
+
+- [x] Price range validation berfungsi.
+- [x] Filter criteria validation berfungsi.
+
+### ✅ Error Case
+
+- [x] Database error handled gracefully.
+- [x] Network error handled gracefully.
+
+---
+
+## ✅ Completion State
 
 Setelah UC-06 Filter Product selesai, kondisi project adalah:
 
-- ProductRepository mendukung filter functionality.
-- Endpoint GET /products/filter berfungsi dan teruji.
-- Filter component berfungsi di frontend.
-- Filtered results displayed dengan baik.
-- Kombinasi search dan filter berfungsi.
-- Product Catalog module (View, Search, Filter) telah lengkap.
-- Project siap untuk implementasi UC-07 View Product Detail.
+- [x] ProductRepository mendukung filter functionality.
+- [x] Endpoint GET /products/filter berfungsi dan teruji.
+- [x] Filter component berfungsi di frontend.
+- [x] Filtered results displayed dengan baik.
+- [x] Kombinasi search dan filter berfungsi.
+- [x] Product Catalog module (View, Search, Filter) telah lengkap.
+- [x] Project siap untuk implementasi UC-07 View Product Detail.
 
 ---
 

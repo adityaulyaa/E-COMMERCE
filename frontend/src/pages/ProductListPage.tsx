@@ -5,6 +5,7 @@ import Header from '../components/Header'
 import ProductCard from '../components/ProductCard'
 import PriceRangeSlider from '../components/PriceRangeSlider'
 import ProductService from '../services/ProductService'
+import { useFilter } from '../contexts/FilterContext'
 import type { Product } from '../types/product'
 
 export default function ProductListPage() {
@@ -16,46 +17,77 @@ export default function ProductListPage() {
   const [error, setError] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
+  const filter = useFilter()
+
   useEffect(() => {
     fetchProducts()
-  }, [keyword])
+  }, [keyword, filter.category, filter.minPriceUSD, filter.maxPriceUSD, filter.minRating, filter.sortBy])
 
   const fetchProducts = async () => {
     setLoading(true)
     setError(null)
     try {
-      const data = keyword.trim()
-        ? await ProductService.searchProducts(keyword.trim())
-        : await ProductService.getAllProducts()
+      let data: Product[]
+      
+      if (keyword.trim()) {
+        // If search keyword is present, use search instead of filter
+        console.log('[FETCH] Using search with keyword:', keyword)
+        data = await ProductService.searchProducts(keyword.trim())
+      } else if (isFilterActive()) {
+        // If any filter is active, use filter
+        const filterParams = {
+          category: filter.category === 'All Categories' ? undefined : filter.category,
+          minPrice: filter.minPriceUSD > 0 ? filter.minPriceUSD : undefined,
+          maxPrice: filter.maxPriceUSD < 1000 ? filter.maxPriceUSD : undefined,
+          minRating: filter.minRating > 0 ? filter.minRating : undefined,
+          sortBy: filter.sortBy !== 'featured' ? filter.sortBy : undefined,
+        }
+        console.log('[FETCH] Using filter with params:', filterParams)
+        data = await ProductService.filterProducts(filterParams)
+      } else {
+        // No filters, get all products
+        console.log('[FETCH] Using getAllProducts (no filters active)')
+        data = await ProductService.getAllProducts()
+      }
+      
+      console.log('[FETCH] Received products:', data.length)
       setProducts(data)
     } catch (err: any) {
+      console.error('[FETCH] Error:', err)
       setError(err.message || 'Failed to load products')
     } finally {
       setLoading(false)
     }
   }
 
+  const isFilterActive = (): boolean => {
+    return (
+      filter.category !== 'All Categories' ||
+      filter.minPriceUSD > 0 ||
+      filter.maxPriceUSD < 1000 || // Default max is 1000 USD
+      filter.minRating > 0 ||
+      filter.sortBy !== 'featured'
+    )
+  }
+
   const handleRetry = () => {
     fetchProducts()
   }
 
-  // Calculate dynamic min and max prices from products (in IDR)
   const getPriceRange = () => {
     if (products.length === 0) {
-      return { min: 0, max: 10000000 } // Default: Rp 0 - Rp 10M
+      return { min: 0, max: 10000000 }
     }
 
-    // Convert all USD prices to IDR
     const USD_TO_IDR = 15700
-    const pricesIDR = products.map(p => p.price * USD_TO_IDR)
+    const pricesIDR = products.map(p => Number(p.price) * USD_TO_IDR)
     const maxPriceIDR = Math.max(...pricesIDR)
 
-    // Round UP to nearest Rp 500,000
     const PRICE_STEP = 500000
     const maxRounded = Math.ceil(maxPriceIDR / PRICE_STEP) * PRICE_STEP
 
     return { 
-      min: 0, // Always start from Rp 0
+      min: 0,
       max: maxRounded 
     }
   }
@@ -113,7 +145,14 @@ export default function ProductListPage() {
                 </h3>
               <ul className="space-y-2">
                 <li>
-                  <button className="w-full text-left px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400 font-medium hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors">
+                  <button 
+                    onClick={() => filter.setCategory('All Categories')}
+                    className={`w-full text-left px-3 py-2 rounded-lg font-medium hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors ${
+                      filter.category === 'All Categories'
+                        ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
+                        : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                    }`}
+                  >
                     🔲 All Categories <span className="float-right text-gray-500">12</span>
                   </button>
                 </li>
@@ -128,8 +167,12 @@ export default function ProductListPage() {
                 ].map((cat) => (
                   <li key={cat.name}>
                     <button
-                      disabled
-                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors cursor-not-allowed opacity-60"
+                      onClick={() => filter.setCategory(cat.name)}
+                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                        filter.category === cat.name
+                          ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400 font-medium'
+                          : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                      }`}
                     >
                       {cat.icon} {cat.name} <span className="float-right text-gray-500">{cat.count}</span>
                     </button>
@@ -148,13 +191,10 @@ export default function ProductListPage() {
                 maxPriceIDR={priceRange.max}
                 stepIDR={500000}
                 onPriceChange={(minIDR, maxIDR) => {
-                  // Convert IDR back to USD for backend API (UC-06 filter)
                   const USD_TO_IDR = 15700
                   const minUSD = minIDR / USD_TO_IDR
                   const maxUSD = maxIDR / USD_TO_IDR
-                  console.log(`Price filter (IDR): ${minIDR} - ${maxIDR}`)
-                  console.log(`Price filter (USD): ${minUSD.toFixed(2)} - ${maxUSD.toFixed(2)}`)
-                  // This will be connected to filter functionality in UC-06
+                  filter.setPriceRange(minUSD, maxUSD)
                 }}
               />
             </div>
@@ -172,11 +212,14 @@ export default function ProductListPage() {
                   { stars: 2, count: 18 },
                   { stars: 1, count: 8 },
                 ].map((rating) => (
-                  <label key={rating.stars} className="flex items-center gap-3 cursor-not-allowed opacity-60">
+                  <label key={rating.stars} className="flex items-center gap-3 cursor-pointer">
                     <input
                       type="checkbox"
-                      disabled
-                      className="w-4 h-4 rounded cursor-not-allowed"
+                      checked={filter.minRating === rating.stars}
+                      onChange={(e) => {
+                        filter.setRating(e.target.checked ? rating.stars : 0)
+                      }}
+                      className="w-4 h-4 rounded cursor-pointer"
                     />
                     <span className="text-sm text-gray-700 dark:text-gray-300">
                       {'⭐'.repeat(rating.stars)}
@@ -191,7 +234,7 @@ export default function ProductListPage() {
           {/* Main Content - Right Column */}
           <main className="lg:col-span-3">
           {/* Render based on state */}
-          {loading ? <LoadingState /> : error ? <ErrorState error={error} onRetry={handleRetry} /> : products.length === 0 ? <EmptyState keyword={keyword} /> : <ProductGrid products={products} viewMode={viewMode} keyword={keyword} />}
+          {loading ? <LoadingState /> : error ? <ErrorState error={error} onRetry={handleRetry} /> : products.length === 0 ? <EmptyState keyword={keyword} hasActiveFilter={isFilterActive()} /> : <ProductGrid products={products} viewMode={viewMode} keyword={keyword} filter={filter} />}
           </main>
         </div>
       </div>
@@ -235,7 +278,7 @@ function LoadingState() {
 }
 
 /* Empty State Component */
-function EmptyState({ keyword }: { keyword?: string }) {
+function EmptyState({ keyword, hasActiveFilter }: { keyword?: string; hasActiveFilter?: boolean }) {
   if (keyword) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -260,10 +303,10 @@ function EmptyState({ keyword }: { keyword?: string }) {
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <div className="text-6xl mb-4">📦</div>
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-        No products available
+        {hasActiveFilter ? 'No matching products' : 'No products available'}
       </h2>
       <p className="text-gray-600 dark:text-gray-400">
-        Start adding products to see them displayed here.
+        {hasActiveFilter ? 'Try adjusting or clearing your filters.' : 'Start adding products to see them displayed here.'}
       </p>
     </div>
   )
@@ -291,7 +334,44 @@ function ErrorState({ error, onRetry }: { error: string; onRetry: () => void }) 
 }
 
 /* Product Grid Component */
-function ProductGrid({ products, viewMode, keyword }: { products: Product[]; viewMode: 'grid' | 'list'; keyword?: string }) {
+function ProductGrid({ products, viewMode, keyword, filter }: { products: Product[]; viewMode: 'grid' | 'list'; keyword?: string; filter: any }) {
+  const [showPriceFilter, setShowPriceFilter] = useState(false)
+  const [showRatingFilter, setShowRatingFilter] = useState(false)
+  const [showSortMenu, setShowSortMenu] = useState(false)
+  const [tempMinPrice, setTempMinPrice] = useState('')
+  const [tempMaxPrice, setTempMaxPrice] = useState('')
+
+  const categories = [
+    { icon: '🔲', name: 'All Categories' },
+    { icon: '📱', name: 'Electronics' },
+    { icon: '🏠', name: 'Home & Living' },
+    { icon: '👔', name: 'Fashion' },
+    { icon: '💄', name: 'Beauty' },
+    { icon: '⚽', name: 'Sports' },
+    { icon: '🧸', name: 'Toys & Games' },
+  ]
+
+  const sortOptions = [
+    { value: 'featured', label: 'Featured' },
+    { value: 'latest', label: 'Latest' },
+    { value: 'mostPurchased', label: 'Most Purchased' },
+    { value: 'price_asc', label: 'Price: Low to High' },
+    { value: 'price_desc', label: 'Price: High to Low' },
+    { value: 'rating', label: 'Rating' },
+  ]
+
+  const handleApplyPriceFilter = () => {
+    const USD_TO_IDR = 15700
+    const minIDR = parseFloat(tempMinPrice) || 0
+    const maxIDR = parseFloat(tempMaxPrice) || 10000000
+    
+    const minUSD = minIDR / USD_TO_IDR
+    const maxUSD = maxIDR / USD_TO_IDR
+    
+    filter.setPriceRange(minUSD, maxUSD)
+    setShowPriceFilter(false)
+  }
+
   return (
     <div>
       {/* Search Summary */}
@@ -314,20 +394,12 @@ function ProductGrid({ products, viewMode, keyword }: { products: Product[]; vie
 
       {/* Category Chips Row */}
       <div className="flex gap-2 mb-6 overflow-x-auto pb-2 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-        {[
-          { icon: '🔲', name: 'All' },
-          { icon: '📱', name: 'Electronics' },
-          { icon: '🏠', name: 'Home & Living' },
-          { icon: '👔', name: 'Fashion' },
-          { icon: '💄', name: 'Beauty' },
-          { icon: '⚽', name: 'Sports' },
-          { icon: '🧸', name: 'Toys & Games' },
-        ].map((cat, idx) => (
+        {categories.map((cat, idx) => (
           <button
             key={idx}
-            disabled
-            className={`px-4 py-2 rounded-full font-medium text-sm whitespace-nowrap transition-colors cursor-not-allowed opacity-60 ${
-              idx === 0
+            onClick={() => filter.setCategory(cat.name)}
+            className={`px-4 py-2 rounded-full font-medium text-sm whitespace-nowrap transition-colors ${
+              filter.category === cat.name
                 ? 'bg-blue-600 text-white dark:bg-blue-600 dark:text-white'
                 : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}
@@ -340,25 +412,130 @@ function ProductGrid({ products, viewMode, keyword }: { products: Product[]; vie
       {/* Filter & Sort Bar */}
       <div className="flex flex-wrap gap-3 mb-6 justify-between items-center animate-fade-in" style={{ animationDelay: '0.2s' }}>
         <div className="flex flex-wrap gap-2">
-          {['Price', 'Rating', 'Brand', 'Color', 'Availability'].map((filter) => (
+          {/* Price Filter */}
+          <div className="relative">
             <button
-              key={filter}
-              disabled
-              className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-not-allowed opacity-60 flex items-center gap-1"
+              onClick={() => setShowPriceFilter(!showPriceFilter)}
+              className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-1"
             >
-              {filter} <ChevronDown className="w-4 h-4" />
+              Price <ChevronDown className="w-4 h-4" />
             </button>
-          ))}
+            {showPriceFilter && (
+              <div className="absolute top-full mt-2 left-0 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-4 z-10 w-64">
+                <h4 className="font-semibold mb-3 text-gray-900 dark:text-white">Price Range (IDR)</h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs text-gray-600 dark:text-gray-400">Min Price</label>
+                    <input
+                      type="number"
+                      value={tempMinPrice}
+                      onChange={(e) => setTempMinPrice(e.target.value)}
+                      placeholder="0"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-600 dark:text-gray-400">Max Price</label>
+                    <input
+                      type="number"
+                      value={tempMaxPrice}
+                      onChange={(e) => setTempMaxPrice(e.target.value)}
+                      placeholder="10000000"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleApplyPriceFilter}
+                      className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      Apply
+                    </button>
+                    <button
+                      onClick={() => setShowPriceFilter(false)}
+                      className="flex-1 px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Rating Filter */}
+          <div className="relative">
+            <button
+              onClick={() => setShowRatingFilter(!showRatingFilter)}
+              className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-1"
+            >
+              Rating <ChevronDown className="w-4 h-4" />
+            </button>
+            {showRatingFilter && (
+              <div className="absolute top-full mt-2 left-0 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-4 z-10 w-48">
+                <h4 className="font-semibold mb-3 text-gray-900 dark:text-white">Minimum Rating</h4>
+                <div className="space-y-2">
+                  {[5, 4, 3, 2, 1].map((rating) => (
+                    <button
+                      key={rating}
+                      onClick={() => {
+                        filter.setRating(rating)
+                        setShowRatingFilter(false)
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                        filter.minRating === rating
+                          ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400'
+                          : 'text-gray-700 dark:text-gray-300'
+                      }`}
+                    >
+                      {'⭐'.repeat(rating)} & up
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => {
+                      filter.setRating(0)
+                      setShowRatingFilter(false)
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-700 dark:text-gray-300"
+                  >
+                    All Ratings
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
           <span className="text-sm text-gray-600 dark:text-gray-400">Sort by:</span>
-          <button
-            disabled
-            className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-not-allowed opacity-60 flex items-center gap-1"
-          >
-            Featured <ChevronDown className="w-4 h-4" />
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowSortMenu(!showSortMenu)}
+              className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-1"
+            >
+              {sortOptions.find(opt => opt.value === filter.sortBy)?.label || 'Featured'} <ChevronDown className="w-4 h-4" />
+            </button>
+            {showSortMenu && (
+              <div className="absolute top-full mt-2 right-0 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg py-2 z-10 w-56">
+                {sortOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => {
+                      filter.setSortBy(option.value)
+                      setShowSortMenu(false)
+                    }}
+                    className={`w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                      filter.sortBy === option.value
+                        ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400 font-medium'
+                        : 'text-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div className="flex gap-2">
             <button

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Search, Heart, ShoppingCart, User, Sun, Moon, Menu, X } from 'lucide-react'
+import { Search, Heart, ShoppingCart, User, Sun, Moon, Menu, X, ChevronDown } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { useFilter } from '../contexts/FilterContext'
 
 // Custom ShoppingBag icon (matching LoginPage & RegisterPage)
 function ShoppingBag({ className }: { className: string }) {
@@ -21,6 +22,19 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false)
   const [searchKeyword, setSearchKeyword] = useState('')
+  const [isCategoriesDropdownOpen, setIsCategoriesDropdownOpen] = useState(false)
+  const filter = useFilter()
+
+  const categories = [
+    { name: 'All Categories' },
+    { name: 'Electronics' },
+    { name: 'Home & Living' },
+    { name: 'Fashion' },
+    { name: 'Beauty' },
+    { name: 'Sports' },
+    { name: 'Books' },
+    { name: 'Toys & Games' },
+  ]
 
   // Real-time search with debounce
   useEffect(() => {
@@ -74,12 +88,37 @@ export default function Header() {
             >
               Shop
             </Link>
-            <button
-              disabled
-              className="text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed"
-            >
-              Categories
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setIsCategoriesDropdownOpen(!isCategoriesDropdownOpen)}
+                className="text-sm font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1"
+              >
+                Categories
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              
+              {isCategoriesDropdownOpen && (
+                <div className="absolute left-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                  {categories.map((cat) => (
+                    <button
+                      key={cat.name}
+                      onClick={() => {
+                        filter.setCategory(cat.name)
+                        setIsCategoriesDropdownOpen(false)
+                        navigate('/products')
+                      }}
+                      className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                        filter.category === cat.name
+                          ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400 font-medium'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      {cat.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <button
               disabled
               className="text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed"

@@ -1,5 +1,6 @@
 import { Heart } from 'lucide-react'
 import type { Product } from '../types/product'
+import { formatToRupiah } from '../utils/formatCurrency'
 
 interface ProductCardProps {
   product: Product
@@ -45,13 +46,18 @@ export default function ProductCard({ product }: ProductCardProps) {
         </p>
 
         {/* Price */}
-        <p className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-          ${product.price.toFixed(2)}
+        <p className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2">
+          {formatToRupiah(product.price)}
         </p>
 
-        {/* Placeholder for Rating (Future) */}
-        <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-          <span>★★★★★ (0)</span>
+        {/* Rating */}
+        <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
+          <span className="text-yellow-500">
+            {'★'.repeat(Math.floor(product.rating))}
+            {product.rating % 1 >= 0.5 ? '★' : ''}
+            {'☆'.repeat(5 - Math.ceil(product.rating))}
+          </span>
+          <span className="font-medium">({product.rating.toFixed(1)})</span>
         </div>
       </div>
     </div>

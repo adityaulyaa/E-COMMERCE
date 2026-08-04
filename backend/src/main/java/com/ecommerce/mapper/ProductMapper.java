@@ -23,6 +23,7 @@ public class ProductMapper {
                 .stock(product.getStock())
                 .category(product.getCategory())
                 .imageUrl(product.getImageUrl())
+                .rating(product.getRating())
                 .build();
     }
 

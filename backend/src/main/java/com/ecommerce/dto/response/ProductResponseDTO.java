@@ -20,4 +20,5 @@ public class ProductResponseDTO {
     private Integer stock;
     private String category;
     private String imageUrl;
+    private BigDecimal rating;
 }

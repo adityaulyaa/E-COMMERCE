@@ -6,6 +6,7 @@ export interface Product {
   stock: number
   category: string
   imageUrl: string | null
+  rating: number
 }
 
 export interface ProductListResponse {

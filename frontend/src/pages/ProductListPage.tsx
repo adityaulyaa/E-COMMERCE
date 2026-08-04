@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom'
 import { ChevronDown, Grid3x3, List, X } from 'lucide-react'
 import Header from '../components/Header'
 import ProductCard from '../components/ProductCard'
+import PriceRangeSlider from '../components/PriceRangeSlider'
 import ProductService from '../services/ProductService'
 import type { Product } from '../types/product'
 
@@ -37,6 +38,29 @@ export default function ProductListPage() {
   const handleRetry = () => {
     fetchProducts()
   }
+
+  // Calculate dynamic min and max prices from products (in IDR)
+  const getPriceRange = () => {
+    if (products.length === 0) {
+      return { min: 0, max: 10000000 } // Default: Rp 0 - Rp 10M
+    }
+
+    // Convert all USD prices to IDR
+    const USD_TO_IDR = 15700
+    const pricesIDR = products.map(p => p.price * USD_TO_IDR)
+    const maxPriceIDR = Math.max(...pricesIDR)
+
+    // Round UP to nearest Rp 500,000
+    const PRICE_STEP = 500000
+    const maxRounded = Math.ceil(maxPriceIDR / PRICE_STEP) * PRICE_STEP
+
+    return { 
+      min: 0, // Always start from Rp 0
+      max: maxRounded 
+    }
+  }
+
+  const priceRange = getPriceRange()
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
@@ -119,21 +143,20 @@ export default function ProductListPage() {
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
                 Price Range
               </h3>
-              <div
-                className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 cursor-not-allowed opacity-60"
-              >
-                <input
-                  type="range"
-                  disabled
-                  min="10"
-                  max="5000"
-                  className="w-full"
-                />
-                <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mt-3">
-                  <span>$10</span>
-                  <span>$5000+</span>
-                </div>
-              </div>
+              <PriceRangeSlider 
+                minPriceIDR={priceRange.min} 
+                maxPriceIDR={priceRange.max}
+                stepIDR={500000}
+                onPriceChange={(minIDR, maxIDR) => {
+                  // Convert IDR back to USD for backend API (UC-06 filter)
+                  const USD_TO_IDR = 15700
+                  const minUSD = minIDR / USD_TO_IDR
+                  const maxUSD = maxIDR / USD_TO_IDR
+                  console.log(`Price filter (IDR): ${minIDR} - ${maxIDR}`)
+                  console.log(`Price filter (USD): ${minUSD.toFixed(2)} - ${maxUSD.toFixed(2)}`)
+                  // This will be connected to filter functionality in UC-06
+                }}
+              />
             </div>
 
             {/* Rating */}
@@ -156,7 +179,7 @@ export default function ProductListPage() {
                       className="w-4 h-4 rounded cursor-not-allowed"
                     />
                     <span className="text-sm text-gray-700 dark:text-gray-300">
-                      {'⭐'.repeat(rating.stars)} ({rating.count})
+                      {'⭐'.repeat(rating.stars)}
                     </span>
                   </label>
                 ))}

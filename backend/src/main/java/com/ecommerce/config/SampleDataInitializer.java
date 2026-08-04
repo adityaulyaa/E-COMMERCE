@@ -31,6 +31,7 @@ public class SampleDataInitializer {
                             .stock(15)
                             .category("Electronics")
                             .imageUrl("https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop")
+                            .rating(new BigDecimal("4.80"))
                             .build(),
                     Product.builder()
                             .name("Minimalist Ceramic Pot")
@@ -39,6 +40,7 @@ public class SampleDataInitializer {
                             .stock(40)
                             .category("Home & Living")
                             .imageUrl("https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400&h=400&fit=crop")
+                            .rating(new BigDecimal("4.50"))
                             .build(),
                     Product.builder()
                             .name("Leather Backpack")
@@ -47,6 +49,7 @@ public class SampleDataInitializer {
                             .stock(20)
                             .category("Fashion")
                             .imageUrl("https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop")
+                            .rating(new BigDecimal("4.70"))
                             .build(),
                     Product.builder()
                             .name("The Ordinary Niacinamide 10%")
@@ -55,6 +58,7 @@ public class SampleDataInitializer {
                             .stock(50)
                             .category("Beauty")
                             .imageUrl("https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400&h=400&fit=crop")
+                            .rating(new BigDecimal("4.60"))
                             .build(),
                     Product.builder()
                             .name("Nike Air Force 1 '07")
@@ -63,6 +67,7 @@ public class SampleDataInitializer {
                             .stock(25)
                             .category("Fashion")
                             .imageUrl("https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop")
+                            .rating(new BigDecimal("4.75"))
                             .build(),
                     Product.builder()
                             .name("Apple Watch Series 9")
@@ -71,6 +76,7 @@ public class SampleDataInitializer {
                             .stock(10)
                             .category("Electronics")
                             .imageUrl("https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop")
+                            .rating(new BigDecimal("4.85"))
                             .build(),
                     Product.builder()
                             .name("Atomic Habits")
@@ -79,6 +85,7 @@ public class SampleDataInitializer {
                             .stock(60)
                             .category("Books")
                             .imageUrl("https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop")
+                            .rating(new BigDecimal("4.90"))
                             .build(),
                     Product.builder()
                             .name("Acacia Wood Cutting Board")
@@ -87,6 +94,7 @@ public class SampleDataInitializer {
                             .stock(30)
                             .category("Home & Living")
                             .imageUrl("https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop")
+                            .rating(new BigDecimal("4.55"))
                             .build(),
                     Product.builder()
                             .name("Minimalist Ceramic Vase")
@@ -95,6 +103,7 @@ public class SampleDataInitializer {
                             .stock(35)
                             .category("Home & Living")
                             .imageUrl("https://images.unsplash.com/photo-1493106641515-6b5631de4bb9?w=400&h=400&fit=crop")
+                            .rating(new BigDecimal("4.65"))
                             .build(),
                     Product.builder()
                             .name("Canon EOS R50")
@@ -103,6 +112,7 @@ public class SampleDataInitializer {
                             .stock(5)
                             .category("Electronics")
                             .imageUrl("https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400&h=400&fit=crop")
+                            .rating(new BigDecimal("4.88"))
                             .build(),
                     Product.builder()
                             .name("Scented Candle")
@@ -111,6 +121,7 @@ public class SampleDataInitializer {
                             .stock(45)
                             .category("Beauty")
                             .imageUrl("https://images.unsplash.com/photo-1602874801006-22209aca0653?w=400&h=400&fit=crop")
+                            .rating(new BigDecimal("4.40"))
                             .build(),
                     Product.builder()
                             .name("New York Cap")
@@ -119,6 +130,7 @@ public class SampleDataInitializer {
                             .stock(55)
                             .category("Fashion")
                             .imageUrl("https://images.unsplash.com/photo-1521369909029-2afed882baee?w=400&h=400&fit=crop")
+                            .rating(new BigDecimal("4.58"))
                             .build()
             );
 

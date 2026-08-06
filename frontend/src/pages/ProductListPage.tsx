@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { ChevronDown, Grid3x3, List, X } from 'lucide-react'
 import Header from '../components/Header'
@@ -13,6 +13,7 @@ export default function ProductListPage() {
   const keyword = searchParams.get('keyword') || ''
   
   const [products, setProducts] = useState<Product[]>([])
+  const [allProducts, setAllProducts] = useState<Product[]>([]) // Holds all products for global price range
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
@@ -23,33 +24,59 @@ export default function ProductListPage() {
     fetchProducts()
   }, [keyword, filter.category, filter.minPriceUSD, filter.maxPriceUSD, filter.minRating, filter.sortBy])
 
+  useEffect(() => {
+    fetchAllProductsForRange()
+  }, [])
+
+  const fetchAllProductsForRange = async () => {
+    try {
+      const data = await ProductService.getAllProducts()
+      setAllProducts(data)
+    } catch {
+      // Silently fail - globalPriceRange will use default
+    }
+  }
+
   const fetchProducts = async () => {
     setLoading(true)
     setError(null)
     try {
-      let data: Product[]
-      
+      const filterParams: {
+        keyword?: string
+        category?: string
+        minPrice?: number
+        maxPrice?: number
+        minRating?: number
+        sortBy?: string
+      } = {}
+
       if (keyword.trim()) {
-        // If search keyword is present, use search instead of filter
-        console.log('[FETCH] Using search with keyword:', keyword)
-        data = await ProductService.searchProducts(keyword.trim())
-      } else if (isFilterActive()) {
-        // If any filter is active, use filter
-        const filterParams = {
-          category: filter.category === 'All Categories' ? undefined : filter.category,
-          minPrice: filter.minPriceUSD > 0 ? filter.minPriceUSD : undefined,
-          maxPrice: filter.maxPriceUSD < 1000 ? filter.maxPriceUSD : undefined,
-          minRating: filter.minRating > 0 ? filter.minRating : undefined,
-          sortBy: filter.sortBy !== 'featured' ? filter.sortBy : undefined,
-        }
-        console.log('[FETCH] Using filter with params:', filterParams)
-        data = await ProductService.filterProducts(filterParams)
-      } else {
-        // No filters, get all products
-        console.log('[FETCH] Using getAllProducts (no filters active)')
-        data = await ProductService.getAllProducts()
+        filterParams.keyword = keyword.trim()
       }
-      
+
+      if (filter.category !== 'All Categories') {
+        filterParams.category = filter.category
+      }
+
+      if (filter.minPriceUSD > 0) {
+        filterParams.minPrice = filter.minPriceUSD
+      }
+
+      if (filter.maxPriceUSD < 1000) {
+        filterParams.maxPrice = filter.maxPriceUSD
+      }
+
+      if (filter.minRating > 0) {
+        filterParams.minRating = filter.minRating
+      }
+
+      if (filter.sortBy !== 'featured') {
+        filterParams.sortBy = filter.sortBy
+      }
+
+      console.log('[FETCH] Using getProducts with params:', filterParams)
+      const data = await ProductService.getProducts(filterParams)
+
       console.log('[FETCH] Received products:', data.length)
       setProducts(data)
     } catch (err: any) {
@@ -64,9 +91,10 @@ export default function ProductListPage() {
     return (
       filter.category !== 'All Categories' ||
       filter.minPriceUSD > 0 ||
-      filter.maxPriceUSD < 1000 || // Default max is 1000 USD
+      filter.maxPriceUSD < 1000 ||
       filter.minRating > 0 ||
-      filter.sortBy !== 'featured'
+      filter.sortBy !== 'featured' ||
+      keyword.trim() !== ''
     )
   }
 
@@ -74,13 +102,13 @@ export default function ProductListPage() {
     fetchProducts()
   }
 
-  const getPriceRange = () => {
-    if (products.length === 0) {
+  const getGlobalPriceRange = (productsList: Product[]) => {
+    if (productsList.length === 0) {
       return { min: 0, max: 10000000 }
     }
 
     const USD_TO_IDR = 15700
-    const pricesIDR = products.map(p => Number(p.price) * USD_TO_IDR)
+    const pricesIDR = productsList.map(p => Number(p.price) * USD_TO_IDR)
     const maxPriceIDR = Math.max(...pricesIDR)
 
     const PRICE_STEP = 500000
@@ -92,7 +120,7 @@ export default function ProductListPage() {
     }
   }
 
-  const priceRange = getPriceRange()
+  const globalPriceRange = useMemo(() => getGlobalPriceRange(allProducts), [allProducts])
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
@@ -187,8 +215,8 @@ export default function ProductListPage() {
                 Price Range
               </h3>
               <PriceRangeSlider 
-                minPriceIDR={priceRange.min} 
-                maxPriceIDR={priceRange.max}
+                minPriceIDR={globalPriceRange.min} 
+                maxPriceIDR={globalPriceRange.max}
                 stepIDR={500000}
                 onPriceChange={(minIDR, maxIDR) => {
                   const USD_TO_IDR = 15700
@@ -352,9 +380,8 @@ function ProductGrid({ products, viewMode, keyword, filter }: { products: Produc
   ]
 
   const sortOptions = [
-    { value: 'featured', label: 'Featured' },
     { value: 'latest', label: 'Latest' },
-    { value: 'mostPurchased', label: 'Most Purchased' },
+    { value: 'mostPurchased', label: 'Most Purchased' }, // Re-added Most Purchased
     { value: 'price_asc', label: 'Price: Low to High' },
     { value: 'price_desc', label: 'Price: High to Low' },
     { value: 'rating', label: 'Rating' },
@@ -513,7 +540,7 @@ function ProductGrid({ products, viewMode, keyword, filter }: { products: Produc
               onClick={() => setShowSortMenu(!showSortMenu)}
               className="px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-1"
             >
-              {sortOptions.find(opt => opt.value === filter.sortBy)?.label || 'Featured'} <ChevronDown className="w-4 h-4" />
+              {sortOptions.find(opt => opt.value === filter.sortBy)?.label || 'Latest'} <ChevronDown className="w-4 h-4" />
             </button>
             {showSortMenu && (
               <div className="absolute top-full mt-2 right-0 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg py-2 z-10 w-56">

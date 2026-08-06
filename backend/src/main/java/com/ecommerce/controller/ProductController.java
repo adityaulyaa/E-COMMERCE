@@ -28,47 +28,19 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<ProductListDTO> getAllProducts() {
-        log.info("Received GET /products request");
-
-        List<ProductResponseDTO> products = productService.getAllProducts();
-
-        ProductListDTO response = ProductListDTO.builder()
-                .products(products)
-                .build();
-
-        log.info("Returning {} products", products.size());
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<ProductListDTO> searchProducts(
-            @RequestParam("keyword") @NotBlank String keyword) {
-        log.info("Received GET /products/search request with keyword: {}", keyword);
-
-        List<ProductResponseDTO> products = productService.searchProducts(keyword);
-
-        ProductListDTO response = ProductListDTO.builder()
-                .products(products)
-                .build();
-
-        log.info("Returning {} products matching keyword: {}", products.size(), keyword);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    // UC-06: Filter Products
-    @GetMapping("/filter")
-    public ResponseEntity<ProductListDTO> filterProducts(
+    public ResponseEntity<ProductListDTO> getProducts(
+            @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "category", required = false) String category,
             @RequestParam(value = "minPrice", required = false) BigDecimal minPrice,
             @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice,
             @RequestParam(value = "minRating", required = false) BigDecimal minRating,
             @RequestParam(value = "sortBy", required = false) String sortBy) {
         
-        log.info("Received GET /products/filter request - category: {}, minPrice: {}, maxPrice: {}, minRating: {}, sortBy: {}", 
-                 category, minPrice, maxPrice, minRating, sortBy);
+        log.info("Received GET /products request - keyword: {}, category: {}, minPrice: {}, maxPrice: {}, minRating: {}, sortBy: {}", 
+                 keyword, category, minPrice, maxPrice, minRating, sortBy);
 
         FilterRequestDTO filterRequest = FilterRequestDTO.builder()
+                .keyword(keyword)
                 .category(category)
                 .minPrice(minPrice)
                 .maxPrice(maxPrice)
@@ -82,7 +54,7 @@ public class ProductController {
                 .products(products)
                 .build();
 
-        log.info("Returning {} filtered products", products.size());
+        log.info("Returning {} products", products.size());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

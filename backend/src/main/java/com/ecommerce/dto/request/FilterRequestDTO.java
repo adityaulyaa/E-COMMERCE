@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 public class FilterRequestDTO {
 
     private String category;
+    private String keyword; // For search keyword
 
     @DecimalMin(value = "0.0", message = "Minimum price must be greater than or equal to 0")
     private BigDecimal minPrice;

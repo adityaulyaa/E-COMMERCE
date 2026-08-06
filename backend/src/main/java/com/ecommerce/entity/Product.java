@@ -47,6 +47,9 @@ public class Product {
     @Column(nullable = false, precision = 3, scale = 2)
     private BigDecimal rating;
 
+    @Column(name = "sold_count", nullable = false, columnDefinition = "INT DEFAULT 0")
+    private Integer soldCount;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

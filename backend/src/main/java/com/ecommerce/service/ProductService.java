@@ -7,6 +7,7 @@ import com.ecommerce.mapper.ProductMapper;
 import com.ecommerce.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort; // Import Sort
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,72 +24,45 @@ public class ProductService {
     private final ProductMapper productMapper;
 
     @Transactional(readOnly = true)
-    public List<ProductResponseDTO> getAllProducts() {
-        log.info("Fetching all products from database");
-
-        List<Product> products = productRepository.findAll();
-        
-        log.info("Found {} products", products.size());
-
-        return productMapper.toResponseDTOList(products);
-    }
-
-    @Transactional(readOnly = true)
-    public List<ProductResponseDTO> searchProducts(String keyword) {
-        log.info("Searching products with keyword: {}", keyword);
-
-        if (keyword == null || keyword.trim().isEmpty()) {
-            log.warn("Search keyword is null or empty");
-            return List.of();
-        }
-
-        String trimmedKeyword = keyword.trim();
-        
-        List<Product> products = productRepository
-                .findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                        trimmedKeyword, trimmedKeyword);
-        
-        log.info("Found {} products matching keyword: {}", products.size(), trimmedKeyword);
-
-        return productMapper.toResponseDTOList(products);
-    }
-
-    // UC-06: Filter Products
-    @Transactional(readOnly = true)
     public List<ProductResponseDTO> filterProducts(FilterRequestDTO filterRequest) {
         log.info("Filtering products with criteria: {}", filterRequest);
 
         // Validate filter criteria
         validateFilterCriteria(filterRequest);
 
+        String keyword = filterRequest.getKeyword();
         String category = filterRequest.getCategory();
         BigDecimal minPrice = filterRequest.getMinPrice();
         BigDecimal maxPrice = filterRequest.getMaxPrice();
         BigDecimal minRating = filterRequest.getMinRating();
-        String sortBy = filterRequest.getSortBy() != null ? filterRequest.getSortBy() : "featured";
+        String sortBy = filterRequest.getSortBy() != null ? filterRequest.getSortBy() : "latest";
 
         // Normalize category (handle "All Categories" or empty)
         if (category != null && (category.equalsIgnoreCase("All Categories") || category.trim().isEmpty())) {
             category = null;
         }
 
+        Sort sort = createSort(sortBy);
+
         List<Product> products;
 
-        // If no filters applied, return all products
-        if (category == null && minPrice == null && maxPrice == null && minRating == null) {
-            log.info("No filters applied, fetching all products");
-            products = productRepository.findAll();
+        // If no filters, no keyword, and sorting by latest, return all sorted by created date
+        if (keyword == null && category == null && minPrice == null && maxPrice == null && minRating == null && sortBy.equals("latest")) {
+            log.info("No filters, keyword, or specific sort applied (using default latest), fetching all products sorted by latest");
+            products = productRepository.findAll(sort); // Use findAll with sort
         } else {
-            // Apply filters using repository query
-            log.info("Applying filters - category: {}, minPrice: {}, maxPrice: {}, minRating: {}, sortBy: {}", 
-                     category, minPrice, maxPrice, minRating, sortBy);
+            // Apply filters (including keyword) using repository query
+            log.info("Applying filters - keyword: {}, category: {}, minPrice: {}, maxPrice: {}, minRating: {}, sortBy: {}", 
+                     keyword, category, minPrice, maxPrice, minRating, sortBy);
             
             products = productRepository.filterProductsWithSorting(
-                    category, minPrice, maxPrice, minRating, sortBy);
+                    keyword,
+                    category,
+                    minPrice,
+                    maxPrice,
+                    minRating,
+                    sort); // Pass Sort object
         }
-
-        // Apply sorting if needed (for featured and mostPurchased which aren't in DB)
-        products = applySorting(products, sortBy);
 
         log.info("Found {} products after filtering", products.size());
 
@@ -129,25 +103,20 @@ public class ProductService {
         }
     }
 
-    private List<Product> applySorting(List<Product> products, String sortBy) {
-        if (sortBy == null || sortBy.isEmpty() || sortBy.equalsIgnoreCase("featured")) {
-            // Featured: sort by rating DESC, then by name
-            return products.stream()
-                    .sorted(Comparator.comparing(Product::getRating).reversed()
-                            .thenComparing(Product::getName))
-                    .toList();
+    private Sort createSort(String sortBy) {
+        switch (sortBy) {
+            case "price_asc":
+                return Sort.by(Sort.Direction.ASC, "price");
+            case "price_desc":
+                return Sort.by(Sort.Direction.DESC, "price");
+            case "rating":
+                return Sort.by(Sort.Direction.DESC, "rating");
+            case "mostPurchased":
+                return Sort.by(Sort.Direction.DESC, "soldCount");
+            case "latest":
+                return Sort.by(Sort.Direction.DESC, "createdAt");
+            default:
+                return Sort.by(Sort.Direction.DESC, "createdAt"); // Default to latest
         }
-
-        // For mostPurchased, we don't have purchase data, so treat as featured
-        if (sortBy.equalsIgnoreCase("mostPurchased")) {
-            log.warn("mostPurchased sorting requested but no purchase data available, using featured instead");
-            return products.stream()
-                    .sorted(Comparator.comparing(Product::getRating).reversed()
-                            .thenComparing(Product::getName))
-                    .toList();
-        }
-
-        // Other sorting is already handled by repository query
-        return products;
     }
 }

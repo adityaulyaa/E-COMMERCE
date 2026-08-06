@@ -36,7 +36,7 @@ export const FilterProvider = ({ children }: FilterProviderProps) => {
   const [minPriceUSD, setMinPriceUSD] = useState<number>(0)
   const [maxPriceUSD, setMaxPriceUSD] = useState<number>(DEFAULT_MAX_USD)
   const [minRating, setMinRating] = useState<number>(0)
-  const [sortBy, setSortBy] = useState<string>('featured')
+  const [sortBy, setSortBy] = useState<string>('latest')
 
   const setPriceRange = (minUSD: number, maxUSD: number) => {
     setMinPriceUSD(minUSD)
@@ -52,7 +52,7 @@ export const FilterProvider = ({ children }: FilterProviderProps) => {
     setMinPriceUSD(0)
     setMaxPriceUSD(DEFAULT_MAX_USD)
     setMinRating(0)
-    setSortBy('featured')
+    setSortBy('latest')
   }
 
   return (

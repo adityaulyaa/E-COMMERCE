@@ -24,6 +24,7 @@ public class ProductMapper {
                 .category(product.getCategory())
                 .imageUrl(product.getImageUrl())
                 .rating(product.getRating())
+                .soldCount(product.getSoldCount())
                 .build();
     }
 

@@ -15,6 +15,11 @@ public class ProductMapper {
             return null;
         }
 
+        List<String> imageUrls = product.getImages() == null ? List.of() : 
+            product.getImages().stream()
+                .map(img -> img.getImageUrl())
+                .collect(Collectors.toList());
+
         return ProductResponseDTO.builder()
                 .productId(product.getProductId())
                 .name(product.getName())
@@ -22,7 +27,7 @@ public class ProductMapper {
                 .price(product.getPrice())
                 .stock(product.getStock())
                 .category(product.getCategory())
-                .imageUrl(product.getImageUrl())
+                .imageUrls(imageUrls)
                 .rating(product.getRating())
                 .soldCount(product.getSoldCount())
                 .build();
@@ -38,3 +43,4 @@ public class ProductMapper {
                 .collect(Collectors.toList());
     }
 }
+

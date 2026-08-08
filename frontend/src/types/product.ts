@@ -5,7 +5,7 @@ export interface Product {
   price: number
   stock: number
   category: string
-  imageUrl: string | null
+  imageUrls: string[]
   rating: number
 }
 

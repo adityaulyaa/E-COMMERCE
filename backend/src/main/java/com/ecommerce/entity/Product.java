@@ -11,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -41,8 +43,10 @@ public class Product {
     @Column(nullable = false, length = 100)
     private String category;
 
-    @Column(name = "image_url", length = 500)
-    private String imageUrl;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("displayOrder ASC")
+    @Builder.Default
+    private List<ProductImage> images = new ArrayList<>();
 
     @Column(nullable = false, precision = 3, scale = 2)
     private BigDecimal rating;

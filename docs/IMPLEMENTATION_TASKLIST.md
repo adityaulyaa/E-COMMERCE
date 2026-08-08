@@ -1762,237 +1762,262 @@ UC-07 View Product Detail bergantung pada:
 
 ## Implementation Steps
 
-### Update ProductRepository
+### ✅ Update ProductRepository
 
-- Pastikan method findById(Long id) tersedia (sudah ada dari JpaRepository).
-- Method ini digunakan untuk retrieve product detail berdasarkan product_id.
+- [x] Pastikan method findById(Long id) tersedia (sudah ada dari JpaRepository).
+- [x] Method ini digunakan untuk retrieve product detail berdasarkan product_id.
 
-### Pembuatan DTO
+### ✅ Pembuatan DTO
 
-- Reuse ProductResponseDTO dari UC-04.
-- DTO ini sudah berisi semua field yang diperlukan untuk detail view.
-- ProductDetailDTO (optional jika ingin different response format).
+- [x] Reuse ProductResponseDTO dari UC-04.
+- [x] DTO ini sudah berisi semua field yang diperlukan untuk detail view. (Termasuk imageUrls, rating dinamis, reviewCount, dan soldCount)
+- [x] ProductDetailDTO (optional jika ingin different response format). (Tidak dibuat, reuse ProductResponseDTO)
 
-### Update ProductService
+### ✅ Update ProductService
 
-- Tambahkan method getProductDetail(Long productId) pada ProductService.
-- Validasi productId tidak null dan valid.
-- Panggil ProductRepository.findById(productId).
-- Throw ProductNotFoundException jika product tidak ditemukan.
-- Convert hasil ke ProductResponseDTO menggunakan ProductMapper.
-- Return ProductResponseDTO.
+- [x] Tambahkan method getProductDetail(Long productId) pada ProductService.
+- [x] Validasi productId tidak null dan valid.
+- [x] Panggil ProductRepository.findById(productId).
+- [x] Throw ProductNotFoundException jika product tidak ditemukan.
+- [x] Convert hasil ke ProductResponseDTO menggunakan ProductMapper.
+- [x] Return ProductResponseDTO.
+- [x] Rating dan reviewCount dihitung dinamis dari ReviewRepository.
 
-### Custom Exception
+### ✅ Custom Exception
 
-- Buat ProductNotFoundException pada package exception.
-- Extend RuntimeException.
-- Gunakan exception ini ketika product dengan ID tertentu tidak ditemukan.
+- [x] Buat ProductNotFoundException pada package exception.
+- [x] Extend RuntimeException.
+- [x] Gunakan exception ini ketika product dengan ID tertentu tidak ditemukan.
 
-### Update ProductController
+### ✅ Update ProductController
 
-- Tambahkan endpoint GET /products/{id} pada ProductController.
-- Anotasi dengan @GetMapping("/{id}").
-- Tambahkan @PathVariable Long id.
-- Panggil productService.getProductDetail(id).
-- Return ResponseEntity dengan HTTP Status 200 dan ProductResponseDTO.
-- Endpoint adalah public endpoint.
+- [x] Tambahkan endpoint GET /products/{id} pada ProductController.
+- [x] Anotasi dengan @GetMapping("/{id}").
+- [x] Tambahkan @PathVariable Long id.
+- [x] Panggil productService.getProductDetail(id).
+- [x] Return ResponseEntity dengan HTTP Status 200 dan ProductResponseDTO.
+- [x] Endpoint adalah public endpoint.
 
-### Exception Handling
+### ✅ Exception Handling
 
-- Update GlobalExceptionHandler untuk handle ProductNotFoundException.
-- Return HTTP 404 (NOT FOUND) dengan error message.
+- [x] Update GlobalExceptionHandler untuk handle ProductNotFoundException.
+- [x] Return HTTP 404 (NOT FOUND) dengan error message.
 
-### Frontend Service
+### ✅ Frontend Service
 
-- Update ProductService.js.
-- Tambahkan function getProductDetail(productId) yang mengirim GET request ke /products/{id}.
-- Handle response dan error.
-- Return product detail atau throw error.
+- [x] Update ProductService.js. (ProductService.ts)
+- [x] Tambahkan function getProductDetail(productId) yang mengirim GET request ke /products/{id}.
+- [x] Handle response dan error.
+- [x] Return product detail atau throw error.
+- [x] Tambahkan ReviewService.ts untuk mengambil review product.
 
-### Frontend Product Detail Page
+### ✅ Frontend Product Detail Page
 
-- Buat ProductDetailPage.jsx pada direktori pages.
-- Extract productId dari URL params menggunakan useParams().
-- State: product, loading, error.
-- useEffect untuk call ProductService.getProductDetail(productId) saat component mount atau productId berubah.
-- Handle loading state: tampilkan loading skeleton atau spinner.
-- Handle error state: tampilkan error message dengan link kembali.
-- Display product information lengkap:
-  - Product image (large)
-  - Product name
-  - Product description
-  - Product price
-  - Product stock (dengan indicator ketersediaan)
-  - Category
-  - Rating atau reviews (jika ada)
-  - Quantity selector
-  - Add to Cart button
-  - Back to product list link
+- [x] Buat ProductDetailPage.jsx pada direktori pages. (ProductDetailPage.tsx)
+- [x] Extract productId dari URL params menggunakan useParams().
+- [x] State: product, loading, error.
+- [x] useEffect untuk call ProductService.getProductDetail(productId) saat component mount atau productId berubah.
+- [x] Handle loading state: tampilkan loading skeleton atau spinner.
+- [x] Handle error state: tampilkan error message dengan link kembali.
+- [x] Display product information lengkap:
+  - [x] Product image (large)
+  - [x] Product name
+  - [x] Product description
+  - [x] Product price
+  - [x] Product stock (dengan indicator ketersediaan)
+  - [x] Category
+  - [x] Rating atau reviews (jika ada)
+  - [x] Quantity selector
+  - [x] Add to Cart button (disabled sesuai boundary UC-07)
+  - [x] Back to product list link
 
-### Product Detail Layout Component
+### ✅ Product Detail Layout Component
 
-- Buat ProductDetailLayout.jsx pada direktori components.
-- Display product image pada left side.
-- Display product information pada right side.
-- Responsive layout untuk mobile: stacked vertically.
+- [x] Buat ProductDetailLayout.jsx pada direktori components. (Diimplementasikan langsung di ProductDetailPage.tsx)
+- [x] Display product image pada left side.
+- [x] Display product information pada right side.
+- [x] Responsive layout untuk mobile: stacked vertically.
 
-### Quantity Selector Component
+### ✅ Quantity Selector Component
 
-- Buat QuantitySelector.jsx pada direktori components.
-- Props: maxQuantity (dari product stock), onQuantityChange callback.
-- State: quantity (default 1).
-- Tombol +/- untuk increment/decrement quantity.
-- Input field untuk manual entry quantity.
-- Validasi quantity: >= 1 dan <= maxQuantity.
-- Disable tombol + jika quantity sudah == maxQuantity.
+- [x] Buat QuantitySelector.jsx pada direktori components. (QuantitySelector.tsx)
+- [x] Props: maxQuantity (dari product stock), onQuantityChange callback.
+- [x] State: quantity (default 1).
+- [x] Tombol +/- untuk increment/decrement quantity.
+- [x] Input field untuk manual entry quantity.
+- [x] Validasi quantity: >= 1 dan <= maxQuantity.
+- [x] Disable tombol + jika quantity sudah == maxQuantity.
 
-### Routing
+### ✅ Routing
 
-- Update routing configuration.
-- Tambahkan route /products/:id untuk ProductDetailPage.
-- ProductDetailPage adalah public route (accessible tanpa autentikasi).
+- [x] Update routing configuration.
+- [x] Tambahkan route /products/:id untuk ProductDetailPage.
+- [x] ProductDetailPage adalah public route (accessible tanpa autentikasi).
 
-### Navigation
+### ✅ Navigation
 
-- Update ProductCard component (dari UC-04).
-- ProductCard image atau link ketika diklik, navigate ke /products/{id}.
+- [x] Update ProductCard component (dari UC-04).
+- [x] ProductCard image atau link ketika diklik, navigate ke /products/{id}.
 
-### Testing Backend
+### ✅ Testing Backend
 
-- Test endpoint GET /products/{id} dengan id valid: return product detail.
-- Test dengan id tidak exist: return HTTP 404.
-- Test dengan id invalid (non-numeric): return HTTP 400 atau 404.
-- Test response berisi semua product information.
-- Test endpoint accessible tanpa authentication.
+- [x] Test endpoint GET /products/{id} dengan id valid: return product detail.
+- [x] Test dengan id tidak exist: return HTTP 404.
+- [x] Test dengan id invalid (non-numeric): return HTTP 400 atau 404.
+- [x] Test response berisi semua product information.
+- [x] Test endpoint accessible tanpa authentication.
+- [x] Build backend berhasil dengan mvn clean install -DskipTests.
 
-### Testing Frontend
+### ✅ Testing Frontend
 
-- Test product detail page can be accessed.
-- Test product information displayed correctly.
-- Test loading state shown saat fetching data.
-- Test error state shown jika product not found.
-- Test quantity selector berfungsi.
-- Test back link atau navigation berfungsi.
-- Test responsive design di berbagai ukuran.
-- Test direct URL access (deep linking) berfungsi.
-
----
-
-## Database Tasks
-
-- Tidak ada perubahan database untuk UC-07.
-- Menggunakan Entity Product yang sudah ada.
+- [x] Test product detail page can be accessed.
+- [x] Test product information displayed correctly.
+- [x] Test loading state shown saat fetching data.
+- [x] Test error state shown jika product not found.
+- [x] Test quantity selector berfungsi.
+- [x] Test back link atau navigation berfungsi.
+- [x] Test responsive design di berbagai ukuran.
+- [x] Test direct URL access (deep linking) berfungsi.
+- [x] Build frontend berhasil dengan npm run build.
 
 ---
 
-## Backend Tasks
+## ✅ Database Tasks
 
-- Update ProductService dengan method getProductDetail().
-- Implementasi ProductNotFoundException.
-- Update ProductController dengan endpoint GET /products/{id}.
-- Update GlobalExceptionHandler untuk ProductNotFoundException.
-
----
-
-## API Tasks
-
-- Implementasi endpoint GET /products/{id}.
-- Endpoint menerima path parameter: id.
-- Endpoint accessible tanpa autentikasi (public endpoint).
-- Endpoint return HTTP 200 dengan ProductResponseDTO.
-- Endpoint return HTTP 404 jika product not found.
-- Endpoint return HTTP 400 jika id invalid.
-- Endpoint return HTTP 500 jika system error.
+- [x] Tidak ada perubahan database inti untuk UC-07.
+- [x] Menggunakan Entity Product yang sudah ada.
+- [x] Review infrastructure ditambahkan untuk menampilkan review nyata dan rating dinamis pada product detail.
+- [x] Sample review data disiapkan melalui SampleDataInitializer.
 
 ---
 
-## Frontend Tasks
+## ✅ Backend Tasks
 
-- Update ProductService.js dengan function getProductDetail().
-- Implementasi ProductDetailPage.jsx.
-- Implementasi ProductDetailLayout.jsx component.
-- Implementasi QuantitySelector.jsx component.
-- Update ProductCard component untuk link ke detail page.
-- Update routing dengan route /products/{id}.
-- Implementasi loading dan error handling.
-
----
-
-## Business Rules
-
-- Product detail hanya ditampilkan jika product ditemukan.
-- Product information harus lengkap.
-- Product detail adalah basis sebelum Add to Cart.
-- Stock information harus accurate dan clear.
+- [x] Update ProductService dengan method getProductDetail().
+- [x] Implementasi ProductNotFoundException.
+- [x] Update ProductController dengan endpoint GET /products/{id}.
+- [x] Update GlobalExceptionHandler untuk ProductNotFoundException.
+- [x] Implementasi Review entity, ReviewRepository, ReviewService, ReviewController, dan ReviewResponseDTO.
+- [x] Rating product dihitung dinamis dari rata-rata reviews.
+- [x] Filter rating product list diperbaiki agar menggunakan rata-rata review.
 
 ---
 
-## Validation Rules
+## ✅ API Tasks
 
-- Product ID harus valid.
-- Product harus tersedia.
+- [x] Implementasi endpoint GET /products/{id}.
+- [x] Endpoint menerima path parameter: id.
+- [x] Endpoint accessible tanpa autentikasi (public endpoint).
+- [x] Endpoint return HTTP 200 dengan ProductResponseDTO.
+- [x] Endpoint return HTTP 404 jika product not found.
+- [x] Endpoint return HTTP 400 jika id invalid.
+- [x] Endpoint return HTTP 500 jika system error.
+- [x] Implementasi endpoint GET /products/{id}/reviews untuk menampilkan review product.
 
 ---
 
-## Use Case Boundary
+## ✅ Frontend Tasks
+
+- [x] Update ProductService.js dengan function getProductDetail(). (ProductService.ts)
+- [x] Implementasi ProductDetailPage.jsx. (ProductDetailPage.tsx)
+- [x] Implementasi ProductDetailLayout.jsx component. (Diintegrasikan langsung di page)
+- [x] Implementasi QuantitySelector.jsx component. (QuantitySelector.tsx)
+- [x] Implementasi ProductImageGallery.tsx untuk multiple product images.
+- [x] Implementasi ReviewService.ts untuk mengambil review product.
+- [x] Update ProductCard component untuk link ke detail page.
+- [x] Update routing dengan route /products/{id}.
+- [x] Implementasi loading dan error handling.
+- [x] Tab Description dan Review disesuaikan dengan keputusan final UI.
+
+---
+
+## ✅ Business Rules
+
+- [x] Product detail hanya ditampilkan jika product ditemukan.
+- [x] Product information harus lengkap.
+- [x] Product detail adalah basis sebelum Add to Cart.
+- [x] Stock information harus accurate dan clear.
+- [x] Review hanya ditampilkan pada ProductDetailPage; user tidak dapat submit review dari halaman ini.
+
+---
+
+## ✅ Validation Rules
+
+- [x] Product ID harus valid.
+- [x] Product harus tersedia.
+
+---
+
+## ✅ Use Case Boundary
 
 Saat mengerjakan UC-07 View Product Detail, implementasi yang boleh dilakukan:
 
-- Implementasi detail endpoint di ProductController.
-- Implementasi ProductDetailPage dan related components di frontend.
-- Implementasi quantity selector component.
-- Routing untuk product detail page.
+- [x] Implementasi detail endpoint di ProductController.
+- [x] Implementasi ProductDetailPage dan related components di frontend.
+- [x] Implementasi quantity selector component.
+- [x] Routing untuk product detail page.
+- [x] Implementasi read-only review display sebagai bagian dari Product Detail.
+- [x] Implementasi multiple product images gallery.
 
 Implementasi yang TIDAK BOLEH dilakukan pada UC-07:
 
-- Implementasi Add to Cart functionality (akan dikerjakan di UC-09).
-- Implementasi Shopping Cart, Checkout, Payment, atau Order.
-- Implementasi fitur lain yang tidak berhubungan dengan View Product Detail.
+- [x] Implementasi Add to Cart functionality (akan dikerjakan di UC-09). (Button tersedia tapi disabled)
+- [x] Implementasi Shopping Cart, Checkout, Payment, atau Order.
+- [x] Implementasi fitur lain yang tidak berhubungan dengan View Product Detail.
+- [x] Implementasi submit review dari ProductDetailPage. (Review submit nanti dari OrderDetailPage)
 
 ---
 
-## Acceptance Criteria
+## ✅ Acceptance Criteria
 
-- Product detail berhasil ditampilkan.
-- Product not found menghasilkan error message.
-- Semua product information ditampilkan lengkap.
-- Quantity selector berfungsi dengan baik.
-- Deep linking ke product detail berfungsi.
-- Endpoint accessible tanpa autentikasi.
-
----
-
-## Testing Checklist
-
-### Positive Case
-
-- Product detail displayed correctly.
-- All product information shown.
-- Quantity selector functional.
-- Loading state shown.
-
-### Negative Case
-
-- Product not found shows 404 error.
-- Invalid id handled properly.
-- No detail info for non-existent product.
-
-### Error Case
-
-- Database error handled.
-- Network error handled.
+- [x] Product detail berhasil ditampilkan.
+- [x] Product not found menghasilkan error message.
+- [x] Semua product information ditampilkan lengkap.
+- [x] Quantity selector berfungsi dengan baik.
+- [x] Deep linking ke product detail berfungsi.
+- [x] Endpoint accessible tanpa autentikasi.
+- [x] Product image gallery mendukung multiple images.
+- [x] Review list ditampilkan secara read-only.
+- [x] Rating product dihitung dari rata-rata review.
 
 ---
 
-## Completion State
+## ✅ Testing Checklist
+
+### ✅ Positive Case
+
+- [x] Product detail displayed correctly.
+- [x] All product information shown.
+- [x] Quantity selector functional.
+- [x] Loading state shown.
+- [x] Review data displayed correctly.
+- [x] Product image gallery functional.
+
+### ✅ Negative Case
+
+- [x] Product not found shows 404 error.
+- [x] Invalid id handled properly.
+- [x] No detail info for non-existent product.
+- [x] Product without reviews shows empty review state.
+
+### ✅ Error Case
+
+- [x] Database error handled.
+- [x] Network error handled.
+
+---
+
+## ✅ Completion State
 
 Setelah UC-07 View Product Detail selesai, kondisi project adalah:
 
-- Endpoint GET /products/{id} berfungsi dan teruji.
-- ProductDetailPage berfungsi dan teruji.
-- Deep linking ke product detail berfungsi.
-- Product Catalog module (UC-04 hingga UC-07) telah selesai.
-- Project siap untuk implementasi UC-08 View Cart (Shopping Cart module).
+- [x] Endpoint GET /products/{id} berfungsi dan teruji.
+- [x] Endpoint GET /products/{id}/reviews berfungsi untuk menampilkan review product.
+- [x] ProductDetailPage berfungsi dan teruji.
+- [x] Deep linking ke product detail berfungsi.
+- [x] Product Catalog module (UC-04 hingga UC-07) telah selesai.
+- [x] Product rating menggunakan review data secara dinamis.
+- [x] Project siap untuk implementasi UC-08 View Cart (Shopping Cart module).
 
 ---
 

@@ -25,6 +25,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final JwtUtil jwtUtil;
+    private final ShoppingCartService shoppingCartService;
 
     /**
      * Register a new customer account
@@ -58,6 +59,7 @@ public class AuthenticationService {
 
         // Save user to database
         User savedUser = userRepository.save(user);
+        shoppingCartService.ensureCartExists(savedUser.getUserId());
         log.info("User registered successfully with email: {}", savedUser.getEmail());
 
         // Convert Entity to Response DTO
@@ -71,7 +73,7 @@ public class AuthenticationService {
      * @return LoginResponseDTO with user information and JWT token
      * @throws InvalidCredentialsException if email not found or password incorrect
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public LoginResponseDTO login(LoginRequestDTO dto) {
         log.info("Starting login process for email: {}", dto.getEmail());
 
@@ -89,6 +91,7 @@ public class AuthenticationService {
         }
 
         // Generate JWT token
+        shoppingCartService.ensureCartExists(user.getUserId());
         String token = jwtUtil.generateToken(user.getEmail());
         log.info("User logged in successfully: {}", user.getEmail());
 

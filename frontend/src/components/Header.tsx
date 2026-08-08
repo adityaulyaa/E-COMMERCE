@@ -38,12 +38,12 @@ export default function Header() {
 
   // Real-time search with debounce
   useEffect(() => {
+    // Only navigate if searchKeyword is not empty
+    // This prevents auto-redirecting to /products when mounting Header on other pages
+    if (!searchKeyword.trim()) return
+
     const timer = setTimeout(() => {
-      if (searchKeyword.trim()) {
-        navigate(`/products?keyword=${encodeURIComponent(searchKeyword.trim())}`)
-      } else {
-        navigate('/products')
-      }
+      navigate(`/products?keyword=${encodeURIComponent(searchKeyword.trim())}`)
     }, 300)
 
     return () => clearTimeout(timer)

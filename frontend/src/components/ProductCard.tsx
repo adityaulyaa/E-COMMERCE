@@ -1,4 +1,5 @@
 import { Heart } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import type { Product } from '../types/product'
 import { formatToRupiah } from '../utils/formatCurrency'
 
@@ -8,7 +9,8 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   return (
-    <div className="group bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow duration-300 hover:scale-105 cursor-not-allowed opacity-60">
+    <Link to={`/products/${product.productId}`}>
+      <div className="group bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow duration-300 hover:scale-105 cursor-pointer">
       {/* Product Image */}
       <div className="relative w-full aspect-square bg-gray-100 dark:bg-gray-700 overflow-hidden">
         {product.imageUrls && product.imageUrls.length > 0 ? (
@@ -60,6 +62,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <span className="font-medium">({product.rating.toFixed(1)})</span>
         </div>
       </div>
-    </div>
+      </div>
+    </Link>
   )
 }

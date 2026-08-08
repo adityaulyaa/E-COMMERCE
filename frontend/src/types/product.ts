@@ -7,6 +7,16 @@ export interface Product {
   category: string
   imageUrls: string[]
   rating: number
+  reviewCount: number
+  soldCount: number
+}
+
+export interface Review {
+  reviewId: number
+  authorName: string
+  rating: number
+  comment: string
+  createdAt: string // ISO date string
 }
 
 export interface ProductListResponse {

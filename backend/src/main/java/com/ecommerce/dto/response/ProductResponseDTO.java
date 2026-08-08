@@ -22,5 +22,6 @@ public class ProductResponseDTO {
     private String category;
     private List<String> imageUrls;
     private BigDecimal rating;
+    private Long reviewCount;
     private Integer soldCount;
 }

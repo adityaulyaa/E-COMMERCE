@@ -69,6 +69,23 @@ class ProductService {
   async filterProducts(params: FilterParams): Promise<Product[]> {
     return this.getProducts(params)
   }
+
+  async getProductDetail(productId: number): Promise<Product> {
+    try {
+      const response = await apiClient.get<Product>(`/products/${productId}`)
+      return response.data
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        throw new Error('Product not found')
+      } else if (error.response?.data?.message) {
+        throw new Error(error.response.data.message)
+      } else if (error.message) {
+        throw new Error(error.message)
+      } else {
+        throw new Error('Failed to fetch product detail. Please try again.')
+      }
+    }
+  }
 }
 
 export default new ProductService()

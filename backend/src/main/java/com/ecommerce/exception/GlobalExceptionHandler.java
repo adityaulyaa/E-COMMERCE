@@ -135,6 +135,27 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handle product not found exception
+     *
+     * @param ex ProductNotFoundException
+     * @return ResponseEntity with not found error
+     */
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleProductNotFoundException(
+            ProductNotFoundException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Product not found: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    /**
      * Handle all unexpected exceptions
      *
      * @param ex Exception

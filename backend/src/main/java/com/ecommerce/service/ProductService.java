@@ -3,17 +3,21 @@ package com.ecommerce.service;
 import com.ecommerce.dto.request.FilterRequestDTO;
 import com.ecommerce.dto.response.ProductResponseDTO;
 import com.ecommerce.entity.Product;
+import com.ecommerce.exception.ProductNotFoundException;
 import com.ecommerce.mapper.ProductMapper;
 import com.ecommerce.repository.ProductRepository;
+import com.ecommerce.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort; // Import Sort
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +25,7 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ReviewRepository reviewRepository;
     private final ProductMapper productMapper;
 
     @Transactional(readOnly = true)
@@ -66,7 +71,19 @@ public class ProductService {
 
         log.info("Found {} products after filtering", products.size());
 
-        return productMapper.toResponseDTOList(products);
+        // Fetch dynamic ratings for all filtered products
+        List<Long> productIds = products.stream().map(Product::getProductId).collect(Collectors.toList());
+        Map<Long, Object[]> ratingStatsMap = Map.of();
+        if (!productIds.isEmpty()) {
+            List<Object[]> ratingStats = reviewRepository.findRatingStatsByProductIds(productIds);
+            ratingStatsMap = ratingStats.stream()
+                    .collect(Collectors.toMap(
+                            arr -> (Long) arr[0],
+                            arr -> arr
+                    ));
+        }
+
+        return productMapper.toResponseDTOList(products, ratingStatsMap);
     }
 
     private void validateFilterCriteria(FilterRequestDTO filterRequest) {
@@ -116,7 +133,32 @@ public class ProductService {
             case "latest":
                 return Sort.by(Sort.Direction.DESC, "createdAt");
             default:
-                return Sort.by(Sort.Direction.DESC, "createdAt"); // Default to latest
+                return Sort.by(Sort.Direction.DESC, "createdAt");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public ProductResponseDTO getProductDetail(Long productId) {
+        log.info("Fetching product detail for ID: {}", productId);
+
+        if (productId == null || productId <= 0) {
+            log.error("Invalid product ID: {}", productId);
+            throw new IllegalArgumentException("Product ID must be a positive number");
+        }
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> {
+                    log.error("Product not found with ID: {}", productId);
+                    return new ProductNotFoundException(productId);
+                });
+
+        // Dynamic calculation of rating and review count
+        Double averageRating = reviewRepository.findAverageRatingByProductId(productId);
+        Long reviewCount = reviewRepository.countByProductProductId(productId);
+
+        log.info("Successfully retrieved product: {}, rating: {}, reviews: {}", 
+                 product.getName(), averageRating, reviewCount);
+        
+        return productMapper.toResponseDTO(product, averageRating, reviewCount);
     }
 }

@@ -19,12 +19,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllByOrderByCreatedAtDesc();
     
     // UC-06: Combined filter with sorting
-    @Query("SELECT p FROM Product p WHERE " +
+    @Query("SELECT p FROM Product p LEFT JOIN Review r ON r.product.productId = p.productId " +
+           "GROUP BY p.productId HAVING " +
            "(:keyword IS NULL OR (LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%')))) AND " +
            "(:category IS NULL OR LOWER(p.category) = LOWER(:category)) AND " +
            "(:minPrice IS NULL OR p.price >= :minPrice) AND " +
            "(:maxPrice IS NULL OR p.price <= :maxPrice) AND " +
-           "(:minRating IS NULL OR p.rating >= :minRating)")
+           "(:minRating IS NULL OR COALESCE(AVG(r.rating), 0) >= :minRating)")
     List<Product> filterProductsWithSorting(
             @Param("keyword") String keyword,
             @Param("category") String category,

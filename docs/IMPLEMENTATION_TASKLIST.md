@@ -3041,7 +3041,7 @@ Setelah UC-11 Remove Cart Item selesai:
 Mengimplementasikan fitur Checkout yang melakukan validasi final terhadap Shopping Cart dan menghasilkan Order Summary sebelum Customer memilih payment method.
 
 ---
-
+ 
 ## Initial State
 
 Project telah menyelesaikan Shopping Cart module dengan kondisi:

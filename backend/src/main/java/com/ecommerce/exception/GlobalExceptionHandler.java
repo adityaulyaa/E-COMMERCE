@@ -178,6 +178,48 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handle out of stock exception
+     *
+     * @param ex OutOfStockException
+     * @return ResponseEntity with conflict error
+     */
+    @ExceptionHandler(OutOfStockException.class)
+    public ResponseEntity<ErrorResponseDTO> handleOutOfStockException(
+            OutOfStockException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Product out of stock: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    /**
+     * Handle quantity exceeds stock exception
+     *
+     * @param ex QuantityExceedsStockException
+     * @return ResponseEntity with conflict error
+     */
+    @ExceptionHandler(QuantityExceedsStockException.class)
+    public ResponseEntity<ErrorResponseDTO> handleQuantityExceedsStockException(
+            QuantityExceedsStockException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Quantity exceeds stock: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    /**
      * Handle all unexpected exceptions
      *
      * @param ex Exception

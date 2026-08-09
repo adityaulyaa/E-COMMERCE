@@ -22,6 +22,27 @@ class ShoppingCartService {
       throw new Error('Failed to load shopping cart. Please try again.')
     }
   }
+
+  async addToCart(productId: number, quantity: number): Promise<CartResponse> {
+    try {
+      const response = await apiClient.post<CartResponse>('/cart/items', { productId, quantity })
+      return response.data
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        throw new Error('Please login to add items to your cart')
+      }
+
+      if (error.response?.data?.message) {
+        throw new Error(error.response.data.message)
+      }
+
+      if (error.message) {
+        throw new Error(error.message)
+      }
+
+      throw new Error('Failed to add item to cart. Please try again.')
+    }
+  }
 }
 
 export default new ShoppingCartService()

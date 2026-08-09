@@ -64,20 +64,40 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(false)
   }, [authLoading, isAuthenticated, loadCart])
 
-  const unavailableMutation = async (): Promise<void> => {
-    throw new Error(CART_MUTATION_UNAVAILABLE)
+const addToCart = useCallback(async (productId: number, quantity: number): Promise<void> => {
+  if (!isAuthenticated) {
+    throw new Error('Please login to add items to your cart')
   }
 
-  const value: CartContextType = {
-    cart,
-    loading,
-    error,
-    loadCart,
-    addToCart: unavailableMutation,
-    removeFromCart: unavailableMutation,
-    updateQuantity: unavailableMutation,
-    clearCart: unavailableMutation,
+  setLoading(true)
+  setError(null)
+
+  try {
+    const updatedCart = await ShoppingCartService.addToCart(productId, quantity)
+    setCart(updatedCart)
+  } catch (err: any) {
+    const message = err.message || 'Failed to add item to cart'
+    setError(message)
+    throw new Error(message)
+  } finally {
+    setLoading(false)
   }
+}, [isAuthenticated])
+
+const unavailableMutation = async (): Promise<void> => {
+  throw new Error(CART_MUTATION_UNAVAILABLE)
+}
+
+const value: CartContextType = {
+  cart,
+  loading,
+  error,
+  loadCart,
+  addToCart,
+  removeFromCart: unavailableMutation,
+  updateQuantity: unavailableMutation,
+  clearCart: unavailableMutation,
+}
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }

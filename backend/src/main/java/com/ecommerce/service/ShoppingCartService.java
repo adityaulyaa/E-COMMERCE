@@ -1,9 +1,14 @@
 package com.ecommerce.service;
 
+import com.ecommerce.dto.request.AddToCartRequestDTO;
 import com.ecommerce.dto.response.CartResponseDTO;
 import com.ecommerce.entity.Cart;
 import com.ecommerce.entity.CartItem;
+import com.ecommerce.entity.Product;
 import com.ecommerce.entity.User;
+import com.ecommerce.exception.OutOfStockException;
+import com.ecommerce.exception.ProductNotFoundException;
+import com.ecommerce.exception.QuantityExceedsStockException;
 import com.ecommerce.mapper.CartMapper;
 import com.ecommerce.repository.CartItemRepository;
 import com.ecommerce.repository.CartRepository;
@@ -36,6 +41,50 @@ public class ShoppingCartService {
 
         CartResponseDTO response = cartMapper.toCartResponseDTO(cart, cartItems);
         log.info("Returning cart ID: {} with {} item(s)", response.getCartId(), response.getTotalItems());
+
+        return response;
+    }
+
+    @Transactional
+    public CartResponseDTO addToCart(Long userId, AddToCartRequestDTO request) {
+        log.info("Adding product ID: {} (quantity: {}) to cart for user ID: {}",
+                request.getProductId(), request.getQuantity(), userId);
+
+        Cart cart = getOrCreateCart(userId);
+        Long productId = request.getProductId();
+        Integer requestedQuantity = request.getQuantity();
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+
+        Integer stock = product.getStock() != null ? product.getStock() : 0;
+        if (stock <= 0) {
+            throw new OutOfStockException(productId);
+        }
+        if (requestedQuantity > stock) {
+            throw new QuantityExceedsStockException(productId, stock);
+        }
+
+        CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cart.getCartId(), productId)
+                .orElseGet(() -> CartItem.builder()
+                        .cart(cart)
+                        .product(product)
+                        .quantity(0)
+                        .build());
+
+        int newQuantity = cartItem.getQuantity() + requestedQuantity;
+        if (newQuantity > stock) {
+            throw new QuantityExceedsStockException(productId, stock);
+        }
+
+        cartItem.setQuantity(newQuantity);
+        cartItemRepository.save(cartItem);
+
+        List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getCartId());
+        CartResponseDTO response = cartMapper.toCartResponseDTO(cart, cartItems);
+
+        log.info("Product ID: {} added to cart ID: {}. New total quantity: {}",
+                productId, cart.getCartId(), response.getTotalQuantity());
 
         return response;
     }

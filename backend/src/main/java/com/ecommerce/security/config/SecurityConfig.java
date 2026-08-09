@@ -1,8 +1,12 @@
 package com.ecommerce.security.config;
 
+import com.ecommerce.dto.response.ErrorResponseDTO;
 import com.ecommerce.security.filter.JwtAuthenticationFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,6 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +49,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            JwtAuthenticationFilter jwtAuthenticationFilter
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            ObjectMapper objectMapper
     ) throws Exception {
         http
                 // Disable CSRF for stateless REST API
@@ -67,6 +73,22 @@ public class SecurityConfig {
                 // Configure session management as stateless
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
+                // Return JSON 401 for unauthenticated protected requests
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                                    .status(HttpServletResponse.SC_UNAUTHORIZED)
+                                    .message("Authentication required")
+                                    .timestamp(LocalDateTime.now())
+                                    .errors(null)
+                                    .build();
+
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            objectMapper.writeValue(response.getOutputStream(), errorResponse);
+                        })
                 )
 
                 // Register JWT filter before UsernamePasswordAuthenticationFilter

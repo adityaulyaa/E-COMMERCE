@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Search, Heart, ShoppingCart, User, Sun, Moon, Menu, X, ChevronDown } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useFilter } from '../contexts/FilterContext'
+import { useCart } from '../contexts/CartContext'
 
 // Custom ShoppingBag icon (matching LoginPage & RegisterPage)
 function ShoppingBag({ className }: { className: string }) {
@@ -16,6 +17,8 @@ function ShoppingBag({ className }: { className: string }) {
 export default function Header() {
   const navigate = useNavigate()
   const { isAuthenticated, user, logout } = useAuth()
+  const { cart } = useCart()
+  const cartBadgeCount = cart?.totalQuantity ?? 0
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return document.documentElement.classList.contains('dark')
   })
@@ -159,16 +162,17 @@ export default function Header() {
             </button>
 
             {/* Cart */}
-            <button
-              disabled
-              className="relative p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors cursor-not-allowed opacity-60"
-              title="Cart (Coming Soon)"
+            <Link
+              to="/cart"
+              className="relative p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              title="Cart"
+              aria-label="Cart"
             >
               <ShoppingCart className="w-6 h-6 text-gray-700 dark:text-gray-300" />
               <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                0
+                {cartBadgeCount}
               </span>
-            </button>
+            </Link>
 
             {/* Profile Dropdown */}
             <div className="relative">

@@ -3,6 +3,8 @@ import RegisterPage from '../pages/RegisterPage'
 import LoginPage from '../pages/LoginPage'
 import ProductListPage from '../pages/ProductListPage'
 import ProductDetailPage from '../pages/ProductDetailPage'
+import CartPage from '../pages/CartPage'
+import ProtectedRoute from './ProtectedRoute'
 
 const router = createBrowserRouter([
   {
@@ -16,6 +18,14 @@ const router = createBrowserRouter([
   {
     path: '/products/:id',
     element: <ProductDetailPage />,
+  },
+  {
+    path: '/cart',
+    element: (
+      <ProtectedRoute>
+        <CartPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/register',

@@ -1,23 +1,61 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ShoppingCart, Heart, Truck, RotateCcw, ShieldCheck, Lock, Star } from 'lucide-react'
+import { ShoppingCart, Heart, Truck, RotateCcw, ShieldCheck, Lock, Star, CheckCircle2, AlertCircle } from 'lucide-react'
 import Header from '../components/Header'
 import ProductImageGallery from '../components/ProductImageGallery'
 import QuantitySelector from '../components/QuantitySelector'
 import ProductService from '../services/ProductService'
 import ReviewService from '../services/ReviewService'
+import { useAuth } from '../contexts/AuthContext'
+import { useCart } from '../contexts/CartContext'
 import { formatToRupiah } from '../utils/formatCurrency'
 import type { Product, Review } from '../types/product'
+
+interface AddToCartNotification {
+  type: 'success' | 'error'
+  message: string
+}
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
+  const { addToCart } = useCart()
   const [product, setProduct] = useState<Product | null>(null)
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState('description')
+  const [isAddingToCart, setIsAddingToCart] = useState(false)
+  const [notification, setNotification] = useState<AddToCartNotification | null>(null)
+
+  const handleAddToCart = async () => {
+    if (!product) return
+
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: window.location.pathname } })
+      return
+    }
+
+    setIsAddingToCart(true)
+    setNotification(null)
+
+    try {
+      await addToCart(product.productId, quantity)
+      setNotification({ type: 'success', message: `${product.name} added to your cart!` })
+    } catch (err: any) {
+      setNotification({ type: 'error', message: err.message || 'Failed to add item to cart' })
+    } finally {
+      setIsAddingToCart(false)
+    }
+  }
+
+  useEffect(() => {
+    if (!notification) return
+    const timer = setTimeout(() => setNotification(null), 4000)
+    return () => clearTimeout(timer)
+  }, [notification])
 
   useEffect(() => {
     if (!id) {
@@ -165,13 +203,31 @@ export default function ProductDetailPage() {
 
             <QuantitySelector maxQuantity={product.stock} onQuantityChange={setQuantity} />
 
+            {notification && (
+              <div
+                className={`flex items-center gap-2 px-4 py-3 rounded-lg border ${
+                  notification.type === 'success'
+                    ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300'
+                    : 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800 text-red-700 dark:text-red-300'
+                }`}
+              >
+                {notification.type === 'success' ? (
+                  <CheckCircle2 className="w-5 h-5 shrink-0" />
+                ) : (
+                  <AlertCircle className="w-5 h-5 shrink-0" />
+                )}
+                <span className="text-sm font-medium">{notification.message}</span>
+              </div>
+            )}
+
             <div className="flex gap-3">
               <button
-                disabled
+                onClick={handleAddToCart}
+                disabled={isAddingToCart || product.stock <= 0 || quantity > product.stock}
                 className="flex-1 flex items-center justify-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold py-3 px-6 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ShoppingCart className="w-5 h-5" />
-                Add to Cart
+                {isAddingToCart ? 'Adding...' : 'Add to Cart'}
               </button>
               <button
                 disabled

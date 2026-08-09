@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -87,6 +88,27 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handle authentication context errors
+     *
+     * @param ex AuthenticationException
+     * @return ResponseEntity with unauthorized error
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleAuthenticationException(
+            AuthenticationException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Authentication error: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
+    /**
      * Handle password mismatch or illegal arguments
      *
      * @param ex IllegalArgumentException
@@ -153,6 +175,90 @@ public class GlobalExceptionHandler {
 
         log.warn("Product not found: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    /**
+     * Handle out of stock exception
+     *
+     * @param ex OutOfStockException
+     * @return ResponseEntity with conflict error
+     */
+    @ExceptionHandler(OutOfStockException.class)
+    public ResponseEntity<ErrorResponseDTO> handleOutOfStockException(
+            OutOfStockException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Product out of stock: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    /**
+     * Handle quantity exceeds stock exception
+     *
+     * @param ex QuantityExceedsStockException
+     * @return ResponseEntity with conflict error
+     */
+    @ExceptionHandler(QuantityExceedsStockException.class)
+    public ResponseEntity<ErrorResponseDTO> handleQuantityExceedsStockException(
+            QuantityExceedsStockException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Quantity exceeds stock: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    /**
+     * Handle cart item not found exception
+     *
+     * @param ex CartItemNotFoundException
+     * @return ResponseEntity with not found error
+     */
+    @ExceptionHandler(CartItemNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleCartItemNotFoundException(
+            CartItemNotFoundException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Cart item not found: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    /**
+     * Handle unauthorized cart access exception
+     *
+     * @param ex UnauthorizedCartAccessException
+     * @return ResponseEntity with forbidden error
+     */
+    @ExceptionHandler(UnauthorizedCartAccessException.class)
+    public ResponseEntity<ErrorResponseDTO> handleUnauthorizedCartAccessException(
+            UnauthorizedCartAccessException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Unauthorized cart access: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.ecommerce.controller;
 
 import com.ecommerce.dto.request.AddToCartRequestDTO;
+import com.ecommerce.dto.request.UpdateCartItemRequestDTO;
 import com.ecommerce.dto.response.CartResponseDTO;
 import com.ecommerce.service.ShoppingCartService;
 import com.ecommerce.util.SecurityUtil;
@@ -10,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,5 +46,18 @@ public class ShoppingCartController {
 
         CartResponseDTO updatedCart = shoppingCartService.addToCart(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedCart);
+    }
+
+    @PutMapping("/items/{id}")
+    public ResponseEntity<CartResponseDTO> updateCartItem(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateCartItemRequestDTO request
+    ) {
+        Long userId = securityUtil.getCurrentUserId();
+        log.info("Received PUT /cart/items/{} request for user ID: {} with quantity: {}",
+                id, userId, request.getQuantity());
+
+        CartResponseDTO updatedCart = shoppingCartService.updateCartItem(userId, id, request);
+        return ResponseEntity.ok(updatedCart);
     }
 }

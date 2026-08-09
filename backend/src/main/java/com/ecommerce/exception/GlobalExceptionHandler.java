@@ -220,6 +220,48 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handle cart item not found exception
+     *
+     * @param ex CartItemNotFoundException
+     * @return ResponseEntity with not found error
+     */
+    @ExceptionHandler(CartItemNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleCartItemNotFoundException(
+            CartItemNotFoundException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Cart item not found: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    /**
+     * Handle unauthorized cart access exception
+     *
+     * @param ex UnauthorizedCartAccessException
+     * @return ResponseEntity with forbidden error
+     */
+    @ExceptionHandler(UnauthorizedCartAccessException.class)
+    public ResponseEntity<ErrorResponseDTO> handleUnauthorizedCartAccessException(
+            UnauthorizedCartAccessException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Unauthorized cart access: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
+    /**
      * Handle all unexpected exceptions
      *
      * @param ex Exception

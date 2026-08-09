@@ -52,9 +52,7 @@ export default function CartPage() {
                   onRemove={(cartItemId) => {
                     void removeFromCart(cartItemId)
                   }}
-                  onUpdateQuantity={(cartItemId, quantity) => {
-                    void updateQuantity(cartItemId, quantity)
-                  }}
+                  onUpdateQuantity={(cartItemId, quantity) => updateQuantity(cartItemId, quantity)}
                 />
               ))}
             </section>

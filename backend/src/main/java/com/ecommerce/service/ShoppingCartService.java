@@ -1,14 +1,17 @@
 package com.ecommerce.service;
 
 import com.ecommerce.dto.request.AddToCartRequestDTO;
+import com.ecommerce.dto.request.UpdateCartItemRequestDTO;
 import com.ecommerce.dto.response.CartResponseDTO;
 import com.ecommerce.entity.Cart;
 import com.ecommerce.entity.CartItem;
 import com.ecommerce.entity.Product;
 import com.ecommerce.entity.User;
+import com.ecommerce.exception.CartItemNotFoundException;
 import com.ecommerce.exception.OutOfStockException;
 import com.ecommerce.exception.ProductNotFoundException;
 import com.ecommerce.exception.QuantityExceedsStockException;
+import com.ecommerce.exception.UnauthorizedCartAccessException;
 import com.ecommerce.mapper.CartMapper;
 import com.ecommerce.repository.CartItemRepository;
 import com.ecommerce.repository.CartRepository;
@@ -85,6 +88,44 @@ public class ShoppingCartService {
 
         log.info("Product ID: {} added to cart ID: {}. New total quantity: {}",
                 productId, cart.getCartId(), response.getTotalQuantity());
+
+        return response;
+    }
+
+    @Transactional
+    public CartResponseDTO updateCartItem(Long userId, Long cartItemId, UpdateCartItemRequestDTO request) {
+        log.info("Updating cart item ID: {} (quantity: {}) for user ID: {}",
+                cartItemId, request.getQuantity(), userId);
+
+        Cart cart = getOrCreateCart(userId);
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new CartItemNotFoundException(cartItemId));
+
+        if (!cartItem.getCart().getCartId().equals(cart.getCartId())) {
+            throw new UnauthorizedCartAccessException(
+                    "Cart item with ID " + cartItemId + " does not belong to the current user");
+        }
+
+        Product product = cartItem.getProduct();
+        Integer stock = product.getStock() != null ? product.getStock() : 0;
+        if (stock <= 0) {
+            throw new OutOfStockException(product.getProductId());
+        }
+
+        Integer newQuantity = request.getQuantity();
+        if (newQuantity > stock) {
+            throw new QuantityExceedsStockException(product.getProductId(), stock);
+        }
+
+        cartItem.setQuantity(newQuantity);
+        cartItemRepository.save(cartItem);
+
+        List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getCartId());
+        CartResponseDTO response = cartMapper.toCartResponseDTO(cart, cartItems);
+
+        log.info("Cart item ID: {} updated to quantity: {}. New cart total amount: {}",
+                cartItemId, newQuantity, response.getTotalAmount());
 
         return response;
     }

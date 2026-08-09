@@ -88,6 +88,20 @@ const unavailableMutation = async (): Promise<void> => {
   throw new Error(CART_MUTATION_UNAVAILABLE)
 }
 
+const updateQuantity = useCallback(async (cartItemId: number, quantity: number): Promise<void> => {
+  if (!isAuthenticated) {
+    throw new Error('Please login to update your cart')
+  }
+
+  try {
+    const updatedCart = await ShoppingCartService.updateCartItem(cartItemId, quantity)
+    setCart(updatedCart)
+  } catch (err: any) {
+    const message = err.message || 'Failed to update cart item'
+    throw new Error(message)
+  }
+}, [isAuthenticated])
+
 const value: CartContextType = {
   cart,
   loading,
@@ -95,7 +109,7 @@ const value: CartContextType = {
   loadCart,
   addToCart,
   removeFromCart: unavailableMutation,
-  updateQuantity: unavailableMutation,
+  updateQuantity,
   clearCart: unavailableMutation,
 }
 

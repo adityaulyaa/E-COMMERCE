@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AlertCircle, Package, RefreshCw, ShoppingCart } from 'lucide-react'
+import { AlertCircle, CheckCircle, Package, RefreshCw, ShoppingCart } from 'lucide-react'
 import Header from '../components/Header'
 import CartItemRow from '../components/CartItemRow'
 import CartSummary from '../components/CartSummary'
@@ -8,12 +8,37 @@ import { useCart } from '../contexts/CartContext'
 
 export default function CartPage() {
   const { cart, loading, error, loadCart, removeFromCart, updateQuantity } = useCart()
+  const [removeMessage, setRemoveMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   useEffect(() => {
     if (!cart && !loading) {
       void loadCart().catch(() => undefined)
     }
   }, [cart, loading, loadCart])
+
+  useEffect(() => {
+    if (!removeMessage) {
+      return
+    }
+
+    const timer = setTimeout(() => setRemoveMessage(null), 3000)
+    return () => clearTimeout(timer)
+  }, [removeMessage])
+
+  const handleRemove = useCallback(
+    async (cartItemId: number): Promise<void> => {
+      setRemoveMessage(null)
+
+      try {
+        await removeFromCart(cartItemId)
+        setRemoveMessage({ type: 'success', text: 'Item removed from cart' })
+      } catch (err: any) {
+        setRemoveMessage({ type: 'error', text: err.message || 'Failed to remove item' })
+        throw err
+      }
+    },
+    [removeFromCart],
+  )
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
@@ -45,13 +70,28 @@ export default function CartPage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
             <section className="space-y-4">
+              {removeMessage && (
+                <div
+                  className={`flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium ${
+                    removeMessage.type === 'success'
+                      ? 'bg-green-50 text-green-700 dark:bg-green-900/40 dark:text-green-300'
+                      : 'bg-red-50 text-red-700 dark:bg-red-900/40 dark:text-red-300'
+                  }`}
+                >
+                  {removeMessage.type === 'success' ? (
+                    <CheckCircle className="w-4 h-4 shrink-0" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                  )}
+                  {removeMessage.text}
+                </div>
+              )}
+
               {cart.items.map((item) => (
                 <CartItemRow
                   key={item.cartItemId}
                   cartItem={item}
-                  onRemove={(cartItemId) => {
-                    void removeFromCart(cartItemId)
-                  }}
+                  onRemove={handleRemove}
                   onUpdateQuantity={(cartItemId, quantity) => updateQuantity(cartItemId, quantity)}
                 />
               ))}

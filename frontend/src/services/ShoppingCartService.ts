@@ -64,6 +64,27 @@ class ShoppingCartService {
       throw new Error('Failed to update cart item. Please try again.')
     }
   }
+
+  async removeCartItem(cartItemId: number): Promise<CartResponse> {
+    try {
+      const response = await apiClient.delete<CartResponse>(`/cart/items/${cartItemId}`)
+      return response.data
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        throw new Error('Please login to remove items from your cart')
+      }
+
+      if (error.response?.data?.message) {
+        throw new Error(error.response.data.message)
+      }
+
+      if (error.message) {
+        throw new Error(error.message)
+      }
+
+      throw new Error('Failed to remove cart item. Please try again.')
+    }
+  }
 }
 
 export default new ShoppingCartService()

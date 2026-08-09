@@ -102,13 +102,33 @@ const updateQuantity = useCallback(async (cartItemId: number, quantity: number):
   }
 }, [isAuthenticated])
 
+const removeFromCart = useCallback(async (cartItemId: number): Promise<void> => {
+  if (!isAuthenticated) {
+    throw new Error('Please login to remove items from your cart')
+  }
+
+  setLoading(true)
+  setError(null)
+
+  try {
+    const updatedCart = await ShoppingCartService.removeCartItem(cartItemId)
+    setCart(updatedCart)
+  } catch (err: any) {
+    const message = err.message || 'Failed to remove cart item'
+    setError(message)
+    throw new Error(message)
+  } finally {
+    setLoading(false)
+  }
+}, [isAuthenticated])
+
 const value: CartContextType = {
   cart,
   loading,
   error,
   loadCart,
   addToCart,
-  removeFromCart: unavailableMutation,
+  removeFromCart,
   updateQuantity,
   clearCart: unavailableMutation,
 }

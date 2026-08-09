@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,6 +59,17 @@ public class ShoppingCartController {
                 id, userId, request.getQuantity());
 
         CartResponseDTO updatedCart = shoppingCartService.updateCartItem(userId, id, request);
+        return ResponseEntity.ok(updatedCart);
+    }
+
+    @DeleteMapping("/items/{id}")
+    public ResponseEntity<CartResponseDTO> removeCartItem(
+            @PathVariable Long id
+    ) {
+        Long userId = securityUtil.getCurrentUserId();
+        log.info("Received DELETE /cart/items/{} request for user ID: {}", id, userId);
+
+        CartResponseDTO updatedCart = shoppingCartService.removeCartItem(userId, id);
         return ResponseEntity.ok(updatedCart);
     }
 }

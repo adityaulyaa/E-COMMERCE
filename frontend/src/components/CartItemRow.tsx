@@ -6,7 +6,7 @@ import type { CartItem } from '../types/cart'
 
 interface CartItemRowProps {
   cartItem: CartItem
-  onRemove: (cartItemId: number) => void
+  onRemove: (cartItemId: number) => Promise<void> | void
   onUpdateQuantity: (cartItemId: number, quantity: number) => Promise<void> | void
 }
 
@@ -15,6 +15,8 @@ const UPDATE_DEBOUNCE_MS = 400
 export default function CartItemRow({ cartItem, onRemove, onUpdateQuantity }: CartItemRowProps) {
   const [quantity, setQuantity] = useState(cartItem.quantity)
   const [updating, setUpdating] = useState(false)
+  const [removing, setRemoving] = useState(false)
+  const [confirmingRemove, setConfirmingRemove] = useState(false)
   const [itemError, setItemError] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -77,8 +79,23 @@ export default function CartItemRow({ cartItem, onRemove, onUpdateQuantity }: Ca
     }
   }
 
+  const handleRemove = useCallback(async () => {
+    setConfirmingRemove(false)
+    setRemoving(true)
+    setItemError(null)
+
+    try {
+      await onRemove(cartItem.cartItemId)
+    } catch (err: any) {
+      setItemError(err.message || 'Failed to remove item')
+      setQuantity(cartItem.quantity)
+    } finally {
+      setRemoving(false)
+    }
+  }, [cartItem.cartItemId, cartItem.quantity, onRemove])
+
   return (
-    <article className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+    <article className="relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
       <div className="grid grid-cols-[96px_1fr] sm:grid-cols-[96px_1fr_auto] gap-4">
         <Link
           to={`/products/${cartItem.productId}`}
@@ -155,15 +172,41 @@ export default function CartItemRow({ cartItem, onRemove, onUpdateQuantity }: Ca
 
         <button
           type="button"
-          disabled
-          onClick={() => onRemove(cartItem.cartItemId)}
-          className="hidden sm:inline-flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-400 cursor-not-allowed"
+          disabled={removing}
+          onClick={() => setConfirmingRemove(true)}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-400 hover:text-red-600 hover:border-red-300 dark:hover:text-red-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           title="Remove item"
           aria-label="Remove item"
         >
-          <Trash2 className="w-5 h-5" />
+          {removing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
         </button>
       </div>
+
+      {confirmingRemove && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-lg bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm p-4">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white">
+            Remove this item from your cart?
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setConfirmingRemove(false)}
+              disabled={removing}
+              className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => void handleRemove()}
+              disabled={removing}
+              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      )}
     </article>
   )
 }

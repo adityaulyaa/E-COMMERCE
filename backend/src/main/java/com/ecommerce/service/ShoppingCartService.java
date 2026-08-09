@@ -131,6 +131,31 @@ public class ShoppingCartService {
     }
 
     @Transactional
+    public CartResponseDTO removeCartItem(Long userId, Long cartItemId) {
+        log.info("Removing cart item ID: {} for user ID: {}", cartItemId, userId);
+
+        Cart cart = getOrCreateCart(userId);
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new CartItemNotFoundException(cartItemId));
+
+        if (!cartItem.getCart().getCartId().equals(cart.getCartId())) {
+            throw new UnauthorizedCartAccessException(
+                    "Cart item with ID " + cartItemId + " does not belong to the current user");
+        }
+
+        cartItemRepository.delete(cartItem);
+
+        List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getCartId());
+        CartResponseDTO response = cartMapper.toCartResponseDTO(cart, cartItems);
+
+        log.info("Cart item ID: {} removed. Remaining cart item count: {}, total amount: {}",
+                cartItemId, response.getTotalItems(), response.getTotalAmount());
+
+        return response;
+    }
+
+    @Transactional
     public Cart getOrCreateCart(Long userId) {
         validateUserId(userId);
 

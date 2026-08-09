@@ -6,8 +6,7 @@ public class QuantityExceedsStockException extends RuntimeException {
         super(message);
     }
 
-    public QuantityExceedsStockException(Long productId, int availableStock) {
-        super("Requested quantity exceeds available stock for product ID " + productId
-                + " (available: " + availableStock + ")");
+    public QuantityExceedsStockException(int availableStock) {
+        super("Insufficient stock. Maximum quantity that can be ordered is " + availableStock + ".");
     }
 }

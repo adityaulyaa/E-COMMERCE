@@ -65,7 +65,7 @@ public class ShoppingCartService {
             throw new OutOfStockException(productId);
         }
         if (requestedQuantity > stock) {
-            throw new QuantityExceedsStockException(productId, stock);
+            throw new QuantityExceedsStockException(stock);
         }
 
         CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cart.getCartId(), productId)
@@ -77,7 +77,7 @@ public class ShoppingCartService {
 
         int newQuantity = cartItem.getQuantity() + requestedQuantity;
         if (newQuantity > stock) {
-            throw new QuantityExceedsStockException(productId, stock);
+            throw new QuantityExceedsStockException(stock);
         }
 
         cartItem.setQuantity(newQuantity);
@@ -115,7 +115,7 @@ public class ShoppingCartService {
 
         Integer newQuantity = request.getQuantity();
         if (newQuantity > stock) {
-            throw new QuantityExceedsStockException(product.getProductId(), stock);
+            throw new QuantityExceedsStockException(stock);
         }
 
         cartItem.setQuantity(newQuantity);

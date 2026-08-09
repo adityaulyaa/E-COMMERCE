@@ -2033,10 +2033,10 @@ Mengimplementasikan fitur View Cart yang menampilkan semua shopping cart content
 
 Pada tahap ini, project diasumsikan telah menyelesaikan Product Catalog module (UC-04 hingga UC-07) dan Authentication module dengan kondisi:
 
-- Authentication telah selesai dan JWT berfungsi.
-- Protected routes telah dikonfigurasi.
-- Entity Product telah tersedia.
-- Frontend routing dan components telah tersedia.
+- [x] Authentication telah selesai dan JWT berfungsi.
+- [x] Protected routes telah dikonfigurasi.
+- [x] Entity Product telah tersedia.
+- [x] Frontend routing dan components telah tersedia.
 
 ---
 
@@ -2044,318 +2044,318 @@ Pada tahap ini, project diasumsikan telah menyelesaikan Product Catalog module (
 
 UC-08 View Cart bergantung pada:
 
-- UC-02 Login (harus selesai untuk JWT).
-- UC-03 Logout (protected routes).
-- Entity Product dan ProductRepository.
-- Database MySQL.
+- [x] UC-02 Login (harus selesai untuk JWT).
+- [x] UC-03 Logout (protected routes).
+- [x] Entity Product dan ProductRepository.
+- [x] Database MySQL.
 
 ---
 
 ## Implementation Steps
 
-### Pembuatan Entity Cart
+### ✅ Pembuatan Entity Cart
 
-- Buat Entity Cart pada package entity.
-- Tambahkan field: cart_id (PK, Auto Increment), user_id (FK), created_at, updated_at.
-- Relationship: @OneToOne dengan User (one User has one active Cart).
-- Anotasi JPA yang sesuai.
+- [x] Buat Entity Cart pada package entity.
+- [x] Tambahkan field: cart_id (PK, Auto Increment), user_id (FK), created_at, updated_at.
+- [x] Relationship: @OneToOne dengan User (one User has one active Cart).
+- [x] Anotasi JPA yang sesuai.
 
-### Pembuatan Entity CartItem
+### ✅ Pembuatan Entity CartItem
 
-- Buat Entity CartItem pada package entity.
-- Tambahkan field: cart_item_id (PK, Auto Increment), cart_id (FK), product_id (FK), quantity, created_at, updated_at.
-- Relationship: @ManyToOne dengan Cart dan Product.
-- Unique constraint pada kombinasi (cart_id, product_id).
-- Anotasi JPA yang sesuai.
+- [x] Buat Entity CartItem pada package entity.
+- [x] Tambahkan field: cart_item_id (PK, Auto Increment), cart_id (FK), product_id (FK), quantity, created_at, updated_at.
+- [x] Relationship: @ManyToOne dengan Cart dan Product.
+- [x] Unique constraint pada kombinasi (cart_id, product_id).
+- [x] Anotasi JPA yang sesuai.
 
-### Update Entity User
+### ✅ Update Entity User
 
-- Tambahkan relationship @OneToOne dengan Cart pada Entity User.
-- Field: cart (Cart entity).
-- Bidirectional relationship.
+- [x] Tambahkan relationship @OneToOne dengan Cart pada Entity User.
+- [x] Field: cart (Cart entity).
+- [x] Bidirectional relationship.
 
-### Pembuatan Repository
+### ✅ Pembuatan Repository
 
-- Buat interface CartRepository pada package repository.
-- Extend JpaRepository<Cart, Long>.
-- Tambahkan method findByUserId(Long userId).
-- Tambahkan method findOrCreateCart(Long userId) (optional, helper method).
+- [x] Buat interface CartRepository pada package repository.
+- [x] Extend JpaRepository<Cart, Long>.
+- [x] Tambahkan method findByUserId(Long userId).
+- [x] Tambahkan method findOrCreateCart(Long userId) (optional, helper method).
 
-- Buat interface CartItemRepository pada package repository.
-- Extend JpaRepository<CartItem, Long>.
-- Tambahkan method findByCartId(Long cartId).
-- Tambahkan method findByCartIdAndProductId(Long cartId, Long productId).
+- [x] Buat interface CartItemRepository pada package repository.
+- [x] Extend JpaRepository<CartItem, Long>.
+- [x] Tambahkan method findByCartId(Long cartId).
+- [x] Tambahkan method findByCartIdAndProductId(Long cartId, Long productId).
 
-### Pembuatan DTO
+### ✅ Pembuatan DTO
 
-- Buat CartItemDTO pada package dto.response.
-- Tambahkan field: cart_item_id, product_id, product_name, product_price, quantity, subtotal.
+- [x] Buat CartItemDTO pada package dto.response.
+- [x] Tambahkan field: cart_item_id, product_id, product_name, product_price, quantity, subtotal.
 
-- Buat CartResponseDTO pada package dto.response.
-- Tambahkan field: cart_id, items (List<CartItemDTO>), total_amount.
+- [x] Buat CartResponseDTO pada package dto.response.
+- [x] Tambahkan field: cart_id, items (List<CartItemDTO>), total_amount.
 
-### Pembuatan Mapper
+### ✅ Pembuatan Mapper
 
-- Buat CartMapper pada package mapper.
-- Buat method toCartItemDTO(CartItem cartItem) untuk convert CartItem ke DTO.
-- Buat method toCartResponseDTO(Cart cart) untuk convert Cart ke DTO.
-- Method ini harus calculate subtotal untuk setiap item dan total amount.
+- [x] Buat CartMapper pada package mapper.
+- [x] Buat method toCartItemDTO(CartItem cartItem) untuk convert CartItem ke DTO.
+- [x] Buat method toCartResponseDTO(Cart cart) untuk convert Cart ke DTO.
+- [x] Method ini harus calculate subtotal untuk setiap item dan total amount.
 
-### Pembuatan Service
+### ✅ Pembuatan Service
 
-- Buat ShoppingCartService pada package service.
-- Inject CartRepository, CartItemRepository, UserRepository, ProductRepository.
+- [x] Buat ShoppingCartService pada package service.
+- [x] Inject CartRepository, CartItemRepository, UserRepository, ProductRepository.
 
-- Implementasi method getCart(Long userId) pada ShoppingCartService.
-- Retrieve cart berdasarkan userId.
-- Jika cart tidak ada, create new cart untuk user.
-- Retrieve semua CartItems dari cart.
-- Calculate subtotal untuk setiap item (price * quantity).
-- Calculate total amount (sum semua subtotals).
-- Convert ke CartResponseDTO menggunakan CartMapper.
-- Return CartResponseDTO.
+- [x] Implementasi method getCart(Long userId) pada ShoppingCartService.
+- [x] Retrieve cart berdasarkan userId.
+- [x] Jika cart tidak ada, create new cart untuk user.
+- [x] Retrieve semua CartItems dari cart.
+- [x] Calculate subtotal untuk setiap item (price * quantity).
+- [x] Calculate total amount (sum semua subtotals).
+- [x] Convert ke CartResponseDTO menggunakan CartMapper.
+- [x] Return CartResponseDTO.
 
-### Pembuatan Controller
+### ✅ Pembuatan Controller
 
-- Buat ShoppingCartController pada package controller.
-- Anotasi dengan @RestController dan @RequestMapping("/cart").
-- Inject ShoppingCartService dan SecurityUtil (untuk mendapat current user).
+- [x] Buat ShoppingCartController pada package controller.
+- [x] Anotasi dengan @RestController dan @RequestMapping("/cart").
+- [x] Inject ShoppingCartService dan SecurityUtil (untuk mendapat current user).
 
-- Buat endpoint GET /cart pada ShoppingCartController.
-- Anotasi dengan @GetMapping.
-- Anotasi dengan @PreAuthorize("isAuthenticated()") atau verify JWT.
-- Extract current userId dari authentication context atau JWT.
-- Panggil shoppingCartService.getCart(userId).
-- Return ResponseEntity dengan HTTP Status 200 dan CartResponseDTO.
-- Endpoint adalah protected endpoint (memerlukan autentikasi).
+- [x] Buat endpoint GET /cart pada ShoppingCartController.
+- [x] Anotasi dengan @GetMapping.
+- [x] Anotasi dengan @PreAuthorize("isAuthenticated()") atau verify JWT.
+- [x] Extract current userId dari authentication context atau JWT.
+- [x] Panggil shoppingCartService.getCart(userId).
+- [x] Return ResponseEntity dengan HTTP Status 200 dan CartResponseDTO.
+- [x] Endpoint adalah protected endpoint (memerlukan autentikasi).
 
-### Security Context Helper
+### ✅ Security Context Helper
 
-- Buat SecurityUtil atau UserUtil pada package util.
-- Implementasi method getCurrentUserId() untuk extract userId dari SecurityContext.
-- Atau gunakan @AuthenticationPrincipal untuk inject current user ke controller.
+- [x] Buat SecurityUtil atau UserUtil pada package util.
+- [x] Implementasi method getCurrentUserId() untuk extract userId dari SecurityContext.
+- [x] Atau gunakan @AuthenticationPrincipal untuk inject current user ke controller.
 
-### Exception Handling
+### ✅ Exception Handling
 
-- Update GlobalExceptionHandler untuk handle Cart-related errors.
-- Handle cart not found (rare, sebab auto-create).
-- Handle user not authenticated (401).
+- [x] Update GlobalExceptionHandler untuk handle Cart-related errors.
+- [x] Handle cart not found (rare, sebab auto-create).
+- [x] Handle user not authenticated (401).
 
-### Initialization di AuthenticationService
+### ✅ Initialization di AuthenticationService
 
-- Saat user berhasil login atau register, create Cart otomatis.
-- Call ShoppingCartService untuk create atau get cart.
-- Pastikan setiap user memiliki cart.
+- [x] Saat user berhasil login atau register, create Cart otomatis.
+- [x] Call ShoppingCartService untuk create atau get cart.
+- [x] Pastikan setiap user memiliki cart.
 
-### Frontend Cart Context
+### ✅ Frontend Cart Context
 
-- Buat CartContext.jsx pada direktori contexts.
-- State: cart (CartResponseDTO), loading, error.
-- Function: loadCart(), addToCart(), removeFromCart(), updateQuantity(), clearCart().
-- loadCart digunakan untuk fetch cart dari backend saat user login.
+- [x] Buat CartContext.jsx pada direktori contexts.
+- [x] State: cart (CartResponseDTO), loading, error.
+- [x] Function: loadCart(), addToCart(), removeFromCart(), updateQuantity(), clearCart().
+- [x] loadCart digunakan untuk fetch cart dari backend saat user login.
 
-### Frontend Service
+### ✅ Frontend Service
 
-- Buat ShoppingCartService.js pada direktori services.
-- Buat function getCart() yang mengirim GET request ke /cart dengan JWT token.
-- Handle response dan error.
-- Return CartResponseDTO atau throw error.
+- [x] Buat ShoppingCartService.js pada direktori services.
+- [x] Buat function getCart() yang mengirim GET request ke /cart dengan JWT token.
+- [x] Handle response dan error.
+- [x] Return CartResponseDTO atau throw error.
 
-### Frontend Cart Page
+### ✅ Frontend Cart Page
 
-- Buat CartPage.jsx pada direktori pages.
-- Extract cart dari CartContext.
-- State: loading, error.
-- useEffect untuk call loadCart() dari CartContext.
-- Handle loading state: tampilkan loading skeleton.
-- Handle error state: tampilkan error message.
-- Handle empty cart: tampilkan "Shopping Cart is empty" dengan link ke product list.
-- Display cart items sebagai list atau table:
-  - Product image (small)
-  - Product name
-  - Product price
-  - Quantity
-  - Subtotal
-  - Remove button
-- Display cart summary:
-  - Subtotal semua items
-  - Shipping (jika ada)
-  - Total amount
-  - Checkout button
+- [x] Buat CartPage.jsx pada direktori pages.
+- [x] Extract cart dari CartContext.
+- [x] State: loading, error.
+- [x] useEffect untuk call loadCart() dari CartContext.
+- [x] Handle loading state: tampilkan loading skeleton.
+- [x] Handle error state: tampilkan error message.
+- [x] Handle empty cart: tampilkan "Shopping Cart is empty" dengan link ke product list.
+- [x] Display cart items sebagai list atau table:
+  - [x] Product image (small)
+  - [x] Product name
+  - [x] Product price
+  - [x] Quantity
+  - [x] Subtotal
+  - [x] Remove button
+- [x] Display cart summary:
+  - [x] Subtotal semua items
+  - [x] Shipping (jika ada)
+  - [x] Total amount
+  - [x] Checkout button
 
-### Cart Item Component
+### ✅ Cart Item Component
 
-- Buat CartItemRow.jsx pada direktori components.
-- Props: cartItem, onRemove, onUpdateQuantity callbacks.
-- Display product information.
-- Quantity selector untuk update quantity.
-- Remove button.
+- [x] Buat CartItemRow.jsx pada direktori components.
+- [x] Props: cartItem, onRemove, onUpdateQuantity callbacks.
+- [x] Display product information.
+- [x] Quantity selector untuk update quantity.
+- [x] Remove button.
 
-### Cart Summary Component
+### ✅ Cart Summary Component
 
-- Buat CartSummary.jsx pada direktori components.
-- Props: cart data.
-- Display subtotal, tax (jika ada), total.
-- Checkout button.
-- Continue shopping link.
+- [x] Buat CartSummary.jsx pada direktori components.
+- [x] Props: cart data.
+- [x] Display subtotal, tax (jika ada), total.
+- [x] Checkout button.
+- [x] Continue shopping link.
 
-### Routing
+### ✅ Routing
 
-- Update routing configuration.
-- Tambahkan route /cart untuk CartPage (protected route).
-- Pastikan hanya authenticated users yang dapat access.
+- [x] Update routing configuration.
+- [x] Tambahkan route /cart untuk CartPage (protected route).
+- [x] Pastikan hanya authenticated users yang dapat access.
 
-### Navigation
+### ✅ Navigation
 
-- Update header/navigation untuk include link ke cart.
-- Tampilkan cart icon dengan badge menampilkan jumlah items.
+- [x] Update header/navigation untuk include link ke cart.
+- [x] Tampilkan cart icon dengan badge menampilkan jumlah items.
 
-### Testing Backend
+### ✅ Testing Backend
 
-- Test endpoint GET /cart dengan valid JWT: return cart dengan items.
-- Test endpoint dengan empty cart: return empty items list.
-- Test calculation subtotal dan total correct.
-- Test endpoint tanpa authentication: return HTTP 401.
-- Test endpoint dengan invalid token: return HTTP 401.
-- Test multiple users have separate carts.
+- [x] Test endpoint GET /cart dengan valid JWT: return cart dengan items.
+- [x] Test endpoint dengan empty cart: return empty items list.
+- [x] Test calculation subtotal dan total correct.
+- [x] Test endpoint tanpa authentication: return HTTP 401.
+- [x] Test endpoint dengan invalid token: return HTTP 401.
+- [x] Test multiple users have separate carts.
 
-### Testing Frontend
+### ✅ Testing Frontend
 
-- Test cart page can be accessed dengan authentication.
-- Test cart items displayed correctly.
-- Test loading state berfungsi.
-- Test empty cart menampilkan appropriate message.
-- Test cart summary calculation correct.
-- Test responsive design di berbagai ukuran.
-
----
-
-## Database Tasks
-
-- Buat Entity Cart dan CartItem.
-- Create table Cart dan CartItem di database.
-- Setup relationship antara User-Cart dan Cart-CartItem.
-- Verify unique constraint pada (cart_id, product_id).
+- [x] Test cart page can be accessed dengan authentication.
+- [x] Test cart items displayed correctly.
+- [x] Test loading state berfungsi.
+- [x] Test empty cart menampilkan appropriate message.
+- [x] Test cart summary calculation correct.
+- [x] Test responsive design di berbagai ukuran.
 
 ---
 
-## Backend Tasks
+## ✅ Database Tasks
 
-- Implementasi Entity Cart dan CartItem.
-- Implementasi CartRepository dan CartItemRepository.
-- Implementasi CartItemDTO dan CartResponseDTO.
-- Implementasi CartMapper.
-- Implementasi ShoppingCartService dengan method getCart().
-- Implementasi ShoppingCartController dengan endpoint GET /cart.
-- Implementasi SecurityUtil atau UserUtil.
-- Update AuthenticationService untuk auto-create cart.
-- Update GlobalExceptionHandler.
+- [x] Buat Entity Cart dan CartItem.
+- [x] Create table Cart dan CartItem di database.
+- [x] Setup relationship antara User-Cart dan Cart-CartItem.
+- [x] Verify unique constraint pada (cart_id, product_id).
 
 ---
 
-## API Tasks
+## ✅ Backend Tasks
 
-- Implementasi endpoint GET /cart.
-- Endpoint requires valid JWT token di Authorization header.
-- Endpoint return HTTP 200 dengan CartResponseDTO.
-- Endpoint return HTTP 401 jika not authenticated.
-- Endpoint return HTTP 500 jika system error.
-
----
-
-## Frontend Tasks
-
-- Implementasi CartContext untuk manage cart state.
-- Implementasi ShoppingCartService.js untuk API communication.
-- Implementasi CartPage.jsx.
-- Implementasi CartItemRow.jsx dan CartSummary.jsx components.
-- Update routing dengan protected route /cart.
-- Update navigation untuk link ke cart.
-- Implementasi loading dan error handling.
+- [x] Implementasi Entity Cart dan CartItem.
+- [x] Implementasi CartRepository dan CartItemRepository.
+- [x] Implementasi CartItemDTO dan CartResponseDTO.
+- [x] Implementasi CartMapper.
+- [x] Implementasi ShoppingCartService dengan method getCart().
+- [x] Implementasi ShoppingCartController dengan endpoint GET /cart.
+- [x] Implementasi SecurityUtil atau UserUtil.
+- [x] Update AuthenticationService untuk auto-create cart.
+- [x] Update GlobalExceptionHandler.
 
 ---
 
-## Business Rules
+## ✅ API Tasks
 
-- Shopping Cart hanya milik logged-in customer.
-- Setiap customer hanya memiliki satu active cart.
-- Setiap CartItem merepresentasikan satu product.
-- System automatically calculate subtotal dan total.
-- Shopping cart dapat dalam state empty.
-
----
-
-## Validation Rules
-
-- Customer harus authenticated.
-- Cart harus berhasil di-retrieve.
+- [x] Implementasi endpoint GET /cart.
+- [x] Endpoint requires valid JWT token di Authorization header.
+- [x] Endpoint return HTTP 200 dengan CartResponseDTO.
+- [x] Endpoint return HTTP 401 jika not authenticated.
+- [x] Endpoint return HTTP 500 jika system error.
 
 ---
 
-## Use Case Boundary
+## ✅ Frontend Tasks
+
+- [x] Implementasi CartContext untuk manage cart state.
+- [x] Implementasi ShoppingCartService.js untuk API communication.
+- [x] Implementasi CartPage.jsx.
+- [x] Implementasi CartItemRow.jsx dan CartSummary.jsx components.
+- [x] Update routing dengan protected route /cart.
+- [x] Update navigation untuk link ke cart.
+- [x] Implementasi loading dan error handling.
+
+---
+
+## ✅ Business Rules
+
+- [x] Shopping Cart hanya milik logged-in customer.
+- [x] Setiap customer hanya memiliki satu active cart.
+- [x] Setiap CartItem merepresentasikan satu product.
+- [x] System automatically calculate subtotal dan total.
+- [x] Shopping cart dapat dalam state empty.
+
+---
+
+## ✅ Validation Rules
+
+- [x] Customer harus authenticated.
+- [x] Cart harus berhasil di-retrieve.
+
+---
+
+## ✅ Use Case Boundary
 
 Saat mengerjakan UC-08 View Cart, implementasi yang boleh dilakukan:
 
-- Pembuatan Entity Cart dan CartItem.
-- Implementasi CartRepository dan CartItemRepository.
-- Implementasi ShoppingCartService.getCart().
-- Implementasi endpoint GET /cart.
-- Implementasi CartPage dan components.
-- Auto-create cart saat user login/register.
+- [x] Pembuatan Entity Cart dan CartItem.
+- [x] Implementasi CartRepository dan CartItemRepository.
+- [x] Implementasi ShoppingCartService.getCart().
+- [x] Implementasi endpoint GET /cart.
+- [x] Implementasi CartPage dan components.
+- [x] Auto-create cart saat user login/register.
 
 Implementasi yang TIDAK BOLEH dilakukan pada UC-08:
 
-- Implementasi Add to Cart (akan dikerjakan di UC-09).
-- Implementasi Update Cart quantity (akan dikerjakan di UC-10).
-- Implementasi Remove Cart Item (akan dikerjakan di UC-11).
-- Implementasi Checkout dan Payment.
+- [x] Implementasi Add to Cart (akan dikerjakan di UC-09).
+- [x] Implementasi Update Cart quantity (akan dikerjakan di UC-10).
+- [x] Implementasi Remove Cart Item (akan dikerjakan di UC-11).
+- [x] Implementasi Checkout dan Payment.
 
 ---
 
-## Acceptance Criteria
+## ✅ Acceptance Criteria
 
-- Shopping cart berhasil ditampilkan.
-- Cart items ditampilkan dengan informasi lengkap.
-- Subtotal dan total calculated correctly.
-- Empty cart menampilkan appropriate message.
-- Hanya authenticated users dapat access cart.
-- Cart summary accurate.
-
----
-
-## Testing Checklist
-
-### Positive Case
-
-- Cart displayed for authenticated user.
-- All cart items shown.
-- Calculations correct.
-- Empty cart handled.
-
-### Negative Case
-
-- Unauthenticated user cannot access cart.
-- Invalid token rejected.
-
-### Error Case
-
-- Database error handled.
-- Network error handled.
+- [x] Shopping cart berhasil ditampilkan.
+- [x] Cart items ditampilkan dengan informasi lengkap.
+- [x] Subtotal dan total calculated correctly.
+- [x] Empty cart menampilkan appropriate message.
+- [x] Hanya authenticated users dapat access cart.
+- [x] Cart summary accurate.
 
 ---
 
-## Completion State
+## ✅ Testing Checklist
+
+### ✅ Positive Case
+
+- [x] Cart displayed for authenticated user.
+- [x] All cart items shown.
+- [x] Calculations correct.
+- [x] Empty cart handled.
+
+### ✅ Negative Case
+
+- [x] Unauthenticated user cannot access cart.
+- [x] Invalid token rejected.
+
+### ✅ Error Case
+
+- [x] Database error handled.
+- [x] Network error handled.
+
+---
+
+## ✅ Completion State
 
 Setelah UC-08 View Cart selesai, kondisi project adalah:
 
-- Entity Cart dan CartItem telah dibuat dan tables tersedia.
-- Endpoint GET /cart berfungsi dan teruji.
-- CartPage berfungsi dan teruji.
-- CartContext mengelola cart state.
-- Cart auto-created saat user login/register.
-- Calculation subtotal dan total berfungsi.
-- Protected route /cart telah dikonfigurasi.
-- Project siap untuk implementasi UC-09 Add to Cart.
+- [x] Entity Cart dan CartItem telah dibuat dan tables tersedia.
+- [x] Endpoint GET /cart berfungsi dan teruji.
+- [x] CartPage berfungsi dan teruji.
+- [x] CartContext mengelola cart state.
+- [x] Cart auto-created saat user login/register.
+- [x] Calculation subtotal dan total berfungsi.
+- [x] Protected route /cart telah dikonfigurasi.
+- [x] Project siap untuk implementasi UC-09 Add to Cart.
 
 ---
 
@@ -2371,10 +2371,10 @@ Mengimplementasikan fitur Add to Cart yang memungkinkan Customer menambahkan pro
 
 Project telah menyelesaikan UC-08 View Cart dengan kondisi:
 
-- Entity Cart dan CartItem tersedia.
-- ShoppingCartService dan ShoppingCartController tersedia.
-- CartContext dan CartPage tersedia.
-- Product Detail page tersedia dengan quantity selector.
+- [x] Entity Cart dan CartItem tersedia.
+- [x] ShoppingCartService dan ShoppingCartController tersedia.
+- [x] CartContext dan CartPage tersedia.
+- [x] Product Detail page tersedia dengan quantity selector.
 
 ---
 
@@ -2382,226 +2382,226 @@ Project telah menyelesaikan UC-08 View Cart dengan kondisi:
 
 UC-09 Add to Cart bergantung pada:
 
-- UC-07 View Product Detail.
-- UC-08 View Cart.
-- Authentication JWT.
-- Entity Product, Cart, CartItem.
-- ProductRepository, CartRepository, CartItemRepository.
+- [x] UC-07 View Product Detail.
+- [x] UC-08 View Cart.
+- [x] Authentication JWT.
+- [x] Entity Product, Cart, CartItem.
+- [x] ProductRepository, CartRepository, CartItemRepository.
 
 ---
 
 ## Implementation Steps
 
-### Pembuatan DTO
+### ✅ Pembuatan DTO
 
-- Buat AddToCartRequestDTO pada package dto.request.
-- Tambahkan field: productId, quantity.
-- Tambahkan validation: productId required, quantity required, quantity > 0.
-- Reuse CartResponseDTO sebagai response setelah cart updated.
+- [x] Buat AddToCartRequestDTO pada package dto.request.
+- [x] Tambahkan field: productId, quantity.
+- [x] Tambahkan validation: productId required, quantity required, quantity > 0.
+- [x] Reuse CartResponseDTO sebagai response setelah cart updated.
 
-### Update ShoppingCartService
+### ✅ Update ShoppingCartService
 
-- Tambahkan method addToCart(Long userId, AddToCartRequestDTO request).
-- Retrieve current user cart berdasarkan userId.
-- Retrieve product berdasarkan productId.
-- Jika product tidak ditemukan, throw ProductNotFoundException.
-- Check product stock availability.
-- Jika stock <= 0, throw OutOfStockException.
-- Validasi quantity tidak melebihi stock.
-- Check apakah product sudah ada di cart menggunakan cartId dan productId.
-- Jika CartItem sudah ada, tambah quantity existing dengan requested quantity.
-- Validasi total quantity baru tidak melebihi stock.
-- Jika CartItem belum ada, create CartItem baru dengan product dan quantity.
-- Save CartItem.
-- Recalculate subtotal dan total melalui CartMapper.
-- Return updated CartResponseDTO.
+- [x] Tambahkan method addToCart(Long userId, AddToCartRequestDTO request).
+- [x] Retrieve current user cart berdasarkan userId.
+- [x] Retrieve product berdasarkan productId.
+- [x] Jika product tidak ditemukan, throw ProductNotFoundException.
+- [x] Check product stock availability.
+- [x] Jika stock <= 0, throw OutOfStockException.
+- [x] Validasi quantity tidak melebihi stock.
+- [x] Check apakah product sudah ada di cart menggunakan cartId dan productId.
+- [x] Jika CartItem sudah ada, tambah quantity existing dengan requested quantity.
+- [x] Validasi total quantity baru tidak melebihi stock.
+- [x] Jika CartItem belum ada, create CartItem baru dengan product dan quantity.
+- [x] Save CartItem.
+- [x] Recalculate subtotal dan total melalui CartMapper.
+- [x] Return updated CartResponseDTO.
 
-### Custom Exception
+### ✅ Custom Exception
 
-- Buat OutOfStockException pada package exception.
-- Buat QuantityExceedsStockException pada package exception.
-- Update GlobalExceptionHandler untuk handle kedua exception tersebut.
+- [x] Buat OutOfStockException pada package exception.
+- [x] Buat QuantityExceedsStockException pada package exception.
+- [x] Update GlobalExceptionHandler untuk handle kedua exception tersebut.
 
-### Update ShoppingCartController
+### ✅ Update ShoppingCartController
 
-- Tambahkan endpoint POST /cart/items.
-- Endpoint protected dan membutuhkan valid JWT.
-- Terima AddToCartRequestDTO sebagai @RequestBody dengan @Valid.
-- Extract current userId dari SecurityContext.
-- Panggil shoppingCartService.addToCart(userId, request).
-- Return HTTP 200 atau 201 dengan updated CartResponseDTO.
+- [x] Tambahkan endpoint POST /cart/items.
+- [x] Endpoint protected dan membutuhkan valid JWT.
+- [x] Terima AddToCartRequestDTO sebagai @RequestBody dengan @Valid.
+- [x] Extract current userId dari SecurityContext.
+- [x] Panggil shoppingCartService.addToCart(userId, request).
+- [x] Return HTTP 200 atau 201 dengan updated CartResponseDTO.
 
-### Update Frontend ShoppingCartService
+### ✅ Update Frontend ShoppingCartService
 
-- Tambahkan function addToCart(productId, quantity).
-- Kirim POST request ke /cart/items dengan body productId dan quantity.
-- Pastikan JWT dikirim melalui Authorization header oleh axios interceptor.
-- Return updated cart.
+- [x] Tambahkan function addToCart(productId, quantity).
+- [x] Kirim POST request ke /cart/items dengan body productId dan quantity.
+- [x] Pastikan JWT dikirim melalui Authorization header oleh axios interceptor.
+- [x] Return updated cart.
 
-### Update CartContext
+### ✅ Update CartContext
 
-- Tambahkan function addToCart(productId, quantity).
-- Panggil ShoppingCartService.addToCart().
-- Update cart state dengan response terbaru.
-- Handle loading dan error state.
+- [x] Tambahkan function addToCart(productId, quantity).
+- [x] Panggil ShoppingCartService.addToCart().
+- [x] Update cart state dengan response terbaru.
+- [x] Handle loading dan error state.
 
-### Update Product Detail Page
+### ✅ Update Product Detail Page
 
-- Integrasikan Add to Cart button pada ProductDetailPage.
-- Gunakan quantity dari QuantitySelector.
-- Jika user belum login, redirect ke Login page atau tampilkan message untuk login.
-- Jika user login, panggil addToCart dari CartContext.
-- Tampilkan success notification ketika product berhasil ditambahkan.
-- Tampilkan error message jika out of stock atau quantity melebihi stock.
-- Disable button jika stock tidak tersedia.
+- [x] Integrasikan Add to Cart button pada ProductDetailPage.
+- [x] Gunakan quantity dari QuantitySelector.
+- [x] Jika user belum login, redirect ke Login page atau tampilkan message untuk login.
+- [x] Jika user login, panggil addToCart dari CartContext.
+- [x] Tampilkan success notification ketika product berhasil ditambahkan.
+- [x] Tampilkan error message jika out of stock atau quantity melebihi stock.
+- [x] Disable button jika stock tidak tersedia.
 
-### Update Navigation Cart Badge
+### ✅ Update Navigation Cart Badge
 
-- Update cart badge count setelah Add to Cart berhasil.
-- Hitung jumlah total quantity atau jumlah item sesuai kebutuhan UI.
+- [x] Update cart badge count setelah Add to Cart berhasil.
+- [x] Hitung jumlah total quantity atau jumlah item sesuai kebutuhan UI.
 
-### Testing Backend
+### ✅ Testing Backend
 
-- Test POST /cart/items dengan valid productId dan quantity: cart updated.
-- Test add product yang sudah ada di cart: quantity bertambah, bukan duplicate row.
-- Test quantity melebihi stock: return business error.
-- Test out of stock product: return error.
-- Test invalid productId: return 404.
-- Test unauthenticated request: return 401.
+- [x] Test POST /cart/items dengan valid productId dan quantity: cart updated.
+- [x] Test add product yang sudah ada di cart: quantity bertambah, bukan duplicate row.
+- [x] Test quantity melebihi stock: return business error.
+- [x] Test out of stock product: return error.
+- [x] Test invalid productId: return 404.
+- [x] Test unauthenticated request: return 401.
 
-### Testing Frontend
+### ✅ Testing Frontend
 
-- Test Add to Cart dari Product Detail page.
-- Test success notification muncul.
-- Test cart badge updated.
-- Test unauthenticated user diarahkan ke login.
-- Test out of stock button disabled atau error displayed.
-- Test quantity exceeding stock shows error.
-
----
-
-## Database Tasks
-
-- Tidak ada perubahan struktur database.
-- Insert atau update CartItem saat Add to Cart.
-- Pastikan unique constraint (cart_id, product_id) tetap terjaga.
+- [x] Test Add to Cart dari Product Detail page.
+- [x] Test success notification muncul.
+- [x] Test cart badge updated.
+- [x] Test unauthenticated user diarahkan ke login.
+- [x] Test out of stock button disabled atau error displayed.
+- [x] Test quantity exceeding stock shows error.
 
 ---
 
-## Backend Tasks
+## ✅ Database Tasks
 
-- Implementasi AddToCartRequestDTO.
-- Update ShoppingCartService dengan method addToCart().
-- Implementasi OutOfStockException dan QuantityExceedsStockException.
-- Update ShoppingCartController dengan endpoint POST /cart/items.
-- Update GlobalExceptionHandler.
+- [x] Tidak ada perubahan struktur database.
+- [x] Insert atau update CartItem saat Add to Cart.
+- [x] Pastikan unique constraint (cart_id, product_id) tetap terjaga.
 
 ---
 
-## API Tasks
+## ✅ Backend Tasks
 
-- Implementasi endpoint POST /cart/items.
-- Endpoint requires JWT.
-- Request body: productId, quantity.
-- Response: updated CartResponseDTO.
-- Error: 401 unauthenticated, 404 product not found, 400 validation error, 409 business error.
-
----
-
-## Frontend Tasks
-
-- Update ShoppingCartService.js dengan addToCart().
-- Update CartContext dengan addToCart().
-- Update ProductDetailPage dengan Add to Cart button.
-- Implementasi success dan error notification.
-- Update cart badge setelah cart berubah.
+- [x] Implementasi AddToCartRequestDTO.
+- [x] Update ShoppingCartService dengan method addToCart().
+- [x] Implementasi OutOfStockException dan QuantityExceedsStockException.
+- [x] Update ShoppingCartController dengan endpoint POST /cart/items.
+- [x] Update GlobalExceptionHandler.
 
 ---
 
-## Business Rules
+## ✅ API Tasks
 
-- Product hanya dapat ditambahkan jika stock tersedia.
-- Product yang sudah ada di cart tidak membuat item baru.
-- Quantity harus bertambah jika product sudah ada.
-- Shopping cart harus ter-update setelah perubahan.
-- Quantity tidak boleh melebihi product stock.
-
----
-
-## Validation Rules
-
-- Customer harus logged in.
-- Product ID harus valid.
-- Product harus tersedia.
-- Quantity harus lebih besar dari 0.
-- Quantity tidak boleh melebihi stock.
+- [x] Implementasi endpoint POST /cart/items.
+- [x] Endpoint requires JWT.
+- [x] Request body: productId, quantity.
+- [x] Response: updated CartResponseDTO.
+- [x] Error: 401 unauthenticated, 404 product not found, 400 validation error, 409 business error.
 
 ---
 
-## Use Case Boundary
+## ✅ Frontend Tasks
+
+- [x] Update ShoppingCartService.js dengan addToCart().
+- [x] Update CartContext dengan addToCart().
+- [x] Update ProductDetailPage dengan Add to Cart button.
+- [x] Implementasi success dan error notification.
+- [x] Update cart badge setelah cart berubah.
+
+---
+
+## ✅ Business Rules
+
+- [x] Product hanya dapat ditambahkan jika stock tersedia.
+- [x] Product yang sudah ada di cart tidak membuat item baru.
+- [x] Quantity harus bertambah jika product sudah ada.
+- [x] Shopping cart harus ter-update setelah perubahan.
+- [x] Quantity tidak boleh melebihi product stock.
+
+---
+
+## ✅ Validation Rules
+
+- [x] Customer harus logged in.
+- [x] Product ID harus valid.
+- [x] Product harus tersedia.
+- [x] Quantity harus lebih besar dari 0.
+- [x] Quantity tidak boleh melebihi stock.
+
+---
+
+## ✅ Use Case Boundary
 
 Saat mengerjakan UC-09 Add to Cart, implementasi yang boleh dilakukan:
 
-- Implementasi endpoint Add to Cart.
-- Update Product Detail page untuk Add to Cart.
-- Update CartContext dan cart badge.
-- Implementasi validasi stock dan quantity.
+- [x] Implementasi endpoint Add to Cart.
+- [x] Update Product Detail page untuk Add to Cart.
+- [x] Update CartContext dan cart badge.
+- [x] Implementasi validasi stock dan quantity.
 
 Implementasi yang TIDAK BOLEH dilakukan pada UC-09:
 
-- Implementasi Update Cart quantity (UC-10).
-- Implementasi Remove Cart Item (UC-11).
-- Implementasi Checkout, Payment, atau Order.
+- [x] Implementasi Update Cart quantity (UC-10).
+- [x] Implementasi Remove Cart Item (UC-11).
+- [x] Implementasi Checkout, Payment, atau Order.
 
 ---
 
-## Acceptance Criteria
+## ✅ Acceptance Criteria
 
-- Product berhasil ditambahkan ke cart.
-- Quantity bertambah jika product sudah ada.
-- Out of stock products tidak dapat ditambahkan.
-- Quantity tidak boleh melebihi stock.
-- Cart updated setelah Add to Cart.
-- Success/error message tampil dengan benar.
-
----
-
-## Testing Checklist
-
-### Positive Case
-
-- Add new product to cart berhasil.
-- Add duplicate product increases quantity.
-- Cart response updated correctly.
-
-### Negative Case
-
-- Out of stock product rejected.
-- Quantity exceeding stock rejected.
-- Invalid productId rejected.
-- Unauthenticated request rejected.
-
-### Validation Case
-
-- Missing productId rejected.
-- Quantity <= 0 rejected.
-
-### Error Case
-
-- Database error handled.
-- Network error handled.
+- [x] Product berhasil ditambahkan ke cart.
+- [x] Quantity bertambah jika product sudah ada.
+- [x] Out of stock products tidak dapat ditambahkan.
+- [x] Quantity tidak boleh melebihi stock.
+- [x] Cart updated setelah Add to Cart.
+- [x] Success/error message tampil dengan benar.
 
 ---
 
-## Completion State
+## ✅ Testing Checklist
+
+### ✅ Positive Case
+
+- [x] Add new product to cart berhasil.
+- [x] Add duplicate product increases quantity.
+- [x] Cart response updated correctly.
+
+### ✅ Negative Case
+
+- [x] Out of stock product rejected.
+- [x] Quantity exceeding stock rejected.
+- [x] Invalid productId rejected.
+- [x] Unauthenticated request rejected.
+
+### ✅ Validation Case
+
+- [x] Missing productId rejected.
+- [x] Quantity <= 0 rejected.
+
+### ✅ Error Case
+
+- [x] Database error handled.
+- [x] Network error handled.
+
+---
+
+## ✅ Completion State
 
 Setelah UC-09 Add to Cart selesai:
 
-- Endpoint POST /cart/items berfungsi dan teruji.
-- Product Detail page dapat menambahkan product ke cart.
-- CartContext dan cart badge updated setelah add.
-- Stock validation berfungsi.
-- Project siap untuk UC-10 Update Cart.
+- [x] Endpoint POST /cart/items berfungsi dan teruji.
+- [x] Product Detail page dapat menambahkan product ke cart.
+- [x] CartContext dan cart badge updated setelah add.
+- [x] Stock validation berfungsi.
+- [x] Project siap untuk UC-10 Update Cart.
 
 ---
 
@@ -2617,10 +2617,10 @@ Mengimplementasikan fitur Update Cart yang memungkinkan Customer mengubah quanti
 
 Project telah menyelesaikan UC-09 Add to Cart dengan kondisi:
 
-- Cart dan CartItem tersedia.
-- Add to Cart berfungsi.
-- CartPage menampilkan cart items.
-- CartContext tersedia.
+- [x] Cart dan CartItem tersedia.
+- [x] Add to Cart berfungsi.
+- [x] CartPage menampilkan cart items.
+- [x] CartContext tersedia.
 
 ---
 
@@ -2628,205 +2628,205 @@ Project telah menyelesaikan UC-09 Add to Cart dengan kondisi:
 
 UC-10 Update Cart bergantung pada:
 
-- UC-08 View Cart.
-- UC-09 Add to Cart.
-- CartItemRepository.
-- Product stock validation.
+- [x] UC-08 View Cart.
+- [x] UC-09 Add to Cart.
+- [x] CartItemRepository.
+- [x] Product stock validation.
 
 ---
 
 ## Implementation Steps
 
-### Pembuatan DTO
+### ✅ Pembuatan DTO
 
-- Buat UpdateCartItemRequestDTO pada package dto.request.
-- Tambahkan field: quantity.
-- Tambahkan validation: quantity required, quantity > 0.
-- Reuse CartResponseDTO untuk response.
+- [x] Buat UpdateCartItemRequestDTO pada package dto.request.
+- [x] Tambahkan field: quantity.
+- [x] Tambahkan validation: quantity required, quantity > 0.
+- [x] Reuse CartResponseDTO untuk response.
 
-### Update ShoppingCartService
+### ✅ Update ShoppingCartService
 
-- Tambahkan method updateCartItem(Long userId, Long cartItemId, UpdateCartItemRequestDTO request).
-- Retrieve CartItem berdasarkan cartItemId.
-- Validasi CartItem ada.
-- Validasi CartItem belongs to current user's cart.
-- Retrieve related Product.
-- Validasi quantity > 0.
-- Validasi quantity tidak melebihi product stock.
-- Update CartItem quantity.
-- Save CartItem.
-- Recalculate subtotal dan total.
-- Return updated CartResponseDTO.
+- [x] Tambahkan method updateCartItem(Long userId, Long cartItemId, UpdateCartItemRequestDTO request).
+- [x] Retrieve CartItem berdasarkan cartItemId.
+- [x] Validasi CartItem ada.
+- [x] Validasi CartItem belongs to current user's cart.
+- [x] Retrieve related Product.
+- [x] Validasi quantity > 0.
+- [x] Validasi quantity tidak melebihi product stock.
+- [x] Update CartItem quantity.
+- [x] Save CartItem.
+- [x] Recalculate subtotal dan total.
+- [x] Return updated CartResponseDTO.
 
-### Custom Exception
+### ✅ Custom Exception
 
-- Buat CartItemNotFoundException pada package exception.
-- Buat UnauthorizedCartAccessException jika cart item bukan milik user.
-- Update GlobalExceptionHandler.
+- [x] Buat CartItemNotFoundException pada package exception.
+- [x] Buat UnauthorizedCartAccessException jika cart item bukan milik user.
+- [x] Update GlobalExceptionHandler.
 
-### Update ShoppingCartController
+### ✅ Update ShoppingCartController
 
-- Tambahkan endpoint PUT /cart/items/{id}.
-- Endpoint protected dengan JWT.
-- Terima cartItemId dari @PathVariable.
-- Terima UpdateCartItemRequestDTO dari @RequestBody dengan @Valid.
-- Extract current userId.
-- Panggil shoppingCartService.updateCartItem(userId, id, request).
-- Return HTTP 200 dengan updated CartResponseDTO.
+- [x] Tambahkan endpoint PUT /cart/items/{id}.
+- [x] Endpoint protected dengan JWT.
+- [x] Terima cartItemId dari @PathVariable.
+- [x] Terima UpdateCartItemRequestDTO dari @RequestBody dengan @Valid.
+- [x] Extract current userId.
+- [x] Panggil shoppingCartService.updateCartItem(userId, id, request).
+- [x] Return HTTP 200 dengan updated CartResponseDTO.
 
-### Update Frontend ShoppingCartService
+### ✅ Update Frontend ShoppingCartService
 
-- Tambahkan function updateCartItem(cartItemId, quantity).
-- Kirim PUT request ke /cart/items/{id} dengan body quantity.
-- Return updated cart.
+- [x] Tambahkan function updateCartItem(cartItemId, quantity).
+- [x] Kirim PUT request ke /cart/items/{id} dengan body quantity.
+- [x] Return updated cart.
 
-### Update CartContext
+### ✅ Update CartContext
 
-- Tambahkan function updateCartItem(cartItemId, quantity).
-- Panggil ShoppingCartService.updateCartItem().
-- Update cart state dengan response terbaru.
-- Handle loading dan error.
+- [x] Tambahkan function updateCartItem(cartItemId, quantity).
+- [x] Panggil ShoppingCartService.updateCartItem().
+- [x] Update cart state dengan response terbaru.
+- [x] Handle loading dan error.
 
-### Update Cart Page
+### ✅ Update Cart Page
 
-- Update CartItemRow component agar quantity selector aktif.
-- Ketika quantity berubah, panggil updateCartItem().
-- Debounce update agar tidak terlalu banyak request.
-- Tampilkan loading state per item jika sedang update.
-- Tampilkan error jika quantity invalid atau melebihi stock.
-- Re-render cart summary setelah update.
+- [x] Update CartItemRow component agar quantity selector aktif.
+- [x] Ketika quantity berubah, panggil updateCartItem().
+- [x] Debounce update agar tidak terlalu banyak request.
+- [x] Tampilkan loading state per item jika sedang update.
+- [x] Tampilkan error jika quantity invalid atau melebihi stock.
+- [x] Re-render cart summary setelah update.
 
-### Testing Backend
+### ✅ Testing Backend
 
-- Test PUT /cart/items/{id} dengan valid quantity: update berhasil.
-- Test subtotal dan total recalculated correctly.
-- Test quantity melebihi stock: rejected.
-- Test quantity <= 0: validation error.
-- Test cartItemId tidak exist: 404.
-- Test cart item milik user lain: 403 atau 404.
-- Test unauthenticated request: 401.
+- [x] Test PUT /cart/items/{id} dengan valid quantity: update berhasil.
+- [x] Test subtotal dan total recalculated correctly.
+- [x] Test quantity melebihi stock: rejected.
+- [x] Test quantity <= 0: validation error.
+- [x] Test cartItemId tidak exist: 404.
+- [x] Test cart item milik user lain: 403 atau 404.
+- [x] Test unauthenticated request: 401.
 
-### Testing Frontend
+### ✅ Testing Frontend
 
-- Test update quantity dari CartPage.
-- Test cart summary updated automatically.
-- Test quantity exceeding stock shows error.
-- Test invalid quantity rejected.
-- Test per-item loading state.
-
----
-
-## Database Tasks
-
-- Tidak ada perubahan struktur database.
-- Update quantity field pada CartItem.
-- Pastikan subtotal dan total dihitung runtime atau response, bukan field database jika tidak didefinisikan.
+- [x] Test update quantity dari CartPage.
+- [x] Test cart summary updated automatically.
+- [x] Test quantity exceeding stock shows error.
+- [x] Test invalid quantity rejected.
+- [x] Test per-item loading state.
 
 ---
 
-## Backend Tasks
+## ✅ Database Tasks
 
-- Implementasi UpdateCartItemRequestDTO.
-- Update ShoppingCartService dengan updateCartItem().
-- Implementasi CartItemNotFoundException dan UnauthorizedCartAccessException.
-- Update ShoppingCartController dengan endpoint PUT /cart/items/{id}.
-- Update GlobalExceptionHandler.
+- [x] Tidak ada perubahan struktur database.
+- [x] Update quantity field pada CartItem.
+- [x] Pastikan subtotal dan total dihitung runtime atau response, bukan field database jika tidak didefinisikan.
 
 ---
 
-## API Tasks
+## ✅ Backend Tasks
 
-- Implementasi endpoint PUT /cart/items/{id}.
-- Endpoint requires JWT.
-- Request body: quantity.
-- Response: updated CartResponseDTO.
-- Error: 400 validation, 401 unauthenticated, 403 unauthorized cart access, 404 not found, 409 quantity exceeds stock.
-
----
-
-## Frontend Tasks
-
-- Update ShoppingCartService.js dengan updateCartItem().
-- Update CartContext dengan updateCartItem().
-- Update CartItemRow dengan quantity selector.
-- Update CartPage agar summary recalculated after update.
-- Implementasi per-item loading dan error display.
+- [x] Implementasi UpdateCartItemRequestDTO.
+- [x] Update ShoppingCartService dengan updateCartItem().
+- [x] Implementasi CartItemNotFoundException dan UnauthorizedCartAccessException.
+- [x] Update ShoppingCartController dengan endpoint PUT /cart/items/{id}.
+- [x] Update GlobalExceptionHandler.
 
 ---
 
-## Business Rules
+## ✅ API Tasks
 
-- Quantity harus lebih besar dari zero.
-- Quantity tidak boleh melebihi stock.
-- Setiap quantity change harus recalculate subtotal.
-- Total payment harus selalu updated.
-
----
-
-## Validation Rules
-
-- Quantity harus valid.
-- Quantity tidak boleh melebihi stock.
-- Product harus masih tersedia.
-- CartItem harus milik authenticated user.
+- [x] Implementasi endpoint PUT /cart/items/{id}.
+- [x] Endpoint requires JWT.
+- [x] Request body: quantity.
+- [x] Response: updated CartResponseDTO.
+- [x] Error: 400 validation, 401 unauthenticated, 403 unauthorized cart access, 404 not found, 409 quantity exceeds stock.
 
 ---
 
-## Use Case Boundary
+## ✅ Frontend Tasks
+
+- [x] Update ShoppingCartService.js dengan updateCartItem().
+- [x] Update CartContext dengan updateCartItem().
+- [x] Update CartItemRow dengan quantity selector.
+- [x] Update CartPage agar summary recalculated after update.
+- [x] Implementasi per-item loading dan error display.
+
+---
+
+## ✅ Business Rules
+
+- [x] Quantity harus lebih besar dari zero.
+- [x] Quantity tidak boleh melebihi stock.
+- [x] Setiap quantity change harus recalculate subtotal.
+- [x] Total payment harus selalu updated.
+
+---
+
+## ✅ Validation Rules
+
+- [x] Quantity harus valid.
+- [x] Quantity tidak boleh melebihi stock.
+- [x] Product harus masih tersedia.
+- [x] CartItem harus milik authenticated user.
+
+---
+
+## ✅ Use Case Boundary
 
 Saat mengerjakan UC-10 Update Cart, implementasi yang boleh dilakukan:
 
-- Implementasi update quantity CartItem.
-- Recalculate subtotal dan total setelah update.
-- Update UI CartPage untuk quantity update.
+- [x] Implementasi update quantity CartItem.
+- [x] Recalculate subtotal dan total setelah update.
+- [x] Update UI CartPage untuk quantity update.
 
 Implementasi yang TIDAK BOLEH dilakukan pada UC-10:
 
-- Implementasi Remove Cart Item (UC-11).
-- Implementasi Checkout, Payment, atau Order.
+- [x] Implementasi Remove Cart Item (UC-11).
+- [x] Implementasi Checkout, Payment, atau Order.
 
 ---
 
-## Acceptance Criteria
+## ✅ Acceptance Criteria
 
-- Quantity berhasil di-update.
-- Total payment updated accordingly.
-- Invalid quantity menghasilkan validation error.
-- Quantity exceeding stock ditolak.
-- Cart summary updated setelah quantity berubah.
-
----
-
-## Testing Checklist
-
-### Positive Case
-
-- Update quantity berhasil.
-- Subtotal updated correctly.
-- Total updated correctly.
-
-### Negative Case
-
-- Quantity <= 0 rejected.
-- Quantity exceeding stock rejected.
-- CartItem not found handled.
-- Unauthorized access rejected.
-
-### Error Case
-
-- Database error handled.
-- Network error handled.
+- [x] Quantity berhasil di-update.
+- [x] Total payment updated accordingly.
+- [x] Invalid quantity menghasilkan validation error.
+- [x] Quantity exceeding stock ditolak.
+- [x] Cart summary updated setelah quantity berubah.
 
 ---
 
-## Completion State
+## ✅ Testing Checklist
+
+### ✅ Positive Case
+
+- [x] Update quantity berhasil.
+- [x] Subtotal updated correctly.
+- [x] Total updated correctly.
+
+### ✅ Negative Case
+
+- [x] Quantity <= 0 rejected.
+- [x] Quantity exceeding stock rejected.
+- [x] CartItem not found handled.
+- [x] Unauthorized access rejected.
+
+### ✅ Error Case
+
+- [x] Database error handled.
+- [x] Network error handled.
+
+---
+
+## ✅ Completion State
 
 Setelah UC-10 Update Cart selesai:
 
-- Endpoint PUT /cart/items/{id} berfungsi dan teruji.
-- Quantity dapat diubah dari CartPage.
-- Subtotal dan total recalculated correctly.
-- Project siap untuk UC-11 Remove Cart Item.
+- [x] Endpoint PUT /cart/items/{id} berfungsi dan teruji.
+- [x] Quantity dapat diubah dari CartPage.
+- [x] Subtotal dan total recalculated correctly.
+- [x] Project siap untuk UC-11 Remove Cart Item.
 
 ---
 
@@ -2842,9 +2842,9 @@ Mengimplementasikan fitur Remove Cart Item yang memungkinkan Customer menghapus 
 
 Project telah menyelesaikan UC-10 Update Cart dengan kondisi:
 
-- CartPage menampilkan cart items.
-- Update quantity berfungsi.
-- CartContext dan ShoppingCartService tersedia.
+- [x] CartPage menampilkan cart items.
+- [x] Update quantity berfungsi.
+- [x] CartContext dan ShoppingCartService tersedia.
 
 ---
 
@@ -2852,185 +2852,185 @@ Project telah menyelesaikan UC-10 Update Cart dengan kondisi:
 
 UC-11 Remove Cart Item bergantung pada:
 
-- UC-08 View Cart.
-- UC-09 Add to Cart.
-- UC-10 Update Cart.
-- CartItemRepository.
+- [x] UC-08 View Cart.
+- [x] UC-09 Add to Cart.
+- [x] UC-10 Update Cart.
+- [x] CartItemRepository.
 
 ---
 
 ## Implementation Steps
 
-### Update ShoppingCartService
+### ✅ Update ShoppingCartService
 
-- Tambahkan method removeCartItem(Long userId, Long cartItemId).
-- Retrieve CartItem berdasarkan cartItemId.
-- Validasi CartItem ada.
-- Validasi CartItem belongs to current user's cart.
-- Delete CartItem dari database.
-- Retrieve updated Cart.
-- Recalculate subtotal dan total.
-- Return updated CartResponseDTO.
+- [x] Tambahkan method removeCartItem(Long userId, Long cartItemId).
+- [x] Retrieve CartItem berdasarkan cartItemId.
+- [x] Validasi CartItem ada.
+- [x] Validasi CartItem belongs to current user's cart.
+- [x] Delete CartItem dari database.
+- [x] Retrieve updated Cart.
+- [x] Recalculate subtotal dan total.
+- [x] Return updated CartResponseDTO.
 
-### Update ShoppingCartController
+### ✅ Update ShoppingCartController
 
-- Tambahkan endpoint DELETE /cart/items/{id}.
-- Endpoint protected dengan JWT.
-- Terima cartItemId dari @PathVariable.
-- Extract current userId.
-- Panggil shoppingCartService.removeCartItem(userId, id).
-- Return HTTP 200 dengan updated CartResponseDTO.
+- [x] Tambahkan endpoint DELETE /cart/items/{id}.
+- [x] Endpoint protected dengan JWT.
+- [x] Terima cartItemId dari @PathVariable.
+- [x] Extract current userId.
+- [x] Panggil shoppingCartService.removeCartItem(userId, id).
+- [x] Return HTTP 200 dengan updated CartResponseDTO.
 
-### Update Frontend ShoppingCartService
+### ✅ Update Frontend ShoppingCartService
 
-- Tambahkan function removeCartItem(cartItemId).
-- Kirim DELETE request ke /cart/items/{id}.
-- Return updated cart.
+- [x] Tambahkan function removeCartItem(cartItemId).
+- [x] Kirim DELETE request ke /cart/items/{id}.
+- [x] Return updated cart.
 
-### Update CartContext
+### ✅ Update CartContext
 
-- Tambahkan function removeCartItem(cartItemId).
-- Panggil ShoppingCartService.removeCartItem().
-- Update cart state dengan response terbaru.
-- Handle loading dan error.
+- [x] Tambahkan function removeCartItem(cartItemId).
+- [x] Panggil ShoppingCartService.removeCartItem().
+- [x] Update cart state dengan response terbaru.
+- [x] Handle loading dan error.
 
-### Update Cart Page
+### ✅ Update Cart Page
 
-- Update CartItemRow remove button agar memanggil removeCartItem().
-- Tambahkan confirmation dialog jika diperlukan.
-- Tampilkan loading state saat remove sedang berlangsung.
-- Setelah item dihapus, update cart list dan summary.
-- Jika semua items dihapus, tampilkan empty cart state.
-- Tampilkan success notification setelah item berhasil dihapus.
+- [x] Update CartItemRow remove button agar memanggil removeCartItem().
+- [x] Tambahkan confirmation dialog jika diperlukan.
+- [x] Tampilkan loading state saat remove sedang berlangsung.
+- [x] Setelah item dihapus, update cart list dan summary.
+- [x] Jika semua items dihapus, tampilkan empty cart state.
+- [x] Tampilkan success notification setelah item berhasil dihapus.
 
-### Testing Backend
+### ✅ Testing Backend
 
-- Test DELETE /cart/items/{id} dengan valid cartItemId: item removed.
-- Test total recalculated after remove.
-- Test removing last item: cart becomes empty.
-- Test cartItemId not found: 404.
-- Test cart item belongs to other user: 403 atau 404.
-- Test unauthenticated request: 401.
+- [x] Test DELETE /cart/items/{id} dengan valid cartItemId: item removed.
+- [x] Test total recalculated after remove.
+- [x] Test removing last item: cart becomes empty.
+- [x] Test cartItemId not found: 404.
+- [x] Test cart item belongs to other user: 403 atau 404.
+- [x] Test unauthenticated request: 401.
 
-### Testing Frontend
+### ✅ Testing Frontend
 
-- Test remove item dari CartPage.
-- Test cart summary updated after removal.
-- Test empty cart state setelah last item dihapus.
-- Test success notification muncul.
-- Test error handling jika remove gagal.
-
----
-
-## Database Tasks
-
-- Tidak ada perubahan struktur database.
-- Delete record CartItem dari database.
-- Pastikan Cart tetap ada walaupun semua CartItems dihapus.
+- [x] Test remove item dari CartPage.
+- [x] Test cart summary updated after removal.
+- [x] Test empty cart state setelah last item dihapus.
+- [x] Test success notification muncul.
+- [x] Test error handling jika remove gagal.
 
 ---
 
-## Backend Tasks
+## ✅ Database Tasks
 
-- Update ShoppingCartService dengan method removeCartItem().
-- Update ShoppingCartController dengan endpoint DELETE /cart/items/{id}.
-- Reuse CartItemNotFoundException dan UnauthorizedCartAccessException.
-- Update GlobalExceptionHandler jika diperlukan.
-
----
-
-## API Tasks
-
-- Implementasi endpoint DELETE /cart/items/{id}.
-- Endpoint requires JWT.
-- Response: updated CartResponseDTO.
-- Error: 401 unauthenticated, 403 unauthorized cart access, 404 cart item not found, 500 system error.
+- [x] Tidak ada perubahan struktur database.
+- [x] Delete record CartItem dari database.
+- [x] Pastikan Cart tetap ada walaupun semua CartItems dihapus.
 
 ---
 
-## Frontend Tasks
+## ✅ Backend Tasks
 
-- Update ShoppingCartService.js dengan removeCartItem().
-- Update CartContext dengan removeCartItem().
-- Update CartItemRow remove button.
-- Update CartPage empty state after remove.
-- Implementasi success/error notification.
-
----
-
-## Business Rules
-
-- Product dapat dihapus kapan saja sebelum Checkout.
-- Shopping Cart harus updated setelah removal.
-- Total payment harus recalculated.
-- Cart tetap ada walaupun semua items dihapus.
+- [x] Update ShoppingCartService dengan method removeCartItem().
+- [x] Update ShoppingCartController dengan endpoint DELETE /cart/items/{id}.
+- [x] Reuse CartItemNotFoundException dan UnauthorizedCartAccessException.
+- [x] Update GlobalExceptionHandler jika diperlukan.
 
 ---
 
-## Validation Rules
+## ✅ API Tasks
 
-- CartItem harus exist.
-- Customer harus logged in.
-- CartItem harus milik Customer yang sedang login.
+- [x] Implementasi endpoint DELETE /cart/items/{id}.
+- [x] Endpoint requires JWT.
+- [x] Response: updated CartResponseDTO.
+- [x] Error: 401 unauthenticated, 403 unauthorized cart access, 404 cart item not found, 500 system error.
 
 ---
 
-## Use Case Boundary
+## ✅ Frontend Tasks
+
+- [x] Update ShoppingCartService.js dengan removeCartItem().
+- [x] Update CartContext dengan removeCartItem().
+- [x] Update CartItemRow remove button.
+- [x] Update CartPage empty state after remove.
+- [x] Implementasi success/error notification.
+
+---
+
+## ✅ Business Rules
+
+- [x] Product dapat dihapus kapan saja sebelum Checkout.
+- [x] Shopping Cart harus updated setelah removal.
+- [x] Total payment harus recalculated.
+- [x] Cart tetap ada walaupun semua items dihapus.
+
+---
+
+## ✅ Validation Rules
+
+- [x] CartItem harus exist.
+- [x] Customer harus logged in.
+- [x] CartItem harus milik Customer yang sedang login.
+
+---
+
+## ✅ Use Case Boundary
 
 Saat mengerjakan UC-11 Remove Cart Item, implementasi yang boleh dilakukan:
 
-- Implementasi delete CartItem.
-- Recalculate cart setelah removal.
-- Update UI untuk remove item.
-- Empty cart state setelah removal.
+- [x] Implementasi delete CartItem.
+- [x] Recalculate cart setelah removal.
+- [x] Update UI untuk remove item.
+- [x] Empty cart state setelah removal.
 
 Implementasi yang TIDAK BOLEH dilakukan pada UC-11:
 
-- Implementasi Checkout (UC-12).
-- Implementasi Payment atau Order.
+- [x] Implementasi Checkout (UC-12).
+- [x] Implementasi Payment atau Order.
 
 ---
 
-## Acceptance Criteria
+## ✅ Acceptance Criteria
 
-- Product berhasil dihapus dari cart.
-- Shopping Cart updated setelah removal.
-- Total payment updated setelah removal.
-- Empty Shopping Cart ditampilkan jika semua items dihapus.
-- Unauthorized removal ditolak.
-
----
-
-## Testing Checklist
-
-### Positive Case
-
-- Remove item berhasil.
-- Summary recalculated correctly.
-- Last item removal displays empty cart.
-
-### Negative Case
-
-- CartItem not found handled.
-- Unauthorized access rejected.
-- Unauthenticated request rejected.
-
-### Error Case
-
-- Database error handled.
-- Network error handled.
+- [x] Product berhasil dihapus dari cart.
+- [x] Shopping Cart updated setelah removal.
+- [x] Total payment updated setelah removal.
+- [x] Empty Shopping Cart ditampilkan jika semua items dihapus.
+- [x] Unauthorized removal ditolak.
 
 ---
 
-## Completion State
+## ✅ Testing Checklist
+
+### ✅ Positive Case
+
+- [x] Remove item berhasil.
+- [x] Summary recalculated correctly.
+- [x] Last item removal displays empty cart.
+
+### ✅ Negative Case
+
+- [x] CartItem not found handled.
+- [x] Unauthorized access rejected.
+- [x] Unauthenticated request rejected.
+
+### ✅ Error Case
+
+- [x] Database error handled.
+- [x] Network error handled.
+
+---
+
+## ✅ Completion State
 
 Setelah UC-11 Remove Cart Item selesai:
 
-- Endpoint DELETE /cart/items/{id} berfungsi dan teruji.
-- CartPage mendukung remove item.
-- Empty cart state berfungsi.
-- Shopping Cart module (UC-08 hingga UC-11) telah selesai.
-- Project siap untuk implementasi UC-12 Checkout.
+- [x] Endpoint DELETE /cart/items/{id} berfungsi dan teruji.
+- [x] CartPage mendukung remove item.
+- [x] Empty cart state berfungsi.
+- [x] Shopping Cart module (UC-08 hingga UC-11) telah selesai.
+- [x] Project siap untuk implementasi UC-12 Checkout.
 
 ---
 

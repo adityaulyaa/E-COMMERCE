@@ -92,7 +92,7 @@ public class AuthenticationService {
 
         // Generate JWT token
         shoppingCartService.ensureCartExists(user.getUserId());
-        String token = jwtUtil.generateToken(user.getEmail());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getUserId(), user.getFullName());
         log.info("User logged in successfully: {}", user.getEmail());
 
         // Build and return LoginResponseDTO

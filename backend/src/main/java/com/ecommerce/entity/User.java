@@ -12,6 +12,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
@@ -50,5 +51,10 @@ public class User {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Cart cart;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Address> addresses;
 
 }

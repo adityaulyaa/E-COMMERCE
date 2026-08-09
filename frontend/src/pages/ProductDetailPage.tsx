@@ -30,6 +30,11 @@ export default function ProductDetailPage() {
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const [notification, setNotification] = useState<AddToCartNotification | null>(null)
 
+  const handleBuyNow = () => {
+    if (!product) return
+    navigate(`/checkout?productId=${product.productId}&quantity=${quantity}`)
+  }
+
   const handleAddToCart = async () => {
     if (!product) return
 
@@ -230,8 +235,9 @@ export default function ProductDetailPage() {
                 {isAddingToCart ? 'Adding...' : 'Add to Cart'}
               </button>
               <button
-                disabled
-                className="flex-1 bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-200 font-semibold py-3 px-6 rounded-lg hover:bg-orange-200 dark:hover:bg-orange-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleBuyNow}
+                disabled={product.stock <= 0 || quantity > product.stock}
+                className="flex-1 bg-amber-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Buy Now
               </button>

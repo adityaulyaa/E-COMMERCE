@@ -1,6 +1,17 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { jwtDecode } from 'jwt-decode' // Import jwtDecode
 import type { User, LoginRequest, LoginResponse } from '../types/auth'
 import AuthenticationService from '../services/AuthenticationService'
+
+// Define the structure of your decoded JWT token payload
+interface DecodedToken {
+  userId: number
+  fullName: string
+  sub: string // email is typically in 'sub' claim
+  exp: number // Expiration time in seconds since epoch
+  iat: number // Issued at time
+  // Add other claims if your JWT includes them
+}
 
 /**
  * Authentication Context Type Definition
@@ -48,10 +59,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const checkAuth = () => {
     const savedToken = localStorage.getItem('token')
     if (savedToken) {
-      setToken(savedToken)
-      setIsAuthenticated(true)
-      // Note: In real app, could decode JWT to get user info or call API
-      // For now, just set authenticated state
+      try {
+        const decoded = jwtDecode<DecodedToken>(savedToken)
+        
+        // Check if token is expired
+        const currentTime = Date.now() / 1000
+        if (decoded.exp < currentTime) {
+          // Token expired, clear it
+          localStorage.removeItem('token')
+          setToken(null)
+          setUser(null)
+          setIsAuthenticated(false)
+        } else {
+          // Token valid, set state
+          setToken(savedToken)
+          setUser({
+            userId: decoded.userId,
+            fullName: decoded.fullName,
+            email: decoded.sub,
+          })
+          setIsAuthenticated(true)
+        }
+      } catch (error) {
+        // Invalid token
+        localStorage.removeItem('token')
+        setToken(null)
+        setUser(null)
+        setIsAuthenticated(false)
+      }
     }
     setLoading(false)
   }

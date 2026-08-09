@@ -31,11 +31,12 @@ export default function CartSummary({ cart }: CartSummaryProps) {
 
       <button
         type="button"
-        disabled
-        className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-gray-900 dark:bg-white px-4 py-3 font-semibold text-white dark:text-gray-900 opacity-50 cursor-not-allowed"
+        className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-lg bg-amber-600 dark:bg-amber-600 px-4 py-3 font-semibold text-white hover:bg-amber-700 dark:hover:bg-amber-700 transition-colors"
       >
-        <ShoppingBag className="w-5 h-5" />
-        Checkout
+        <Link to="/checkout" className="w-full inline-flex items-center justify-center gap-2">
+          <ShoppingBag className="w-5 h-5" />
+          Checkout
+        </Link>
       </button>
 
       <Link

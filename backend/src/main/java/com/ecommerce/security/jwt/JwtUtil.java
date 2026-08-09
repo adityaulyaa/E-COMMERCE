@@ -33,10 +33,14 @@ public class JwtUtil {
      * Generate JWT token for user
      *
      * @param email User email
+     * @param userId User ID
+     * @param fullName User full name
      * @return JWT token string
      */
-    public String generateToken(String email) {
+    public String generateToken(String email, Long userId, String fullName) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("fullName", fullName);
         return createToken(claims, email);
     }
 

@@ -262,6 +262,90 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handle address not found exception
+     *
+     * @param ex AddressNotFoundException
+     * @return ResponseEntity with not found error
+     */
+    @ExceptionHandler(AddressNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleAddressNotFoundException(
+            AddressNotFoundException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Address not found: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    /**
+     * Handle unauthorized address access exception
+     *
+     * @param ex UnauthorizedAddressAccessException
+     * @return ResponseEntity with forbidden error
+     */
+    @ExceptionHandler(UnauthorizedAddressAccessException.class)
+    public ResponseEntity<ErrorResponseDTO> handleUnauthorizedAddressAccessException(
+            UnauthorizedAddressAccessException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Unauthorized address access: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
+    /**
+     * Handle empty cart exception
+     *
+     * @param ex EmptyCartException
+     * @return ResponseEntity with bad request error
+     */
+    @ExceptionHandler(EmptyCartException.class)
+    public ResponseEntity<ErrorResponseDTO> handleEmptyCartException(
+            EmptyCartException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Empty cart: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    /**
+     * Handle invalid cart exception
+     *
+     * @param ex InvalidCartException
+     * @return ResponseEntity with bad request error
+     */
+    @ExceptionHandler(InvalidCartException.class)
+    public ResponseEntity<ErrorResponseDTO> handleInvalidCartException(
+            InvalidCartException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Invalid cart: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    /**
      * Handle all unexpected exceptions
      *
      * @param ex Exception

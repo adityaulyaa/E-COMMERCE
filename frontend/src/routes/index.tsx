@@ -5,6 +5,7 @@ import ProductListPage from '../pages/ProductListPage'
 import ProductDetailPage from '../pages/ProductDetailPage'
 import CartPage from '../pages/CartPage'
 import CheckoutPage from '../pages/CheckoutPage'
+import PaymentPage from '../pages/PaymentPage'
 import ProtectedRoute from './ProtectedRoute'
 
 const router = createBrowserRouter([
@@ -33,6 +34,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <CheckoutPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/payment',
+    element: (
+      <ProtectedRoute>
+        <PaymentPage />
       </ProtectedRoute>
     ),
   },

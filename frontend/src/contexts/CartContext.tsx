@@ -16,7 +16,6 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
-const CART_MUTATION_UNAVAILABLE = 'Cart updates are not available yet'
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, loading: authLoading } = useAuth()
@@ -84,9 +83,6 @@ const addToCart = useCallback(async (productId: number, quantity: number): Promi
   }
 }, [isAuthenticated])
 
-const unavailableMutation = async (): Promise<void> => {
-  throw new Error(CART_MUTATION_UNAVAILABLE)
-}
 
 const updateQuantity = useCallback(async (cartItemId: number, quantity: number): Promise<void> => {
   if (!isAuthenticated) {
@@ -122,6 +118,11 @@ const removeFromCart = useCallback(async (cartItemId: number): Promise<void> => 
   }
 }, [isAuthenticated])
 
+const clearCart = useCallback(async (): Promise<void> => {
+  setCart(null)
+  setError(null)
+}, [])
+
 const value: CartContextType = {
   cart,
   loading,
@@ -130,7 +131,7 @@ const value: CartContextType = {
   addToCart,
   removeFromCart,
   updateQuantity,
-  clearCart: unavailableMutation,
+  clearCart,
 }
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>

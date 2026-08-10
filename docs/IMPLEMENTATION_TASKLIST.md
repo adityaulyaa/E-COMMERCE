@@ -3046,10 +3046,10 @@ Mengimplementasikan fitur Checkout yang melakukan validasi final terhadap Shoppi
 
 Project telah menyelesaikan Shopping Cart module dengan kondisi:
 
-- Cart dapat ditampilkan.
-- Product dapat ditambahkan, di-update, dan dihapus dari cart.
-- Cart subtotal dan total dihitung dengan benar.
-- Authentication dan protected routes berfungsi.
+- [x] Cart dapat ditampilkan.
+- [x] Product dapat ditambahkan, di-update, dan dihapus dari cart.
+- [x] Cart subtotal dan total dihitung dengan benar.
+- [x] Authentication dan protected routes berfungsi.
 
 ---
 
@@ -3057,213 +3057,213 @@ Project telah menyelesaikan Shopping Cart module dengan kondisi:
 
 UC-12 Checkout bergantung pada:
 
-- UC-08 View Cart.
-- UC-09 Add to Cart.
-- UC-10 Update Cart.
-- UC-11 Remove Cart Item.
-- Product stock validation.
+- [x] UC-08 View Cart.
+- [x] UC-09 Add to Cart.
+- [x] UC-10 Update Cart.
+- [x] UC-11 Remove Cart Item.
+- [x] Product stock validation.
 
 ---
 
 ## Implementation Steps
 
-### Pembuatan DTO
+### ✅ Pembuatan DTO
 
-- Buat OrderSummaryItemDTO pada package dto.response.
-- Tambahkan field: productId, productName, unitPrice, quantity, subtotal.
-- Buat OrderSummaryResponseDTO pada package dto.response.
-- Tambahkan field: items, totalAmount, generatedAt.
+- [x] Buat OrderSummaryItemDTO pada package dto.response.
+- [x] Tambahkan field: productId, productName, unitPrice, quantity, subtotal.
+- [x] Buat OrderSummaryResponseDTO pada package dto.response.
+- [x] Tambahkan field: items, totalAmount, generatedAt.
 
-### Pembuatan OrderProcessingService
+### ✅ Pembuatan OrderProcessingService
 
-- Buat OrderProcessingService pada package service.
-- Inject CartRepository, CartItemRepository, ProductRepository.
-- Implementasi method checkout(Long userId).
-- Retrieve cart milik user.
-- Validasi cart tidak empty.
-- Retrieve cart items.
-- Validasi semua product masih exist.
-- Validasi quantity setiap item tidak melebihi current stock.
-- Recalculate subtotal untuk setiap item.
-- Recalculate total payment.
-- Generate OrderSummaryResponseDTO.
-- Return order summary.
+- [x] Buat OrderProcessingService pada package service.
+- [x] Inject CartRepository, CartItemRepository, ProductRepository.
+- [x] Implementasi method checkout(Long userId).
+- [x] Retrieve cart milik user.
+- [x] Validasi cart tidak empty.
+- [x] Retrieve cart items.
+- [x] Validasi semua product masih exist.
+- [x] Validasi quantity setiap item tidak melebihi current stock.
+- [x] Recalculate subtotal untuk setiap item.
+- [x] Recalculate total payment.
+- [x] Generate OrderSummaryResponseDTO.
+- [x] Return order summary.
 
-### Pembuatan Controller
+### ✅ Pembuatan Controller
 
-- Buat OrderProcessingController pada package controller.
-- Anotasi @RestController dan @RequestMapping.
-- Implementasi endpoint POST /checkout.
-- Endpoint protected dengan JWT.
-- Extract current userId.
-- Panggil orderProcessingService.checkout(userId).
-- Return HTTP 200 dengan OrderSummaryResponseDTO.
+- [x] Buat OrderProcessingController pada package controller.
+- [x] Anotasi @RestController dan @RequestMapping.
+- [x] Implementasi endpoint POST /checkout.
+- [x] Endpoint protected dengan JWT.
+- [x] Extract current userId.
+- [x] Panggil orderProcessingService.checkout(userId).
+- [x] Return HTTP 200 dengan OrderSummaryResponseDTO.
 
-### Exception Handling
+### ✅ Exception Handling
 
-- Buat EmptyCartException.
-- Buat InvalidCartException.
-- Update GlobalExceptionHandler.
+- [x] Buat EmptyCartException.
+- [x] Buat InvalidCartException.
+- [x] Update GlobalExceptionHandler.
 
-### Frontend Service
+### ✅ Frontend Service
 
-- Buat OrderProcessingService.js pada services.
-- Tambahkan function checkout() yang mengirim POST request ke /checkout.
-- Return order summary.
+- [x] Buat OrderProcessingService.js pada services.
+- [x] Tambahkan function checkout() yang mengirim POST request ke /checkout.
+- [x] Return order summary.
 
-### Frontend Checkout Page
+### ✅ Frontend Checkout Page
 
-- Buat CheckoutPage.jsx pada pages.
-- State: orderSummary, loading, error.
-- Saat page load atau ketika Customer klik Checkout dari CartPage, panggil checkout().
-- Display order summary:
-  - Product list
-  - Quantity
-  - Unit price
-  - Subtotal
-  - Total payment
-- Tampilkan error jika cart empty atau invalid.
-- Tambahkan button Continue to Payment Method.
+- [x] Buat CheckoutPage.jsx pada pages.
+- [x] State: orderSummary, loading, error.
+- [x] Saat page load atau ketika Customer klik Checkout dari CartPage, panggil checkout().
+- [x] Display order summary:
+  - [x] Product list
+  - [x] Quantity
+  - [x] Unit price
+  - [x] Subtotal
+  - [x] Total payment
+- [x] Tampilkan error jika cart empty atau invalid.
+- [x] Tambahkan button Continue to Payment Method.
 
-### Update Cart Page
+### ✅ Update Cart Page
 
-- Update Checkout button pada CartSummary.
-- Jika cart empty, disable Checkout button.
-- Jika cart tidak empty, navigate ke /checkout.
+- [x] Update Checkout button pada CartSummary.
+- [x] Jika cart empty, disable Checkout button.
+- [x] Jika cart tidak empty, navigate ke /checkout.
 
-### Routing
+### ✅ Routing
 
-- Tambahkan protected route /checkout untuk CheckoutPage.
+- [x] Tambahkan protected route /checkout untuk CheckoutPage.
 
-### Testing Backend
+### ✅ Testing Backend
 
-- Test POST /checkout dengan cart valid: return order summary.
-- Test empty cart: return business error.
-- Test product stock berubah sehingga cart invalid: return error.
-- Test unauthenticated request: return 401.
-- Test subtotal dan total calculation correct.
+- [x] Test POST /checkout dengan cart valid: return order summary.
+- [x] Test empty cart: return business error.
+- [x] Test product stock berubah sehingga cart invalid: return error.
+- [x] Test unauthenticated request: return 401.
+- [x] Test subtotal dan total calculation correct.
 
-### Testing Frontend
+### ✅ Testing Frontend
 
-- Test Checkout button dari CartPage.
-- Test CheckoutPage displays order summary.
-- Test empty cart cannot checkout.
-- Test invalid cart displays error.
-- Test responsive design.
-
----
-
-## Database Tasks
-
-- Tidak ada table baru untuk UC-12.
-- Menggunakan Cart, CartItem, Product.
-- Tidak membuat Orders pada tahap Checkout.
+- [x] Test Checkout button dari CartPage.
+- [x] Test CheckoutPage displays order summary.
+- [x] Test empty cart cannot checkout.
+- [x] Test invalid cart displays error.
+- [x] Test responsive design.
 
 ---
 
-## Backend Tasks
+## ✅ Database Tasks
 
-- Implementasi OrderSummaryItemDTO dan OrderSummaryResponseDTO.
-- Implementasi OrderProcessingService.checkout().
-- Implementasi OrderProcessingController dengan POST /checkout.
-- Implementasi EmptyCartException dan InvalidCartException.
-- Update GlobalExceptionHandler.
+- [x] Tidak ada table baru untuk UC-12.
+- [x] Menggunakan Cart, CartItem, Product.
+- [x] Tidak membuat Orders pada tahap Checkout.
 
 ---
 
-## API Tasks
+## ✅ Backend Tasks
 
-- Implementasi endpoint POST /checkout.
-- Endpoint requires JWT.
-- Response: OrderSummaryResponseDTO.
-- Error: 401 unauthenticated, 400 empty/invalid cart, 409 stock conflict, 500 system error.
-
----
-
-## Frontend Tasks
-
-- Implementasi OrderProcessingService.js.
-- Implementasi CheckoutPage.jsx.
-- Update CartSummary checkout button.
-- Tambahkan protected route /checkout.
-- Implementasi loading/error state.
+- [x] Implementasi OrderSummaryItemDTO dan OrderSummaryResponseDTO.
+- [x] Implementasi OrderProcessingService.checkout().
+- [x] Implementasi OrderProcessingController dengan POST /checkout.
+- [x] Implementasi EmptyCartException dan InvalidCartException.
+- [x] Update GlobalExceptionHandler.
 
 ---
 
-## Business Rules
+## ✅ API Tasks
 
-- Checkout hanya dapat dilakukan jika Shopping Cart memiliki items.
-- Semua subtotal harus recalculated.
-- Total payment harus recalculated.
-- Order Summary harus dibuat sebelum payment.
-- Checkout belum membuat Order.
-
----
-
-## Validation Rules
-
-- Customer harus logged in.
-- Shopping Cart tidak boleh empty.
-- Semua products harus valid.
-- Quantity tidak boleh melebihi current stock.
+- [x] Implementasi endpoint POST /checkout.
+- [x] Endpoint requires JWT.
+- [x] Response: OrderSummaryResponseDTO.
+- [x] Error: 401 unauthenticated, 400 empty/invalid cart, 409 stock conflict, 500 system error.
 
 ---
 
-## Use Case Boundary
+## ✅ Frontend Tasks
+
+- [x] Implementasi OrderProcessingService.js.
+- [x] Implementasi CheckoutPage.jsx.
+- [x] Update CartSummary checkout button.
+- [x] Tambahkan protected route /checkout.
+- [x] Implementasi loading/error state.
+
+---
+
+## ✅ Business Rules
+
+- [x] Checkout hanya dapat dilakukan jika Shopping Cart memiliki items.
+- [x] Semua subtotal harus recalculated.
+- [x] Total payment harus recalculated.
+- [x] Order Summary harus dibuat sebelum payment.
+- [x] Checkout belum membuat Order.
+
+---
+
+## ✅ Validation Rules
+
+- [x] Customer harus logged in.
+- [x] Shopping Cart tidak boleh empty.
+- [x] Semua products harus valid.
+- [x] Quantity tidak boleh melebihi current stock.
+
+---
+
+## ✅ Use Case Boundary
 
 Saat mengerjakan UC-12 Checkout, implementasi yang boleh dilakukan:
 
-- Implementasi checkout validation.
-- Generate Order Summary.
-- Implementasi CheckoutPage.
+- [x] Implementasi checkout validation.
+- [x] Generate Order Summary.
+- [x] Implementasi CheckoutPage.
 
 Implementasi yang TIDAK BOLEH dilakukan pada UC-12:
 
-- Implementasi Choose Payment Method (UC-13).
-- Implementasi Process Payment (UC-14).
-- Membuat Orders atau Payment records final.
+- [x] Implementasi Choose Payment Method (UC-13).
+- [x] Implementasi Process Payment (UC-14).
+- [x] Membuat Orders atau Payment records final.
 
 ---
 
-## Acceptance Criteria
+## ✅ Acceptance Criteria
 
-- Order Summary berhasil ditampilkan.
-- Empty Shopping Cart tidak dapat Checkout.
-- Total payment calculated correctly.
-- Invalid cart ditolak.
-- Checkout protected by authentication.
-
----
-
-## Testing Checklist
-
-### Positive Case
-
-- Checkout valid cart berhasil.
-- Order summary accurate.
-- Total correct.
-
-### Negative Case
-
-- Empty cart rejected.
-- Invalid cart rejected.
-- Unauthenticated request rejected.
-
-### Error Case
-
-- Stock conflict handled.
-- Database error handled.
+- [x] Order Summary berhasil ditampilkan.
+- [x] Empty Shopping Cart tidak dapat Checkout.
+- [x] Total payment calculated correctly.
+- [x] Invalid cart ditolak.
+- [x] Checkout protected by authentication.
 
 ---
 
-## Completion State
+## ✅ Testing Checklist
+
+### ✅ Positive Case
+
+- [x] Checkout valid cart berhasil.
+- [x] Order summary accurate.
+- [x] Total correct.
+
+### ✅ Negative Case
+
+- [x] Empty cart rejected.
+- [x] Invalid cart rejected.
+- [x] Unauthenticated request rejected.
+
+### ✅ Error Case
+
+- [x] Stock conflict handled.
+- [x] Database error handled.
+
+---
+
+## ✅ Completion State
 
 Setelah UC-12 Checkout selesai:
 
-- Endpoint POST /checkout berfungsi dan teruji.
-- CheckoutPage menampilkan Order Summary.
-- Cart validation berfungsi.
-- Project siap untuk UC-13 Choose Payment Method.
+- [x] Endpoint POST /checkout berfungsi dan teruji.
+- [x] CheckoutPage menampilkan Order Summary.
+- [x] Cart validation berfungsi.
+- [x] Project siap untuk UC-13 Choose Payment Method.
 
 ---
 
@@ -3296,111 +3296,111 @@ Project telah menyelesaikan UC-12 Checkout:
 
 ## Implementation Steps
 
-- Definisikan daftar payment method sesuai PROJECT_SPEC.md: Bank Transfer, QRIS, E-Wallet.
-- Buat PaymentMethodDTO atau gunakan enum PaymentMethod di backend.
-- Buat SelectPaymentMethodRequestDTO dengan field paymentMethod.
-- Tambahkan validasi paymentMethod required dan harus salah satu dari metode yang tersedia.
-- Update OrderProcessingService dengan method validatePaymentMethod().
-- Karena PROJECT_SPEC.md tidak mendefinisikan endpoint terpisah untuk choose payment method, integrasikan pemilihan payment method sebagai bagian dari Payment page sebelum memanggil POST /orders/payment.
-- Buat PaymentPage.jsx yang menerima Order Summary dari CheckoutPage atau memuat ulang checkout summary.
-- Buat PaymentMethodSelector component.
-- Simpan selected payment method di frontend state atau Payment Context sampai Customer klik Pay Now.
-- Tampilkan validation error jika Customer belum memilih payment method.
-- Tambahkan navigation dari CheckoutPage ke PaymentPage.
-- Pastikan PaymentPage protected route.
+- [x] Definisikan daftar payment method sesuai PROJECT_SPEC.md: Bank Transfer, QRIS, E-Wallet.
+- [x] Buat PaymentMethodDTO atau gunakan enum PaymentMethod di backend.
+- [x] Buat SelectPaymentMethodRequestDTO dengan field paymentMethod.
+- [x] Tambahkan validasi paymentMethod required dan harus salah satu dari metode yang tersedia.
+- [x] Update OrderProcessingService dengan method validatePaymentMethod().
+- [x] Karena PROJECT_SPEC.md tidak mendefinisikan endpoint terpisah untuk choose payment method, integrasikan pemilihan payment method sebagai bagian dari Payment page sebelum memanggil POST /orders/payment.
+- [x] Buat PaymentPage.jsx yang menerima Order Summary dari CheckoutPage atau memuat ulang checkout summary.
+- [x] Buat PaymentMethodSelector component.
+- [x] Simpan selected payment method di frontend state atau Payment Context sampai Customer klik Pay Now.
+- [x] Tampilkan validation error jika Customer belum memilih payment method.
+- [x] Tambahkan navigation dari CheckoutPage ke PaymentPage.
+- [x] Pastikan PaymentPage protected route.
 
 ---
 
-## Database Tasks
+## ✅ Database Tasks
 
-- Tidak ada perubahan database pada UC-13.
-- Payment record belum dibuat pada tahap ini kecuali saat Process Payment di UC-14.
-
----
-
-## Backend Tasks
-
-- Implementasi enum atau validator untuk payment method: Bank Transfer, QRIS, E-Wallet.
-- Implementasi DTO untuk payment method request jika digunakan oleh payment process.
-- Tambahkan validation method di OrderProcessingService.
+- [x] Tidak ada perubahan database pada UC-13.
+- [x] Payment record belum dibuat pada tahap ini kecuali saat Process Payment di UC-14.
 
 ---
 
-## API Tasks
+## ✅ Backend Tasks
 
-- Tidak membuat endpoint baru karena PROJECT_SPEC.md hanya mendefinisikan POST /checkout, POST /orders/payment, dan POST /orders/payment/retry untuk Order Processing.
-- Payment method dikirim sebagai bagian dari request POST /orders/payment pada UC-14.
-
----
-
-## Frontend Tasks
-
-- Implementasi PaymentPage.jsx.
-- Implementasi PaymentMethodSelector component.
-- Update CheckoutPage dengan button Continue to Payment.
-- Tambahkan protected route /payment.
-- Simpan selected payment method pada state/context.
-- Tampilkan validation error jika payment method belum dipilih.
+- [x] Implementasi enum atau validator untuk payment method: Bank Transfer, QRIS, E-Wallet.
+- [x] Implementasi DTO untuk payment method request jika digunakan oleh payment process.
+- [x] Tambahkan validation method di OrderProcessingService.
 
 ---
 
-## Business Rules
+## ✅ API Tasks
 
-- Customer hanya dapat memilih satu payment method.
-- Payment method harus tersedia.
-- Payment selection disimpan sebelum payment process.
-
----
-
-## Validation Rules
-
-- Payment Method harus dipilih.
-- Payment Method harus valid.
+- [x] Tidak membuat endpoint baru karena PROJECT_SPEC.md hanya mendefinisikan POST /checkout, POST /orders/payment, dan POST /orders/payment/retry untuk Order Processing.
+- [x] Payment method dikirim sebagai bagian dari request POST /orders/payment pada UC-14.
 
 ---
 
-## Use Case Boundary
+## ✅ Frontend Tasks
+
+- [x] Implementasi PaymentPage.jsx.
+- [x] Implementasi PaymentMethodSelector component.
+- [x] Update CheckoutPage dengan button Continue to Payment.
+- [x] Tambahkan protected route /payment.
+- [x] Simpan selected payment method pada state/context.
+- [x] Tampilkan validation error jika payment method belum dipilih.
+
+---
+
+## ✅ Business Rules
+
+- [x] Customer hanya dapat memilih satu payment method.
+- [x] Payment method harus tersedia.
+- [x] Payment selection disimpan sebelum payment process.
+
+---
+
+## ✅ Validation Rules
+
+- [x] Payment Method harus dipilih.
+- [x] Payment Method harus valid.
+
+---
+
+## ✅ Use Case Boundary
 
 Saat mengerjakan UC-13, hanya boleh mengimplementasikan pemilihan payment method dan navigasi ke payment process. Tidak boleh memproses payment, membuat order, mengurangi stock, atau clear cart.
 
 ---
 
-## Acceptance Criteria
+## ✅ Acceptance Criteria
 
-- Payment Method berhasil dipilih.
-- Payment Method disimpan di frontend state/context.
-- Invalid Payment Method ditolak.
-- Customer tidak dapat melanjutkan payment tanpa memilih method.
-
----
-
-## Testing Checklist
-
-### Positive Case
-
-- Customer memilih Bank Transfer.
-- Customer memilih QRIS.
-- Customer memilih E-Wallet.
-- Selected method tersimpan sampai Pay Now.
-
-### Negative Case
-
-- Customer tidak memilih payment method.
-- Invalid method ditolak.
-
-### Error Case
-
-- State hilang ditangani dengan redirect kembali ke checkout atau reload summary.
+- [x] Payment Method berhasil dipilih.
+- [x] Payment Method disimpan di frontend state/context.
+- [x] Invalid Payment Method ditolak.
+- [x] Customer tidak dapat melanjutkan payment tanpa memilih method.
 
 ---
 
-## Completion State
+## ✅ Testing Checklist
+
+### ✅ Positive Case
+
+- [x] Customer memilih Bank Transfer.
+- [x] Customer memilih QRIS.
+- [x] Customer memilih E-Wallet.
+- [x] Selected method tersimpan sampai Pay Now.
+
+### ✅ Negative Case
+
+- [x] Customer tidak memilih payment method.
+- [x] Invalid method ditolak.
+
+### ✅ Error Case
+
+- [x] State hilang ditangani dengan redirect kembali ke checkout atau reload summary.
+
+---
+
+## ✅ Completion State
 
 Setelah UC-13 selesai:
 
-- PaymentPage tersedia.
-- Payment method selection berfungsi.
-- Project siap untuk UC-14 Process Payment.
+- [x] PaymentPage tersedia.
+- [x] Payment method selection berfungsi.
+- [x] Project siap untuk UC-14 Process Payment.
 
 ---
 
@@ -3433,143 +3433,143 @@ Project telah menyelesaikan UC-13:
 
 ## Implementation Steps
 
-- Buat Entity Orders dengan field order_id, user_id, total_amount, order_status, order_date, created_at, updated_at.
-- Buat Entity OrderItem dengan field order_item_id, order_id, product_id, product_name_snapshot, unit_price_snapshot, quantity, subtotal.
-- Buat Entity Payment dengan field payment_id, order_id, payment_method, payment_status, payment_date.
-- Buat repositories: OrdersRepository, OrderItemRepository, PaymentRepository.
-- Buat ProcessPaymentRequestDTO dengan paymentMethod.
-- Buat PaymentResponseDTO berisi orderId, paymentStatus, orderStatus, message, totalAmount.
-- Update OrderProcessingService dengan method processPayment(userId, request).
-- Validasi payment method valid.
-- Retrieve cart dan cart items.
-- Validasi cart tidak empty dan products masih valid.
-- Jalankan Mock Payment simulation sesuai aturan project.
-- Jika payment failed, buat response failed dan simpan Payment Status Failed sesuai desain transaksi yang digunakan.
-- Jika payment success, jalankan atomic operation:
-  - Create Orders.
-  - Create OrderItems dengan snapshot product name dan unit price.
-  - Reduce Product stock.
-  - Clear CartItems.
-  - Create Payment dengan Success status.
-- Pastikan operasi order creation transactional.
-- Tambahkan endpoint POST /orders/payment pada OrderProcessingController.
-- Update frontend OrderProcessingService dengan processPayment(paymentMethod).
-- Update PaymentPage dengan Pay Now button.
-- Tampilkan payment success atau failed message.
-- Jika success, redirect atau tampilkan link ke Order History.
-- Jika failed, tampilkan retry payment option untuk UC-15.
+- [x] Buat Entity Orders dengan field order_id, user_id, total_amount, order_status, order_date, created_at, updated_at.
+- [x] Buat Entity OrderItem dengan field order_item_id, order_id, product_id, product_name_snapshot, unit_price_snapshot, quantity, subtotal.
+- [x] Buat Entity Payment dengan field payment_id, order_id, payment_method, payment_status, payment_date.
+- [x] Buat repositories: OrdersRepository, OrderItemRepository, PaymentRepository.
+- [x] Buat ProcessPaymentRequestDTO dengan paymentMethod.
+- [x] Buat PaymentResponseDTO berisi orderId, paymentStatus, orderStatus, message, totalAmount.
+- [x] Update OrderProcessingService dengan method processPayment(userId, request).
+- [x] Validasi payment method valid.
+- [x] Retrieve cart dan cart items.
+- [x] Validasi cart tidak empty dan products masih valid.
+- [x] Jalankan Mock Payment simulation sesuai aturan project.
+- [x] Jika payment failed, buat response failed dan simpan Payment Status Failed sesuai desain transaksi yang digunakan.
+- [x] Jika payment success, jalankan atomic operation:
+  - [x] Create Orders.
+  - [x] Create OrderItems dengan snapshot product name dan unit price.
+  - [x] Reduce Product stock.
+  - [x] Clear CartItems.
+  - [x] Create Payment dengan Success status.
+- [x] Pastikan operasi order creation transactional.
+- [x] Tambahkan endpoint POST /orders/payment pada OrderProcessingController.
+- [x] Update frontend OrderProcessingService dengan processPayment(paymentMethod).
+- [x] Update PaymentPage dengan Pay Now button.
+- [x] Tampilkan payment success atau failed message.
+- [x] Jika success, redirect atau tampilkan link ke Order History.
+- [x] Jika failed, tampilkan retry payment option untuk UC-15.
 
 ---
 
-## Database Tasks
+## ✅ Database Tasks
 
-- Buat table Orders, OrderItem, Payment.
-- Setup FK User → Orders, Orders → OrderItem, Product → OrderItem, Orders → Payment.
-- Pastikan snapshot product name dan price tersimpan di OrderItem.
-- Pastikan Payment.order_id unique.
-- Pastikan stock tidak negatif.
-
----
-
-## Backend Tasks
-
-- Implementasi Orders, OrderItem, Payment entities.
-- Implementasi repositories terkait.
-- Implementasi DTO request/response payment.
-- Update OrderProcessingService dengan processPayment().
-- Gunakan transaksi untuk order creation.
-- Update OrderProcessingController dengan POST /orders/payment.
-- Update exception handling untuk Payment Failure dan stock conflict.
+- [x] Buat table Orders, OrderItem, Payment.
+- [x] Setup FK User → Orders, Orders → OrderItem, Product → OrderItem, Orders → Payment.
+- [x] Pastikan snapshot product name dan price tersimpan di OrderItem.
+- [x] Pastikan Payment.order_id unique.
+- [x] Pastikan stock tidak negatif.
 
 ---
 
-## API Tasks
+## ✅ Backend Tasks
 
-- Implementasi POST /orders/payment.
-- Endpoint requires JWT.
-- Request body: paymentMethod.
-- Response success: PaymentResponseDTO dengan status Success.
-- Response failed: PaymentResponseDTO dengan status Failed.
-- Error: 400 invalid request, 401 unauthenticated, 409 invalid cart/stock conflict, 500 system error.
-
----
-
-## Frontend Tasks
-
-- Update OrderProcessingService.js dengan processPayment().
-- Update PaymentPage dengan Pay Now action.
-- Tampilkan loading saat payment diproses.
-- Tampilkan success atau failed payment status.
-- Update CartContext setelah success agar cart kosong.
-- Sediakan navigasi ke Order History setelah success.
+- [x] Implementasi Orders, OrderItem, Payment entities.
+- [x] Implementasi repositories terkait.
+- [x] Implementasi DTO request/response payment.
+- [x] Update OrderProcessingService dengan processPayment().
+- [x] Gunakan transaksi untuk order creation.
+- [x] Update OrderProcessingController dengan POST /orders/payment.
+- [x] Update exception handling untuk Payment Failure dan stock conflict.
 
 ---
 
-## Business Rules
+## ✅ API Tasks
 
-- Payment menggunakan Mock Payment.
-- Order hanya dibuat jika payment berhasil.
-- Shopping Cart dikosongkan setelah successful payment.
-- Product stock dikurangi setelah successful transaction.
-- Payment status harus selalu updated.
-
----
-
-## Validation Rules
-
-- Payment Method harus dipilih.
-- Shopping Cart harus valid.
-- Products harus masih tersedia.
-- Quantity tidak boleh melebihi stock.
+- [x] Implementasi endpoint POST /orders/payment.
+- [x] Endpoint requires JWT.
+- [x] Request body: paymentMethod.
+- [x] Response success: PaymentResponseDTO dengan status Success.
+- [x] Response failed: PaymentResponseDTO dengan status Failed.
+- [x] Error: 400 invalid request, 401 unauthenticated, 409 invalid cart/stock conflict, 500 system error.
 
 ---
 
-## Use Case Boundary
+## ✅ Frontend Tasks
+
+- [x] Update OrderProcessingService.js dengan processPayment().
+- [x] Update PaymentPage dengan Pay Now action.
+- [x] Tampilkan loading saat payment diproses.
+- [x] Tampilkan success atau failed payment status.
+- [x] Update CartContext setelah success agar cart kosong.
+- [x] Sediakan navigasi ke Order History setelah success.
+
+---
+
+## ✅ Business Rules
+
+- [x] Payment menggunakan Mock Payment.
+- [x] Order hanya dibuat jika payment berhasil.
+- [x] Shopping Cart dikosongkan setelah successful payment.
+- [x] Product stock dikurangi setelah successful transaction.
+- [x] Payment status harus selalu updated.
+
+---
+
+## ✅ Validation Rules
+
+- [x] Payment Method harus dipilih.
+- [x] Shopping Cart harus valid.
+- [x] Products harus masih tersedia.
+- [x] Quantity tidak boleh melebihi stock.
+
+---
+
+## ✅ Use Case Boundary
 
 Saat mengerjakan UC-14, hanya boleh mengimplementasikan process payment dan konsekuensi langsungnya: create order, order items, payment, stock reduction, dan cart clearing. Tidak boleh mengimplementasikan Retry Payment kecuali menyimpan status Failed yang diperlukan untuk UC-15.
 
 ---
 
-## Acceptance Criteria
+## ✅ Acceptance Criteria
 
-- Successful payment menghasilkan Order.
-- Shopping Cart kosong setelah transaction.
-- Stock berhasil updated.
-- Failed payment menghasilkan Failed status.
-- Payment Status ditampilkan benar.
-
----
-
-## Testing Checklist
-
-### Positive Case
-
-- Payment success creates order.
-- OrderItems contain snapshot data.
-- Stock reduced correctly.
-- Cart cleared.
-
-### Negative Case
-
-- Invalid payment method rejected.
-- Empty cart rejected.
-- Stock conflict rejected.
-- Failed payment returns Failed status.
-
-### Error Case
-
-- Transaction rollback jika order creation gagal.
-- Network error handled.
+- [x] Successful payment menghasilkan Order.
+- [x] Shopping Cart kosong setelah transaction.
+- [x] Stock berhasil updated.
+- [x] Failed payment menghasilkan Failed status.
+- [x] Payment Status ditampilkan benar.
 
 ---
 
-## Completion State
+## ✅ Testing Checklist
+
+### ✅ Positive Case
+
+- [x] Payment success creates order.
+- [x] OrderItems contain snapshot data.
+- [x] Stock reduced correctly.
+- [x] Cart cleared.
+
+### ✅ Negative Case
+
+- [x] Invalid payment method rejected.
+- [x] Empty cart rejected.
+- [x] Stock conflict rejected.
+- [x] Failed payment returns Failed status.
+
+### ✅ Error Case
+
+- [x] Transaction rollback jika order creation gagal.
+- [x] Network error handled.
+
+---
+
+## ✅ Completion State
 
 Setelah UC-14 selesai:
 
-- Order Processing dapat membuat transaction melalui Mock Payment.
-- Orders, OrderItems, dan Payment tersimpan dengan benar.
-- Project siap untuk UC-15 Retry Payment.
+- [x] Order Processing dapat membuat transaction melalui Mock Payment.
+- [x] Orders, OrderItems, dan Payment tersimpan dengan benar.
+- [x] Project siap untuk UC-15 Retry Payment.
 
 ---
 

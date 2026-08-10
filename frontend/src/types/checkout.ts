@@ -12,3 +12,17 @@ export interface OrderSummaryResponse {
   totalAmount: number
   generatedAt: string
 }
+
+export type PaymentMethod = 'BANK_TRANSFER' | 'QRIS' | 'E_WALLET'
+
+export type PaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED'
+
+export type OrderStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED'
+
+export interface PaymentResponse {
+  orderId: number | null
+  paymentStatus: PaymentStatus
+  orderStatus: OrderStatus | null
+  message: string
+  totalAmount: number
+}

@@ -2,15 +2,29 @@ package com.ecommerce.service;
 
 import com.ecommerce.dto.response.OrderSummaryItemDTO;
 import com.ecommerce.dto.response.OrderSummaryResponseDTO;
+import com.ecommerce.dto.response.PaymentResponseDTO;
+import com.ecommerce.dto.request.ProcessPaymentRequestDTO;
 import com.ecommerce.entity.Cart;
 import com.ecommerce.entity.CartItem;
 import com.ecommerce.entity.Product;
+import com.ecommerce.entity.PaymentMethod;
+import com.ecommerce.entity.Orders;
+import com.ecommerce.entity.OrderItem;
+import com.ecommerce.entity.Payment;
+import com.ecommerce.entity.OrderStatus;
+import com.ecommerce.entity.PaymentStatus;
+import com.ecommerce.entity.User;
 import com.ecommerce.exception.EmptyCartException;
 import com.ecommerce.exception.InvalidCartException;
 import com.ecommerce.exception.ProductNotFoundException;
 import com.ecommerce.exception.QuantityExceedsStockException;
 import com.ecommerce.repository.CartRepository;
+import com.ecommerce.repository.CartItemRepository;
 import com.ecommerce.repository.ProductRepository;
+import com.ecommerce.repository.OrdersRepository;
+import com.ecommerce.repository.OrderItemRepository;
+import com.ecommerce.repository.PaymentRepository;
+import com.ecommerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +34,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +42,12 @@ import java.util.List;
 public class OrderProcessingService {
 
     private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
+    private final OrdersRepository ordersRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final PaymentRepository paymentRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public OrderSummaryResponseDTO checkout(Long userId, Long productId, Integer quantity) {
@@ -138,5 +158,239 @@ public class OrderProcessingService {
                 .totalAmount(subtotal)
                 .generatedAt(LocalDateTime.now())
                 .build();
+    }
+
+    /**
+     * Validate payment method
+     * 
+     * @param paymentMethod The payment method to validate
+     * @return true if valid
+     * @throws IllegalArgumentException if payment method is null or invalid
+     */
+    public boolean validatePaymentMethod(PaymentMethod paymentMethod) {
+        if (paymentMethod == null) {
+            throw new IllegalArgumentException("Payment method cannot be null");
+        }
+        
+        // Payment method is valid if it's one of the enum values
+        // Enum validation is automatically handled by Java
+        log.info("Payment method validated: {}", paymentMethod);
+        return true;
+    }
+
+    /**
+     * Process payment and create order
+     * 
+     * @param userId User ID
+     * @param request Payment request containing payment method
+     * @return Payment response with order details
+     */
+    @Transactional
+    public PaymentResponseDTO processPayment(Long userId, ProcessPaymentRequestDTO request) {
+        log.info("Processing payment for user: {} with method: {}", userId, request.getPaymentMethod());
+
+        validatePaymentMethod(request.getPaymentMethod());
+
+        // "Buy Now" mode: process single product directly
+        if (request.getProductId() != null) {
+            return processBuyNowPayment(userId, request);
+        }
+
+        // Normal mode: process from user's cart
+        return processCartPayment(userId, request);
+    }
+
+    private PaymentResponseDTO processCartPayment(Long userId, ProcessPaymentRequestDTO request) {
+        log.info("Processing cart payment for user: {}", userId);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new InvalidCartException("User not found"));
+
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new InvalidCartException("Cart not found for user"));
+
+        if (cart.getItems() == null || cart.getItems().isEmpty()) {
+            throw new EmptyCartException("Shopping cart is empty. Cannot process payment.");
+        }
+
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (CartItem cartItem : cart.getItems()) {
+            Product product = productRepository.findById(cartItem.getProduct().getProductId())
+                    .orElseThrow(() -> new ProductNotFoundException(
+                            "Product not found: " + cartItem.getProduct().getName()));
+
+            if (product.getStock() <= 0) {
+                throw new QuantityExceedsStockException(
+                        String.format("Product '%s' is out of stock", product.getName()));
+            }
+
+            if (cartItem.getQuantity() > product.getStock()) {
+                throw new QuantityExceedsStockException(
+                        String.format("Product '%s' requested quantity (%d) exceeds available stock (%d)",
+                                product.getName(),
+                                cartItem.getQuantity(),
+                                product.getStock()));
+            }
+
+            BigDecimal subtotal = product.getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+            totalAmount = totalAmount.add(subtotal);
+        }
+
+        boolean paymentSuccess = simulateMockPayment();
+
+        if (!paymentSuccess) {
+            log.warn("Payment simulation failed for user: {}", userId);
+            return PaymentResponseDTO.builder()
+                    .paymentStatus(PaymentStatus.FAILED)
+                    .message("Payment failed. Please try again.")
+                    .totalAmount(totalAmount)
+                    .build();
+        }
+
+        Orders order = createOrderFromCart(user, cart, totalAmount, request.getPaymentMethod());
+        
+        clearCartItems(cart);
+
+        log.info("Cart payment successful for user: {}. Order created: {}", userId, order.getOrderId());
+
+        return buildSuccessPaymentResponse(order, totalAmount);
+    }
+    
+    private PaymentResponseDTO processBuyNowPayment(Long userId, ProcessPaymentRequestDTO request) {
+        log.info("Processing buy-now payment for user: {}", userId);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new InvalidCartException("User not found"));
+
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new ProductNotFoundException("Product not found for Buy Now."));
+        
+        int quantity = (request.getQuantity() != null && request.getQuantity() > 0) ? request.getQuantity() : 1;
+
+        if (product.getStock() <= 0) {
+            throw new QuantityExceedsStockException(
+                    String.format("Product '%s' is out of stock", product.getName()));
+        }
+
+        if (quantity > product.getStock()) {
+            throw new QuantityExceedsStockException(
+                    String.format("Product '%s' requested quantity (%d) exceeds available stock (%d)",
+                            product.getName(),
+                            quantity,
+                            product.getStock()));
+        }
+        
+        BigDecimal totalAmount = product.getPrice().multiply(BigDecimal.valueOf(quantity));
+
+        boolean paymentSuccess = simulateMockPayment();
+
+        if (!paymentSuccess) {
+            log.warn("Buy Now payment simulation failed for user: {}", userId);
+            return PaymentResponseDTO.builder()
+                    .paymentStatus(PaymentStatus.FAILED)
+                    .message("Payment failed. Please try again.")
+                    .totalAmount(totalAmount)
+                    .build();
+        }
+
+        Orders order = createOrderFromBuyNow(user, product, quantity, totalAmount, request.getPaymentMethod());
+
+        log.info("Buy Now payment successful for user: {}. Order created: {}", userId, order.getOrderId());
+
+        return buildSuccessPaymentResponse(order, totalAmount);
+    }
+    
+    private Orders createOrderFromCart(User user, Cart cart, BigDecimal totalAmount, PaymentMethod paymentMethod) {
+        Orders order = Orders.builder()
+                .user(user)
+                .totalAmount(totalAmount)
+                .orderStatus(OrderStatus.COMPLETED)
+                .orderDate(LocalDateTime.now())
+                .build();
+        
+        order = ordersRepository.save(order);
+
+        for (CartItem cartItem : cart.getItems()) {
+            createOrderItem(order, cartItem.getProduct(), cartItem.getQuantity());
+            reduceStock(cartItem.getProduct(), cartItem.getQuantity());
+        }
+
+        createPaymentRecord(order, paymentMethod);
+        
+        return order;
+    }
+    
+    private Orders createOrderFromBuyNow(User user, Product product, int quantity, BigDecimal totalAmount, PaymentMethod paymentMethod) {
+        Orders order = Orders.builder()
+                .user(user)
+                .totalAmount(totalAmount)
+                .orderStatus(OrderStatus.COMPLETED)
+                .orderDate(LocalDateTime.now())
+                .build();
+        
+        order = ordersRepository.save(order);
+
+        createOrderItem(order, product, quantity);
+        reduceStock(product, quantity);
+        createPaymentRecord(order, paymentMethod);
+        
+        return order;
+    }
+    
+    private void createOrderItem(Orders order, Product product, int quantity) {
+        BigDecimal subtotal = product.getPrice().multiply(BigDecimal.valueOf(quantity));
+        OrderItem orderItem = OrderItem.builder()
+                .order(order)
+                .product(product)
+                .productNameSnapshot(product.getName())
+                .unitPriceSnapshot(product.getPrice())
+                .quantity(quantity)
+                .subtotal(subtotal)
+                .build();
+        orderItemRepository.save(orderItem);
+    }
+
+    private void reduceStock(Product product, int quantity) {
+        product.setStock(product.getStock() - quantity);
+        productRepository.save(product);
+    }
+
+    private void createPaymentRecord(Orders order, PaymentMethod paymentMethod) {
+        Payment payment = Payment.builder()
+                .order(order)
+                .paymentMethod(paymentMethod)
+                .paymentStatus(PaymentStatus.SUCCESS)
+                .paymentDate(LocalDateTime.now())
+                .build();
+        paymentRepository.save(payment);
+    }
+
+    private void clearCartItems(Cart cart) {
+        cartItemRepository.deleteAll(cart.getItems());
+        cart.getItems().clear();
+        cartRepository.save(cart);
+    }
+
+    private PaymentResponseDTO buildSuccessPaymentResponse(Orders order, BigDecimal totalAmount) {
+        return PaymentResponseDTO.builder()
+                .orderId(order.getOrderId())
+                .paymentStatus(PaymentStatus.SUCCESS)
+                .orderStatus(OrderStatus.COMPLETED)
+                .message("Payment successful! Your order has been placed.")
+                .totalAmount(totalAmount)
+                .build();
+    }
+
+    /**
+     * Simulate mock payment with 80% success rate
+     * 
+     * @return true if payment succeeds, false otherwise
+     */
+    private boolean simulateMockPayment() {
+        Random random = new Random();
+        double randomValue = random.nextDouble();
+        boolean success = randomValue < 0.8;
+        log.info("Mock payment simulation: random={}, success={}", randomValue, success);
+        return success;
     }
 }

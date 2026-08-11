@@ -6,6 +6,7 @@ import ProductDetailPage from '../pages/ProductDetailPage'
 import CartPage from '../pages/CartPage'
 import CheckoutPage from '../pages/CheckoutPage'
 import PaymentPage from '../pages/PaymentPage'
+import OrderHistoryPage from '../pages/OrderHistoryPage'
 import ProtectedRoute from './ProtectedRoute'
 
 const router = createBrowserRouter([
@@ -42,6 +43,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <PaymentPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/orders',
+    element: (
+      <ProtectedRoute>
+        <OrderHistoryPage />
       </ProtectedRoute>
     ),
   },

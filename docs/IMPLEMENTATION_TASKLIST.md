@@ -3742,123 +3742,127 @@ Project telah menyelesaikan Order Processing module:
 
 ---
 
-## Implementation Steps
+## ✅ Implementation Steps
 
-- Buat OrderSummaryDTO dengan orderId, orderNumber/orderId, orderDate, totalAmount, paymentStatus, orderStatus.
-- Buat OrderHistoryResponseDTO berisi list OrderSummaryDTO.
-- Buat OrderService pada package service.
-- Inject OrdersRepository dan PaymentRepository.
-- Implementasi getOrderHistory(userId).
-- Retrieve semua Orders milik user.
-- Sort berdasarkan orderDate descending.
-- Map ke OrderSummaryDTO.
-- Buat OrderController dengan @RequestMapping("/orders").
-- Tambahkan endpoint GET /orders protected by JWT.
-- Return HTTP 200 dengan OrderHistoryResponseDTO.
-- Buat OrderService.js frontend.
-- Buat OrderHistoryPage.jsx.
-- Tampilkan order list, empty state jika tidak ada order, loading, error.
-- Tambahkan link ke Order Detail untuk setiap order.
-- Tambahkan protected route /orders.
-
----
-
-## Database Tasks
-
-- Tidak ada perubahan struktur database.
-- Query Orders berdasarkan user_id.
-- Join atau fetch Payment untuk payment information.
+- [x] Buat OrderSummaryDTO dengan orderId, orderDate, totalAmount, paymentStatus, orderStatus.
+- [x] Buat OrderHistoryResponseDTO berisi list OrderSummaryDTO.
+- [x] Buat OrderService pada package service.
+- [x] Inject OrdersRepository dan PaymentRepository.
+- [x] Implementasi getOrderHistory(userId).
+- [x] Retrieve semua Orders milik user.
+- [x] Sort berdasarkan orderDate descending.
+- [x] Map ke OrderSummaryDTO.
+- [x] Buat OrderController dengan @RequestMapping("/orders").
+- [x] Tambahkan endpoint GET /orders protected by JWT.
+- [x] Return HTTP 200 dengan OrderHistoryResponseDTO.
+- [x] Buat OrderService frontend.
+- [x] Buat OrderHistoryPage.
+- [x] Tampilkan order list, empty state jika tidak ada order, loading, error.
+- [x] Tambahkan link ke Order Detail untuk setiap order.
+- [x] Tambahkan protected route /orders.
 
 ---
 
-## Backend Tasks
+## ✅ Database Tasks
 
-- Implementasi OrderSummaryDTO dan OrderHistoryResponseDTO.
-- Implementasi OrderService.getOrderHistory().
-- Implementasi OrderController GET /orders.
-- Pastikan authorization hanya menampilkan order milik current user.
-
----
-
-## API Tasks
-
-- Implementasi GET /orders.
-- Endpoint requires JWT.
-- Response: OrderHistoryResponseDTO sorted latest first.
-- Error: 401 unauthenticated, 500 system error.
+- [x] Tidak ada perubahan struktur database.
+- [x] Query Orders berdasarkan user_id.
+- [x] Join atau fetch Payment untuk payment information.
 
 ---
 
-## Frontend Tasks
+## ✅ Backend Tasks
 
-- Implementasi OrderService.js.
-- Implementasi OrderHistoryPage.jsx.
-- Implementasi OrderList component.
-- Tambahkan protected route /orders.
-- Tambahkan navigation link ke Order History.
-
----
-
-## Business Rules
-
-- Customer hanya dapat melihat order miliknya sendiri.
-- Order History sorted by latest transaction.
-- Setiap transaction menampilkan concise information.
-- Order History read-only.
+- [x] Implementasi OrderSummaryDTO dan OrderHistoryResponseDTO.
+- [x] Implementasi OrderService.getOrderHistory().
+- [x] Implementasi OrderController GET /orders.
+- [x] Pastikan authorization hanya menampilkan order milik current user.
 
 ---
 
-## Validation Rules
+## ✅ API Tasks
 
-- Customer harus logged in.
-- Customer harus valid.
-- Transaction data harus berhasil retrieved.
+- [x] Implementasi GET /orders.
+- [x] Endpoint requires JWT.
+- [x] Response: OrderHistoryResponseDTO sorted latest first.
+- [x] Error: 401 unauthenticated, 500 system error.
 
 ---
 
-## Use Case Boundary
+## ✅ Frontend Tasks
+
+- [x] Implementasi OrderService.
+- [x] Implementasi OrderHistoryPage.
+- [x] Implementasi OrderList component.
+- [x] Tambahkan protected route /orders.
+- [x] Tambahkan navigation link ke Order History.
+
+---
+
+## ✅ Business Rules
+
+- [x] Customer hanya dapat melihat order miliknya sendiri.
+- [x] Order History sorted by latest transaction.
+- [x] Setiap transaction menampilkan concise information.
+- [x] Order History read-only.
+
+---
+
+## ✅ Validation Rules
+
+- [x] Customer harus logged in.
+- [x] Customer harus valid.
+- [x] Transaction data harus berhasil retrieved.
+
+---
+
+## ✅ Use Case Boundary
 
 Saat mengerjakan UC-16, hanya boleh mengimplementasikan list order history. Tidak boleh mengubah order data atau mengimplementasikan order detail selain link navigasi.
 
----
-
-## Acceptance Criteria
-
-- Order History berhasil ditampilkan.
-- Orders sorted from latest.
-- Customer tanpa transactions melihat empty state.
-- System errors menghasilkan error message.
-- Customer tidak dapat melihat order user lain.
+- [x] Hanya implementasi list order history.
+- [x] Tidak mengubah order data.
+- [x] Order detail hanya berupa link navigasi (dikerjakan di UC-17).
 
 ---
 
-## Testing Checklist
+## ✅ Acceptance Criteria
 
-### Positive Case
-
-- User dengan orders melihat order history.
-- Sorting latest first benar.
-- Payment/order status displayed.
-
-### Negative Case
-
-- User tanpa orders melihat empty state.
-- Unauthenticated request rejected.
-
-### Error Case
-
-- Database error handled.
-- Network error handled.
+- [x] Order History berhasil ditampilkan.
+- [x] Orders sorted from latest.
+- [x] Customer tanpa transactions melihat empty state.
+- [x] System errors menghasilkan error message.
+- [x] Customer tidak dapat melihat order user lain.
 
 ---
 
-## Completion State
+## ✅ Testing Checklist
+
+### ✅ Positive Case
+
+- [x] User dengan orders melihat order history.
+- [x] Sorting latest first benar.
+- [x] Payment/order status displayed.
+
+### ✅ Negative Case
+
+- [x] User tanpa orders melihat empty state.
+- [x] Unauthenticated request rejected.
+
+### ✅ Error Case
+
+- [x] Database error handled.
+- [x] Network error handled.
+
+---
+
+## ✅ Completion State
 
 Setelah UC-16 selesai:
 
-- Endpoint GET /orders berfungsi dan teruji.
-- OrderHistoryPage berfungsi.
-- Project siap untuk UC-17 View Order Detail.
+- [x] Endpoint GET /orders berfungsi dan teruji.
+- [x] OrderHistoryPage berfungsi.
+- [x] Project siap untuk UC-17 View Order Detail.
 
 ---
 

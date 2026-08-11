@@ -157,7 +157,7 @@ function EmptyCartState() {
         Shopping Cart is empty
       </h2>
       <p className="text-gray-600 dark:text-gray-400 mb-6">
-        Browse products and find something you love.
+        Browse products and find something you need.
       </p>
       <Link
         to="/products"

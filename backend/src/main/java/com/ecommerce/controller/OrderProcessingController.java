@@ -1,6 +1,7 @@
 package com.ecommerce.controller;
 
 import com.ecommerce.dto.request.ProcessPaymentRequestDTO;
+import com.ecommerce.dto.request.RetryPaymentRequestDTO;
 import com.ecommerce.dto.response.OrderSummaryResponseDTO;
 import com.ecommerce.dto.response.PaymentResponseDTO;
 import com.ecommerce.service.OrderProcessingService;
@@ -50,6 +51,19 @@ public class OrderProcessingController {
         PaymentResponseDTO paymentResponse = orderProcessingService.processPayment(currentUserId, request);
 
         log.info("Payment processing completed for user: {}", currentUserId);
+        return ResponseEntity.ok(paymentResponse);
+    }
+
+    @PostMapping("/payment/retry")
+    public ResponseEntity<PaymentResponseDTO> retryPayment(
+            @Valid @RequestBody RetryPaymentRequestDTO request
+    ) {
+        Long currentUserId = securityUtil.getCurrentUserId();
+        log.info("Payment retry request received for user: {} with payment ID: {}", currentUserId, request.getPaymentId());
+
+        PaymentResponseDTO paymentResponse = orderProcessingService.retryPayment(currentUserId, request);
+
+        log.info("Payment retry completed for user: {}", currentUserId);
         return ResponseEntity.ok(paymentResponse);
     }
 }

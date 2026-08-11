@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, AlertCircle, ShoppingCart, CreditCard, MapPin, User, Package } from 'lucide-react'
+import { ArrowLeft, AlertCircle, ShoppingCart, CreditCard, MapPin, User, Package, CheckCircle2, XCircle } from 'lucide-react'
 import Header from '../components/Header'
 import PaymentMethodSelector, { PaymentMethodType } from '../components/PaymentMethodSelector'
 import OrderProcessingService from '../services/OrderProcessingService'
@@ -23,6 +23,9 @@ export default function PaymentPage() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethodType | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [failedPaymentId, setFailedPaymentId] = useState<number | null>(null)
+  const [paymentSuccess, setPaymentSuccess] = useState<{ orderId: number; totalAmount: number } | null>(null)
+  const [paymentFailed, setPaymentFailed] = useState<{ orderId: number; totalAmount: number; message: string } | null>(null)
 
   useEffect(() => {
     const state = location.state as { 
@@ -64,18 +67,75 @@ export default function PaymentPage() {
       )
 
       if (paymentResponse.paymentStatus === 'SUCCESS') {
-        // Clear cart after successful payment
         await clearCart()
         
-        // Payment successful - navigate to order history
-        alert(`${paymentResponse.message}\nOrder ID: ${paymentResponse.orderId}`)
-        navigate('/orders')
+        setPaymentSuccess({
+          orderId: paymentResponse.orderId!,
+          totalAmount: paymentResponse.totalAmount
+        })
       } else {
-        // Payment failed
-        setError(paymentResponse.message || 'Payment failed. Please try again.')
+        setFailedPaymentId(paymentResponse.paymentId || null)
+        setPaymentFailed({
+          orderId: paymentResponse.orderId!,
+          totalAmount: paymentResponse.totalAmount,
+          message: paymentResponse.message || 'Payment failed. Please try again.'
+        })
+        setError(null)
       }
     } catch (err: any) {
-      setError(err.message || 'Payment processing failed. Please try again.')
+      setPaymentFailed({
+        orderId: 0,
+        totalAmount: orderSummary?.totalAmount || 0,
+        message: err.message || 'Payment processing failed. Please try again.'
+      })
+      setError(null)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleRetryPayment = async () => {
+    if (!failedPaymentId) {
+      setError('No failed payment to retry.')
+      return
+    }
+
+    if (!selectedPaymentMethod) {
+      setError('Please select a payment method before retrying.')
+      return
+    }
+
+    try {
+      setLoading(true)
+      setError(null)
+
+      const paymentResponse = await OrderProcessingService.retryPayment(
+        failedPaymentId,
+        selectedPaymentMethod
+      )
+
+      if (paymentResponse.paymentStatus === 'SUCCESS') {
+        await clearCart()
+        
+        setPaymentSuccess({
+          orderId: paymentResponse.orderId!,
+          totalAmount: paymentResponse.totalAmount
+        })
+      } else {
+        setPaymentFailed({
+          orderId: paymentResponse.orderId!,
+          totalAmount: paymentResponse.totalAmount,
+          message: paymentResponse.message || 'Payment retry failed. Please try again.'
+        })
+        setError(null)
+      }
+    } catch (err: any) {
+      setPaymentFailed({
+        orderId: 0,
+        totalAmount: orderSummary?.totalAmount || 0,
+        message: err.message || 'Payment retry failed. Please try again.'
+      })
+      setError(null)
     } finally {
       setLoading(false)
     }
@@ -98,6 +158,10 @@ export default function PaymentPage() {
 
         {error && !orderSummary ? (
           <PaymentErrorState error={error} onBackToCheckout={handleBackToCheckout} />
+        ) : paymentSuccess ? (
+          <PaymentSuccessModal orderId={paymentSuccess.orderId} totalAmount={paymentSuccess.totalAmount} onViewOrders={() => navigate('/orders')} />
+        ) : paymentFailed ? (
+          <PaymentFailedModal orderId={paymentFailed.orderId} totalAmount={paymentFailed.totalAmount} message={paymentFailed.message} onRetryPayment={() => navigate('/checkout')} />
         ) : orderSummary && selectedAddress ? (
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
             {/* Left Column */}
@@ -257,15 +321,17 @@ export default function PaymentPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={handleProceedToPayment}
+                    onClick={failedPaymentId ? handleRetryPayment : handleProceedToPayment}
                     disabled={!selectedPaymentMethod || loading}
                     className={`w-full flex items-center justify-center gap-2 rounded-lg px-5 py-3 font-semibold text-white transition-colors ${
                       selectedPaymentMethod && !loading
-                        ? 'bg-amber-600 hover:bg-amber-700 cursor-pointer'
+                        ? failedPaymentId
+                          ? 'bg-red-600 hover:bg-red-700 cursor-pointer'
+                          : 'bg-amber-600 hover:bg-amber-700 cursor-pointer'
                         : 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed opacity-60'
                     }`}
                   >
-                    {loading ? 'Processing...' : 'Pay Now'}
+                    {loading ? 'Processing...' : failedPaymentId ? 'Retry Payment' : 'Pay Now'}
                   </button>
                   {!selectedPaymentMethod && !loading && (
                     <p className="text-xs text-red-500 dark:text-red-400 text-center">
@@ -274,7 +340,7 @@ export default function PaymentPage() {
                   )}
                   {loading && (
                     <p className="text-xs text-amber-600 dark:text-amber-400 text-center">
-                      Processing your payment, please wait...
+                      {failedPaymentId ? 'Retrying your payment, please wait...' : 'Processing your payment, please wait...'}
                     </p>
                   )}
                   {error && orderSummary && (
@@ -308,6 +374,150 @@ function PaymentErrorState({ error, onBackToCheckout }: { error: string; onBackT
         <ArrowLeft className="w-4 h-4" />
         Back to Checkout
       </button>
+    </div>
+  )
+}
+
+function PaymentSuccessModal({ orderId, totalAmount, onViewOrders }: { orderId: number; totalAmount: number; onViewOrders: () => void }) {
+  return (
+    <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-md w-full animate-in fade-in zoom-in duration-300">
+        <div className="flex justify-center mb-6">
+          <div className="relative w-24 h-24">
+            <svg className="absolute inset-0 w-24 h-24 -rotate-90">
+              <circle
+                cx="48"
+                cy="48"
+                r="44"
+                fill="none"
+                stroke="url(#greenGradient)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeDasharray="276.46"
+                strokeDashoffset="276.46"
+                style={{
+                  animation: 'drawCircle 2s ease-in-out infinite'
+                }}
+              />
+              <defs>
+                <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#10b981" />
+                  <stop offset="100%" stopColor="#059669" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <CheckCircle2 className="w-16 h-16 text-green-500" />
+            </div>
+          </div>
+          <style>{`
+            @keyframes drawCircle {
+              0% {
+                stroke-dashoffset: 276.46;
+              }
+              100% {
+                stroke-dashoffset: 0;
+              }
+            }
+          `}</style>
+        </div>
+
+        <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-2">
+          Payment Successful!
+        </h2>
+        <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
+          Your order has been placed successfully
+        </p>
+
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-4 mb-6 border border-green-200 dark:border-green-800">
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Order ID</span>
+              <span className="font-semibold text-gray-900 dark:text-white">#{orderId}</span>
+            </div>
+            <div className="w-full h-px bg-green-200 dark:bg-green-800"></div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Total Amount</span>
+              <span className="font-bold text-lg text-green-600 dark:text-green-400">{formatToRupiah(totalAmount || 0)}</span>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={onViewOrders}
+          className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg"
+        >
+          View My Orders
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function PaymentFailedModal({ orderId, totalAmount, message, onRetryPayment }: { orderId: number; totalAmount: number; message: string; onRetryPayment: () => void }) {
+  return (
+    <div className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-md w-full animate-in fade-in zoom-in duration-300">
+        <div className="flex justify-center mb-6">
+          <div className="relative w-24 h-24">
+            <svg className="absolute inset-0 w-24 h-24 -rotate-90">
+              <circle
+                cx="48"
+                cy="48"
+                r="44"
+                fill="none"
+                stroke="url(#redGradient)"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeDasharray="276.46"
+                strokeDashoffset="276.46"
+                style={{
+                  animation: 'drawCircle 2s ease-in-out infinite'
+                }}
+              />
+              <defs>
+                <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#ef4444" />
+                  <stop offset="100%" stopColor="#dc2626" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <XCircle className="w-16 h-16 text-red-500" />
+            </div>
+          </div>
+        </div>
+
+        <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-2">
+          Payment Failed
+        </h2>
+        <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
+          {message}
+        </p>
+
+        <div className="bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-lg p-4 mb-6 border border-red-200 dark:border-red-800">
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Order ID</span>
+              <span className="font-semibold text-gray-900 dark:text-white">#{orderId}</span>
+            </div>
+            <div className="w-full h-px bg-red-200 dark:bg-red-800"></div>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Total Amount</span>
+              <span className="font-bold text-lg text-red-600 dark:text-red-400">{formatToRupiah(totalAmount || 0)}</span>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={onRetryPayment}
+          className="w-full bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg"
+        >
+          Retry Payment
+        </button>
+      </div>
     </div>
   )
 }

@@ -73,6 +73,41 @@ class OrderProcessingService {
       throw new Error('Failed to process payment. Please try again.')
     }
   }
+
+  async retryPayment(
+    paymentId: number,
+    paymentMethod?: PaymentMethod
+  ): Promise<PaymentResponse> {
+    try {
+      const response = await apiClient.post<PaymentResponse>('/checkout/payment/retry', {
+        paymentId,
+        paymentMethod,
+      })
+      return response.data
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        throw new Error('Please login to retry payment')
+      }
+
+      if (error.response?.status === 404) {
+        throw new Error(error.response.data?.message || 'Payment not found')
+      }
+
+      if (error.response?.status === 400) {
+        throw new Error(error.response.data?.message || 'Invalid retry request')
+      }
+
+      if (error.response?.data?.message) {
+        throw new Error(error.response.data.message)
+      }
+
+      if (error.message) {
+        throw new Error(error.message)
+      }
+
+      throw new Error('Failed to retry payment. Please try again.')
+    }
+  }
 }
 
 export default new OrderProcessingService()

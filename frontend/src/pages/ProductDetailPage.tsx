@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ShoppingCart, Heart, Truck, RotateCcw, ShieldCheck, Lock, Star, CheckCircle2, AlertCircle } from 'lucide-react'
+import { ShoppingCart, Truck, RotateCcw, ShieldCheck, Lock, Star, CheckCircle2, AlertCircle } from 'lucide-react'
 import Header from '../components/Header'
 import ProductImageGallery from '../components/ProductImageGallery'
 import QuantitySelector from '../components/QuantitySelector'
@@ -240,12 +240,6 @@ export default function ProductDetailPage() {
                 className="flex-1 bg-amber-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Buy Now
-              </button>
-              <button
-                disabled
-                className="p-3 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Heart className="w-6 h-6 text-gray-600 dark:text-gray-400" />
               </button>
             </div>
 

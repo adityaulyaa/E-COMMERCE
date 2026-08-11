@@ -21,6 +21,7 @@ export type OrderStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED'
 
 export interface PaymentResponse {
   orderId: number | null
+  paymentId?: number | null
   paymentStatus: PaymentStatus
   orderStatus: OrderStatus | null
   message: string

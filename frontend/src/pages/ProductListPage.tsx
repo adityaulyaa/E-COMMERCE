@@ -152,7 +152,7 @@ export default function ProductListPage() {
               </h1>
               <p className="text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed animate-slide-up" style={{ animationDelay: '0.1s' }}>
                 Discover our best picks<br />
-                and shop what you love.
+                and shop what you need.
               </p>
             </div>
           </div>
@@ -402,7 +402,7 @@ function ProductGrid({ products, viewMode, keyword, filter }: { products: Produc
   return (
     <div>
       {/* Search Summary */}
-      {keyword && (
+      {keyword && keyword.trim() !== '' && (
         <div className="mb-6 flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-4 py-3">
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-700 dark:text-gray-300">

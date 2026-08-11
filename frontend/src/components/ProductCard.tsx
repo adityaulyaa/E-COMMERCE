@@ -1,4 +1,3 @@
-import { Heart } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import type { Product } from '../types/product'
 import { formatToRupiah } from '../utils/formatCurrency'
@@ -24,15 +23,6 @@ export default function ProductCard({ product }: ProductCardProps) {
             <span className="text-gray-400 dark:text-gray-600 text-sm">No image</span>
           </div>
         )}
-
-        {/* Wishlist Icon */}
-        <button
-          disabled
-          className="absolute top-3 right-3 p-2 bg-white dark:bg-gray-800 rounded-full shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-not-allowed"
-          title="Wishlist (Coming Soon)"
-        >
-          <Heart className="w-5 h-5 text-gray-400 dark:text-gray-600" />
-        </button>
       </div>
 
       {/* Product Info */}

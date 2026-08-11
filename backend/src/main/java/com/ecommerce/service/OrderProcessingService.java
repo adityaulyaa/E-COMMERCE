@@ -4,6 +4,7 @@ import com.ecommerce.dto.response.OrderSummaryItemDTO;
 import com.ecommerce.dto.response.OrderSummaryResponseDTO;
 import com.ecommerce.dto.response.PaymentResponseDTO;
 import com.ecommerce.dto.request.ProcessPaymentRequestDTO;
+import com.ecommerce.dto.request.RetryPaymentRequestDTO;
 import com.ecommerce.entity.Cart;
 import com.ecommerce.entity.CartItem;
 import com.ecommerce.entity.Product;
@@ -16,6 +17,8 @@ import com.ecommerce.entity.PaymentStatus;
 import com.ecommerce.entity.User;
 import com.ecommerce.exception.EmptyCartException;
 import com.ecommerce.exception.InvalidCartException;
+import com.ecommerce.exception.InvalidPaymentStatusException;
+import com.ecommerce.exception.PaymentNotFoundException;
 import com.ecommerce.exception.ProductNotFoundException;
 import com.ecommerce.exception.QuantityExceedsStockException;
 import com.ecommerce.repository.CartRepository;
@@ -240,14 +243,29 @@ public class OrderProcessingService {
 
         if (!paymentSuccess) {
             log.warn("Payment simulation failed for user: {}", userId);
+            Orders order = createOrderFromCart(user, cart, totalAmount, request.getPaymentMethod());
+            Payment payment = createFailedPaymentRecord(order, request.getPaymentMethod());
+            clearCartItems(cart);
+            
             return PaymentResponseDTO.builder()
+                    .orderId(order.getOrderId())
+                    .paymentId(payment.getPaymentId())
                     .paymentStatus(PaymentStatus.FAILED)
-                    .message("Payment failed. Please try again.")
+                    .orderStatus(OrderStatus.PENDING)
+                    .message("Payment failed. Please retry payment or try another payment method.")
                     .totalAmount(totalAmount)
                     .build();
         }
 
         Orders order = createOrderFromCart(user, cart, totalAmount, request.getPaymentMethod());
+        
+        for (CartItem cartItem : cart.getItems()) {
+            reduceStock(cartItem.getProduct(), cartItem.getQuantity());
+        }
+        
+        createPaymentRecord(order, request.getPaymentMethod());
+        order.setOrderStatus(OrderStatus.COMPLETED);
+        ordersRepository.save(order);
         
         clearCartItems(cart);
 
@@ -286,14 +304,25 @@ public class OrderProcessingService {
 
         if (!paymentSuccess) {
             log.warn("Buy Now payment simulation failed for user: {}", userId);
+            Orders order = createOrderFromBuyNow(user, product, quantity, totalAmount, request.getPaymentMethod());
+            Payment payment = createFailedPaymentRecord(order, request.getPaymentMethod());
+            
             return PaymentResponseDTO.builder()
+                    .orderId(order.getOrderId())
+                    .paymentId(payment.getPaymentId())
                     .paymentStatus(PaymentStatus.FAILED)
-                    .message("Payment failed. Please try again.")
+                    .orderStatus(OrderStatus.PENDING)
+                    .message("Payment failed. Please retry payment or try another payment method.")
                     .totalAmount(totalAmount)
                     .build();
         }
 
         Orders order = createOrderFromBuyNow(user, product, quantity, totalAmount, request.getPaymentMethod());
+
+        reduceStock(product, quantity);
+        createPaymentRecord(order, request.getPaymentMethod());
+        order.setOrderStatus(OrderStatus.COMPLETED);
+        ordersRepository.save(order);
 
         log.info("Buy Now payment successful for user: {}. Order created: {}", userId, order.getOrderId());
 
@@ -304,7 +333,7 @@ public class OrderProcessingService {
         Orders order = Orders.builder()
                 .user(user)
                 .totalAmount(totalAmount)
-                .orderStatus(OrderStatus.COMPLETED)
+                .orderStatus(OrderStatus.PENDING)
                 .orderDate(LocalDateTime.now())
                 .build();
         
@@ -312,10 +341,7 @@ public class OrderProcessingService {
 
         for (CartItem cartItem : cart.getItems()) {
             createOrderItem(order, cartItem.getProduct(), cartItem.getQuantity());
-            reduceStock(cartItem.getProduct(), cartItem.getQuantity());
         }
-
-        createPaymentRecord(order, paymentMethod);
         
         return order;
     }
@@ -324,15 +350,13 @@ public class OrderProcessingService {
         Orders order = Orders.builder()
                 .user(user)
                 .totalAmount(totalAmount)
-                .orderStatus(OrderStatus.COMPLETED)
+                .orderStatus(OrderStatus.PENDING)
                 .orderDate(LocalDateTime.now())
                 .build();
         
         order = ordersRepository.save(order);
 
         createOrderItem(order, product, quantity);
-        reduceStock(product, quantity);
-        createPaymentRecord(order, paymentMethod);
         
         return order;
     }
@@ -365,6 +389,16 @@ public class OrderProcessingService {
         paymentRepository.save(payment);
     }
 
+    private Payment createFailedPaymentRecord(Orders order, PaymentMethod paymentMethod) {
+        Payment payment = Payment.builder()
+                .order(order)
+                .paymentMethod(paymentMethod)
+                .paymentStatus(PaymentStatus.FAILED)
+                .paymentDate(LocalDateTime.now())
+                .build();
+        return paymentRepository.save(payment);
+    }
+
     private void clearCartItems(Cart cart) {
         cartItemRepository.deleteAll(cart.getItems());
         cart.getItems().clear();
@@ -379,6 +413,74 @@ public class OrderProcessingService {
                 .message("Payment successful! Your order has been placed.")
                 .totalAmount(totalAmount)
                 .build();
+    }
+
+    /**
+     * Retry failed payment
+     * 
+     * @param userId User ID
+     * @param request Retry payment request containing paymentId
+     * @return Payment response with retry result
+     */
+    @Transactional
+    public PaymentResponseDTO retryPayment(Long userId, RetryPaymentRequestDTO request) {
+        log.info("Processing payment retry for user: {} with payment ID: {}", userId, request.getPaymentId());
+
+        Payment payment = paymentRepository.findByPaymentIdAndOrderUserUserId(request.getPaymentId(), userId)
+                .orElseThrow(() -> new PaymentNotFoundException("Payment not found or unauthorized access"));
+
+        if (payment.getPaymentStatus() != PaymentStatus.FAILED) {
+            throw new InvalidPaymentStatusException(
+                    String.format("Cannot retry payment with status: %s. Only FAILED payments can be retried.",
+                            payment.getPaymentStatus().getDisplayName()));
+        }
+
+        Orders order = payment.getOrder();
+        
+        if (order == null) {
+            throw new InvalidCartException("Associated order not found for this payment");
+        }
+
+        log.info("Retrying payment for order: {}", order.getOrderId());
+
+        boolean paymentSuccess = simulateMockPayment();
+
+        if (!paymentSuccess) {
+            log.warn("Payment retry simulation failed for user: {}, order: {}", userId, order.getOrderId());
+            return PaymentResponseDTO.builder()
+                    .orderId(order.getOrderId())
+                    .paymentStatus(PaymentStatus.FAILED)
+                    .orderStatus(order.getOrderStatus())
+                    .message("Payment retry failed. Please try again with a different payment method.")
+                    .totalAmount(order.getTotalAmount())
+                    .build();
+        }
+
+        log.info("Payment retry successful for user: {}, order: {}", userId, order.getOrderId());
+
+        payment.setPaymentStatus(PaymentStatus.SUCCESS);
+        payment.setPaymentDate(LocalDateTime.now());
+        paymentRepository.save(payment);
+
+        order.setOrderStatus(OrderStatus.COMPLETED);
+        ordersRepository.save(order);
+
+        if (request.getPaymentMethod() != null) {
+            payment.setPaymentMethod(request.getPaymentMethod());
+            paymentRepository.save(payment);
+        }
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            reduceStock(orderItem.getProduct(), orderItem.getQuantity());
+        }
+
+        User user = order.getUser();
+        Cart cart = cartRepository.findByUserId(user.getUserId()).orElse(null);
+        if (cart != null) {
+            clearCartItems(cart);
+        }
+
+        return buildSuccessPaymentResponse(order, order.getTotalAmount());
     }
 
     /**

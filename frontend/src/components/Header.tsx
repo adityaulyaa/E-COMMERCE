@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Search, Heart, ShoppingCart, User, Sun, Moon, Menu, X, ChevronDown } from 'lucide-react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Search, ShoppingCart, User, Sun, Moon, Menu, X, ChevronDown } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useFilter } from '../contexts/FilterContext'
 import { useCart } from '../contexts/CartContext'
@@ -18,13 +18,16 @@ export default function Header() {
   const navigate = useNavigate()
   const { isAuthenticated, user, logout } = useAuth()
   const { cart } = useCart()
+  const [searchParams] = useSearchParams()
+  const keywordFromUrl = searchParams.get('keyword') || ''
+
   const cartBadgeCount = cart?.totalQuantity ?? 0
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return document.documentElement.classList.contains('dark')
   })
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false)
-  const [searchKeyword, setSearchKeyword] = useState('')
+  const [searchKeyword, setSearchKeyword] = useState(keywordFromUrl)
   const [isCategoriesDropdownOpen, setIsCategoriesDropdownOpen] = useState(false)
   const filter = useFilter()
 
@@ -41,16 +44,31 @@ export default function Header() {
 
   // Real-time search with debounce
   useEffect(() => {
-    // Only navigate if searchKeyword is not empty
-    // This prevents auto-redirecting to /products when mounting Header on other pages
-    if (!searchKeyword.trim()) return
+    // Sync local state with URL if URL changes
+    setSearchKeyword(keywordFromUrl)
+  }, [keywordFromUrl])
 
+  useEffect(() => {
     const timer = setTimeout(() => {
-      navigate(`/products?keyword=${encodeURIComponent(searchKeyword.trim())}`)
+      const trimmedKeyword = searchKeyword.trim()
+      
+      // Prevent navigation if the keyword is the same as the one in the URL
+      if (trimmedKeyword === keywordFromUrl) {
+        return
+      }
+
+      if (trimmedKeyword) {
+        navigate(`/products?keyword=${encodeURIComponent(trimmedKeyword)}`)
+      } else {
+        // Only clear the search if there was a keyword in the URL before
+        if (keywordFromUrl) {
+          navigate('/products')
+        }
+      }
     }, 300)
 
     return () => clearTimeout(timer)
-  }, [searchKeyword, navigate])
+  }, [searchKeyword, navigate, keywordFromUrl])
 
   const toggleDarkMode = () => {
     const html = document.documentElement
@@ -86,10 +104,10 @@ export default function Header() {
               Home
             </Link>
             <Link
-              to="/products"
+              to="/orders"
               className="text-sm font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             >
-              Shop
+              Orders
             </Link>
             <div className="relative">
               <button
@@ -152,14 +170,6 @@ export default function Header() {
 
           {/* Action Icons */}
           <div className="flex items-center gap-4">
-            {/* Wishlist */}
-            <button
-              disabled
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors cursor-not-allowed opacity-60"
-              title="Wishlist (Coming Soon)"
-            >
-              <Heart className="w-6 h-6 text-gray-700 dark:text-gray-300" />
-            </button>
 
             {/* Cart */}
             <Link
@@ -202,12 +212,6 @@ export default function Header() {
                         className="w-full text-left px-4 py-2 text-sm text-gray-400 dark:text-gray-600 cursor-not-allowed"
                       >
                         Profile
-                      </button>
-                      <button
-                        disabled
-                        className="w-full text-left px-4 py-2 text-sm text-gray-400 dark:text-gray-600 cursor-not-allowed"
-                      >
-                        Orders
                       </button>
                       <button
                         disabled
@@ -284,11 +288,11 @@ export default function Header() {
                 Home
               </Link>
               <Link
-                to="/products"
+                to="/orders"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="px-4 py-2 text-sm font-medium text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
               >
-                Shop
+                Orders
               </Link>
               <button
                 disabled

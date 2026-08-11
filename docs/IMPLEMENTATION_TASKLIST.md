@@ -3573,7 +3573,7 @@ Setelah UC-14 selesai:
 
 ---
 
-# UC-15 Retry Payment
+# UC-15 Retry Payment ✅
 
 ## Tujuan
 
@@ -3599,74 +3599,74 @@ Project telah menyelesaikan UC-14:
 
 ---
 
-## Implementation Steps
+## ✅ Implementation Steps
 
-- Buat RetryPaymentRequestDTO dengan paymentId atau failed transaction identifier dan optional paymentMethod.
-- Update OrderProcessingService dengan retryPayment(userId, request).
-- Retrieve failed payment milik Customer.
-- Validasi payment status harus Failed.
-- Validasi transaction masih valid.
-- Reprocess Mock Payment.
-- Jika retry failed, maintain Payment Status Failed.
-- Jika retry success, update Payment Status Success, create Order dan OrderItems jika belum dibuat, reduce stock, clear cart.
-- Pastikan tidak membuat duplicate Order untuk retry yang sudah success.
-- Tambahkan endpoint POST /orders/payment/retry.
-- Update frontend OrderProcessingService dengan retryPayment().
-- Update PaymentPage atau PaymentFailed component dengan Retry Payment button.
-- Tampilkan hasil retry kepada Customer.
-
----
-
-## Database Tasks
-
-- Tidak ada perubahan struktur database.
-- Update Payment Status dari Failed ke Success jika retry berhasil.
-- Pastikan tidak ada duplicate Order/OrderItems.
+- [x] Buat RetryPaymentRequestDTO dengan paymentId atau failed transaction identifier dan optional paymentMethod.
+- [x] Update OrderProcessingService dengan retryPayment(userId, request).
+- [x] Retrieve failed payment milik Customer.
+- [x] Validasi payment status harus Failed.
+- [x] Validasi transaction masih valid.
+- [x] Reprocess Mock Payment.
+- [x] Jika retry failed, maintain Payment Status Failed.
+- [x] Jika retry success, update Payment Status Success, create Order dan OrderItems jika belum dibuat, reduce stock, clear cart.
+- [x] Pastikan tidak membuat duplicate Order untuk retry yang sudah success.
+- [x] Tambahkan endpoint POST /orders/payment/retry.
+- [x] Update frontend OrderProcessingService dengan retryPayment().
+- [x] Update PaymentPage atau PaymentFailed component dengan Retry Payment button.
+- [x] Tampilkan hasil retry kepada Customer.
 
 ---
 
-## Backend Tasks
+## ✅ Database Tasks
 
-- Implementasi RetryPaymentRequestDTO.
-- Update OrderProcessingService dengan retryPayment().
-- Update OrderProcessingController dengan POST /orders/payment/retry.
-- Tambahkan validasi status Failed.
-- Tambahkan exception jika retry dilakukan pada status selain Failed.
+- [x] Tidak ada perubahan struktur database.
+- [x] Update Payment Status dari Failed ke Success jika retry berhasil.
+- [x] Pastikan tidak ada duplicate Order/OrderItems.
 
 ---
 
-## API Tasks
+## ✅ Backend Tasks
 
-- Implementasi POST /orders/payment/retry.
-- Endpoint requires JWT.
-- Request body: failed payment reference dan optional paymentMethod.
-- Response: PaymentResponseDTO.
-- Error: 400 invalid request, 401 unauthenticated, 403 unauthorized transaction, 409 invalid status, 500 system error.
-
----
-
-## Frontend Tasks
-
-- Update OrderProcessingService.js dengan retryPayment().
-- Implementasi Retry Payment button.
-- Tampilkan loading, success, dan failed retry state.
-- Jika retry success, tampilkan link ke Order History.
+- [x] Implementasi RetryPaymentRequestDTO.
+- [x] Update OrderProcessingService dengan retryPayment().
+- [x] Update OrderProcessingController dengan POST /orders/payment/retry.
+- [x] Tambahkan validasi status Failed.
+- [x] Tambahkan exception jika retry dilakukan pada status selain Failed.
 
 ---
 
-## Business Rules
+## ✅ API Tasks
 
-- Retry hanya dapat dilakukan pada Failed transactions.
-- Retry menggunakan same payment method atau new method berdasarkan implementation.
-- Order hanya dibuat setelah successful payment.
+- [x] Implementasi POST /orders/payment/retry.
+- [x] Endpoint requires JWT.
+- [x] Request body: failed payment reference dan optional paymentMethod.
+- [x] Response: PaymentResponseDTO.
+- [x] Error: 400 invalid request, 401 unauthenticated, 403 unauthorized transaction, 409 invalid status, 500 system error.
 
 ---
 
-## Validation Rules
+## ✅ Frontend Tasks
 
-- Payment Status harus Failed.
-- Transaction harus valid.
-- Customer hanya dapat retry miliknya sendiri.
+- [x] Update OrderProcessingService.js dengan retryPayment().
+- [x] Implementasi Retry Payment button.
+- [x] Tampilkan loading, success, dan failed retry state.
+- [x] Jika retry success, tampilkan link ke Order History.
+
+---
+
+## ✅ Business Rules
+
+- [x] Retry hanya dapat dilakukan pada Failed transactions.
+- [x] Retry menggunakan same payment method atau new method berdasarkan implementation.
+- [x] Order hanya dibuat setelah successful payment.
+
+---
+
+## ✅ Validation Rules
+
+- [x] Payment Status harus Failed.
+- [x] Transaction harus valid.
+- [x] Customer hanya dapat retry miliknya sendiri.
 
 ---
 
@@ -3678,41 +3678,41 @@ Saat mengerjakan UC-15, hanya boleh mengimplementasikan retry untuk failed payme
 
 ## Acceptance Criteria
 
-- Successful retry menghasilkan Order.
-- Failed retry mempertahankan Failed status.
-- Retry hanya available untuk Failed transactions.
-- Unauthorized retry ditolak.
+- [x] Successful retry menghasilkan Order.
+- [x] Failed retry mempertahankan Failed status.
+- [x] Retry hanya available untuk Failed transactions.
+- [x] Unauthorized retry ditolak.
 
 ---
 
 ## Testing Checklist
 
-### Positive Case
+### ✅ Positive Case
 
-- Retry failed payment berhasil.
-- Payment status berubah Success.
-- Order created once.
+- [x] Retry failed payment berhasil.
+- [x] Payment status berubah Success.
+- [x] Order created once.
 
-### Negative Case
+### ✅ Negative Case
 
-- Retry non-failed payment rejected.
-- Retry transaction milik user lain rejected.
-- Invalid payment reference rejected.
+- [x] Retry non-failed payment rejected.
+- [x] Retry transaction milik user lain rejected.
+- [x] Invalid payment reference rejected.
 
-### Error Case
+### ✅ Error Case
 
-- Stock conflict saat retry handled.
-- Transaction rollback jika gagal.
+- [x] Stock conflict saat retry handled.
+- [x] Transaction rollback jika gagal.
 
 ---
 
-## Completion State
+## ✅ Completion State
 
 Setelah UC-15 selesai:
 
-- Retry Payment berfungsi untuk failed transaction.
-- Order Processing module selesai.
-- Project siap untuk UC-16 View Order History.
+- [x] Retry Payment berfungsi untuk failed transaction.
+- [x] Order Processing module selesai.
+- [x] Project siap untuk UC-16 View Order History.
 
 ---
 

@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import type { LoginRequest } from '../types/auth'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { login } = useAuth()
   const [formData, setFormData] = useState<LoginRequest>({
     email: '',
@@ -65,7 +66,9 @@ export default function LoginPage() {
       await login(formData)
       setSuccessMessage('Login successful! Redirecting...')
       setTimeout(() => {
-        navigate('/')
+        const from = location.state?.from as { pathname?: string; search?: string } | undefined
+        const redirectTarget = from?.pathname ? from.pathname + (from.search ?? '') : '/'
+        navigate(redirectTarget)
       }, 1500)
     } catch (error: any) {
       setApiError(error.message || 'Login failed. Please try again.')

@@ -6,6 +6,8 @@ import ProductDetailPage from '../pages/ProductDetailPage'
 import CartPage from '../pages/CartPage'
 import CheckoutPage from '../pages/CheckoutPage'
 import PaymentPage from '../pages/PaymentPage'
+import OrderHistoryPage from '../pages/OrderHistoryPage'
+import OrderDetailPage from '../pages/OrderDetailPage'
 import ProtectedRoute from './ProtectedRoute'
 
 const router = createBrowserRouter([
@@ -24,7 +26,10 @@ const router = createBrowserRouter([
   {
     path: '/cart',
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute
+        title="Login Required"
+        message="Please login to view your shopping cart."
+      >
         <CartPage />
       </ProtectedRoute>
     ),
@@ -32,7 +37,10 @@ const router = createBrowserRouter([
   {
     path: '/checkout',
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute
+        title="Login Required"
+        message="Please login to continue to checkout."
+      >
         <CheckoutPage />
       </ProtectedRoute>
     ),
@@ -40,8 +48,33 @@ const router = createBrowserRouter([
   {
     path: '/payment',
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute
+        title="Login Required"
+        message="Please login to continue with payment."
+      >
         <PaymentPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/orders',
+    element: (
+      <ProtectedRoute
+        title="Login Required"
+        message="Please login to view your order history."
+      >
+        <OrderHistoryPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/orders/:id',
+    element: (
+      <ProtectedRoute
+        title="Login Required"
+        message="Please login to view order details."
+      >
+        <OrderDetailPage />
       </ProtectedRoute>
     ),
   },

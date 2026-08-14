@@ -388,6 +388,48 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handle order not found exception
+     *
+     * @param ex OrderNotFoundException
+     * @return ResponseEntity with not found error
+     */
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleOrderNotFoundException(
+            OrderNotFoundException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Order not found: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    /**
+     * Handle unauthorized order access exception
+     *
+     * @param ex UnauthorizedOrderAccessException
+     * @return ResponseEntity with forbidden error
+     */
+    @ExceptionHandler(UnauthorizedOrderAccessException.class)
+    public ResponseEntity<ErrorResponseDTO> handleUnauthorizedOrderAccessException(
+            UnauthorizedOrderAccessException ex
+    ) {
+        ErrorResponseDTO errorResponse = ErrorResponseDTO.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .errors(null)
+                .build();
+
+        log.warn("Unauthorized order access: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
+    /**
      * Handle all unexpected exceptions
      *
      * @param ex Exception

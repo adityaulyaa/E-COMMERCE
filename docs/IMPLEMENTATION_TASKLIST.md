@@ -3742,123 +3742,127 @@ Project telah menyelesaikan Order Processing module:
 
 ---
 
-## Implementation Steps
+## ✅ Implementation Steps
 
-- Buat OrderSummaryDTO dengan orderId, orderNumber/orderId, orderDate, totalAmount, paymentStatus, orderStatus.
-- Buat OrderHistoryResponseDTO berisi list OrderSummaryDTO.
-- Buat OrderService pada package service.
-- Inject OrdersRepository dan PaymentRepository.
-- Implementasi getOrderHistory(userId).
-- Retrieve semua Orders milik user.
-- Sort berdasarkan orderDate descending.
-- Map ke OrderSummaryDTO.
-- Buat OrderController dengan @RequestMapping("/orders").
-- Tambahkan endpoint GET /orders protected by JWT.
-- Return HTTP 200 dengan OrderHistoryResponseDTO.
-- Buat OrderService.js frontend.
-- Buat OrderHistoryPage.jsx.
-- Tampilkan order list, empty state jika tidak ada order, loading, error.
-- Tambahkan link ke Order Detail untuk setiap order.
-- Tambahkan protected route /orders.
-
----
-
-## Database Tasks
-
-- Tidak ada perubahan struktur database.
-- Query Orders berdasarkan user_id.
-- Join atau fetch Payment untuk payment information.
+- [x] Buat OrderSummaryDTO dengan orderId, orderDate, totalAmount, paymentStatus, orderStatus.
+- [x] Buat OrderHistoryResponseDTO berisi list OrderSummaryDTO.
+- [x] Buat OrderService pada package service.
+- [x] Inject OrdersRepository dan PaymentRepository.
+- [x] Implementasi getOrderHistory(userId).
+- [x] Retrieve semua Orders milik user.
+- [x] Sort berdasarkan orderDate descending.
+- [x] Map ke OrderSummaryDTO.
+- [x] Buat OrderController dengan @RequestMapping("/orders").
+- [x] Tambahkan endpoint GET /orders protected by JWT.
+- [x] Return HTTP 200 dengan OrderHistoryResponseDTO.
+- [x] Buat OrderService frontend.
+- [x] Buat OrderHistoryPage.
+- [x] Tampilkan order list, empty state jika tidak ada order, loading, error.
+- [x] Tambahkan link ke Order Detail untuk setiap order.
+- [x] Tambahkan protected route /orders.
 
 ---
 
-## Backend Tasks
+## ✅ Database Tasks
 
-- Implementasi OrderSummaryDTO dan OrderHistoryResponseDTO.
-- Implementasi OrderService.getOrderHistory().
-- Implementasi OrderController GET /orders.
-- Pastikan authorization hanya menampilkan order milik current user.
-
----
-
-## API Tasks
-
-- Implementasi GET /orders.
-- Endpoint requires JWT.
-- Response: OrderHistoryResponseDTO sorted latest first.
-- Error: 401 unauthenticated, 500 system error.
+- [x] Tidak ada perubahan struktur database.
+- [x] Query Orders berdasarkan user_id.
+- [x] Join atau fetch Payment untuk payment information.
 
 ---
 
-## Frontend Tasks
+## ✅ Backend Tasks
 
-- Implementasi OrderService.js.
-- Implementasi OrderHistoryPage.jsx.
-- Implementasi OrderList component.
-- Tambahkan protected route /orders.
-- Tambahkan navigation link ke Order History.
-
----
-
-## Business Rules
-
-- Customer hanya dapat melihat order miliknya sendiri.
-- Order History sorted by latest transaction.
-- Setiap transaction menampilkan concise information.
-- Order History read-only.
+- [x] Implementasi OrderSummaryDTO dan OrderHistoryResponseDTO.
+- [x] Implementasi OrderService.getOrderHistory().
+- [x] Implementasi OrderController GET /orders.
+- [x] Pastikan authorization hanya menampilkan order milik current user.
 
 ---
 
-## Validation Rules
+## ✅ API Tasks
 
-- Customer harus logged in.
-- Customer harus valid.
-- Transaction data harus berhasil retrieved.
+- [x] Implementasi GET /orders.
+- [x] Endpoint requires JWT.
+- [x] Response: OrderHistoryResponseDTO sorted latest first.
+- [x] Error: 401 unauthenticated, 500 system error.
 
 ---
 
-## Use Case Boundary
+## ✅ Frontend Tasks
+
+- [x] Implementasi OrderService.
+- [x] Implementasi OrderHistoryPage.
+- [x] Implementasi OrderList component.
+- [x] Tambahkan protected route /orders.
+- [x] Tambahkan navigation link ke Order History.
+
+---
+
+## ✅ Business Rules
+
+- [x] Customer hanya dapat melihat order miliknya sendiri.
+- [x] Order History sorted by latest transaction.
+- [x] Setiap transaction menampilkan concise information.
+- [x] Order History read-only.
+
+---
+
+## ✅ Validation Rules
+
+- [x] Customer harus logged in.
+- [x] Customer harus valid.
+- [x] Transaction data harus berhasil retrieved.
+
+---
+
+## ✅ Use Case Boundary
 
 Saat mengerjakan UC-16, hanya boleh mengimplementasikan list order history. Tidak boleh mengubah order data atau mengimplementasikan order detail selain link navigasi.
 
----
-
-## Acceptance Criteria
-
-- Order History berhasil ditampilkan.
-- Orders sorted from latest.
-- Customer tanpa transactions melihat empty state.
-- System errors menghasilkan error message.
-- Customer tidak dapat melihat order user lain.
+- [x] Hanya implementasi list order history.
+- [x] Tidak mengubah order data.
+- [x] Order detail hanya berupa link navigasi (dikerjakan di UC-17).
 
 ---
 
-## Testing Checklist
+## ✅ Acceptance Criteria
 
-### Positive Case
-
-- User dengan orders melihat order history.
-- Sorting latest first benar.
-- Payment/order status displayed.
-
-### Negative Case
-
-- User tanpa orders melihat empty state.
-- Unauthenticated request rejected.
-
-### Error Case
-
-- Database error handled.
-- Network error handled.
+- [x] Order History berhasil ditampilkan.
+- [x] Orders sorted from latest.
+- [x] Customer tanpa transactions melihat empty state.
+- [x] System errors menghasilkan error message.
+- [x] Customer tidak dapat melihat order user lain.
 
 ---
 
-## Completion State
+## ✅ Testing Checklist
+
+### ✅ Positive Case
+
+- [x] User dengan orders melihat order history.
+- [x] Sorting latest first benar.
+- [x] Payment/order status displayed.
+
+### ✅ Negative Case
+
+- [x] User tanpa orders melihat empty state.
+- [x] Unauthenticated request rejected.
+
+### ✅ Error Case
+
+- [x] Database error handled.
+- [x] Network error handled.
+
+---
+
+## ✅ Completion State
 
 Setelah UC-16 selesai:
 
-- Endpoint GET /orders berfungsi dan teruji.
-- OrderHistoryPage berfungsi.
-- Project siap untuk UC-17 View Order Detail.
+- [x] Endpoint GET /orders berfungsi dan teruji.
+- [x] OrderHistoryPage berfungsi.
+- [x] Project siap untuk UC-17 View Order Detail.
 
 ---
 
@@ -3890,79 +3894,79 @@ Project telah menyelesaikan UC-16:
 
 ## Implementation Steps
 
-- Buat OrderItemDetailDTO dengan productNameSnapshot, unitPriceSnapshot, quantity, subtotal.
-- Buat PaymentDetailDTO dengan paymentMethod, paymentStatus, paymentDate.
-- Buat OrderDetailResponseDTO dengan orderId, orderDate, items, totalAmount, paymentDetail, orderStatus.
-- Update OrderService dengan getOrderDetail(userId, orderId).
-- Retrieve Order berdasarkan orderId.
-- Validasi order ada.
-- Validasi order milik current user.
-- Retrieve OrderItems.
-- Retrieve Payment information.
-- Map semua data ke OrderDetailResponseDTO.
-- Pastikan menggunakan snapshot data dari OrderItem, bukan current Product data.
-- Update OrderController dengan endpoint GET /orders/{id}.
-- Return HTTP 200 dengan OrderDetailResponseDTO.
-- Implementasi OrderDetailPage.jsx.
-- Extract orderId dari URL params.
-- Fetch order detail dari OrderService.js.
-- Tampilkan lengkap: Order Number, Order Date, Product List, Quantity, Unit Price Snapshot, Subtotal, Total Payment, Payment Method, Payment Status, Order Status.
-- Tambahkan protected route /orders/:id.
+- [x] Buat OrderItemDetailDTO dengan productNameSnapshot, unitPriceSnapshot, quantity, subtotal.
+- [x] Buat PaymentDetailDTO dengan paymentMethod, paymentStatus, paymentDate.
+- [x] Buat OrderDetailResponseDTO dengan orderId, orderDate, items, totalAmount, paymentDetail, orderStatus.
+- [x] Update OrderService dengan getOrderDetail(userId, orderId).
+- [x] Retrieve Order berdasarkan orderId.
+- [x] Validasi order ada.
+- [x] Validasi order milik current user.
+- [x] Retrieve OrderItems.
+- [x] Retrieve Payment information.
+- [x] Map semua data ke OrderDetailResponseDTO.
+- [x] Pastikan menggunakan snapshot data dari OrderItem, bukan current Product data.
+- [x] Update OrderController dengan endpoint GET /orders/{id}.
+- [x] Return HTTP 200 dengan OrderDetailResponseDTO.
+- [x] Implementasi OrderDetailPage.jsx.
+- [x] Extract orderId dari URL params.
+- [x] Fetch order detail dari OrderService.js.
+- [x] Tampilkan lengkap: Order Number, Order Date, Product List, Quantity, Unit Price Snapshot, Subtotal, Total Payment, Payment Method, Payment Status, Order Status.
+- [x] Tambahkan protected route /orders/:id.
 
 ---
 
 ## Database Tasks
 
-- Tidak ada perubahan struktur database.
-- Query Orders, OrderItems, dan Payment berdasarkan order_id.
-- Pastikan data snapshot dari OrderItem digunakan.
+- [x] Tidak ada perubahan struktur database.
+- [x] Query Orders, OrderItems, dan Payment berdasarkan order_id.
+- [x] Pastikan data snapshot dari OrderItem digunakan.
 
 ---
 
 ## Backend Tasks
 
-- Implementasi OrderItemDetailDTO, PaymentDetailDTO, OrderDetailResponseDTO.
-- Update OrderService dengan getOrderDetail().
-- Update OrderController dengan GET /orders/{id}.
-- Implementasi OrderNotFoundException jika belum ada.
-- Enforce ownership validation.
+- [x] Implementasi OrderItemDetailDTO, PaymentDetailDTO, OrderDetailResponseDTO.
+- [x] Update OrderService dengan getOrderDetail().
+- [x] Update OrderController dengan GET /orders/{id}.
+- [x] Implementasi OrderNotFoundException jika belum ada.
+- [x] Enforce ownership validation.
 
 ---
 
 ## API Tasks
 
-- Implementasi GET /orders/{id}.
-- Endpoint requires JWT.
-- Response: OrderDetailResponseDTO.
-- Error: 401 unauthenticated, 403 unauthorized order access, 404 order not found, 500 system error.
+- [x] Implementasi GET /orders/{id}.
+- [x] Endpoint requires JWT.
+- [x] Response: OrderDetailResponseDTO.
+- [x] Error: 401 unauthenticated, 403 unauthorized order access, 404 order not found, 500 system error.
 
 ---
 
 ## Frontend Tasks
 
-- Update OrderService.js dengan getOrderDetail().
-- Implementasi OrderDetailPage.jsx.
-- Implementasi OrderItemDetailList component.
-- Implementasi PaymentInfo component.
-- Tambahkan protected route /orders/:id.
-- Update OrderHistoryPage item link ke detail.
+- [x] Update OrderService.js dengan getOrderDetail().
+- [x] Implementasi OrderDetailPage.jsx.
+- [x] Implementasi OrderItemDetailList component.
+- [x] Implementasi PaymentInfo component.
+- [x] Tambahkan protected route /orders/:id.
+- [x] Update OrderHistoryPage item link ke detail.
 
 ---
 
 ## Business Rules
 
-- Customer hanya dapat melihat detail order miliknya sendiri.
-- Transaction detail harus menampilkan snapshot data.
-- Transaction detail tidak berubah walaupun product information berubah.
-- Transaction detail read-only.
+- [x] Customer hanya dapat melihat detail order miliknya sendiri.
+- [x] Transaction detail harus menampilkan snapshot data.
+- [x] Transaction detail tidak berubah walaupun product information berubah.
+- [x] Transaction detail read-only.
 
 ---
 
 ## Validation Rules
 
-- Order ID harus valid.
-- Order harus dimiliki oleh logged-in Customer.
-- Order data harus available.
+- [x] Order ID harus valid.
+- [x] Order harus dimiliki oleh logged-in Customer.
+- [x] Order data harus available.
 
 ---
 
@@ -3974,11 +3978,11 @@ Saat mengerjakan UC-17, hanya boleh mengimplementasikan detail view untuk existi
 
 ## Acceptance Criteria
 
-- Transaction detail berhasil ditampilkan.
-- Order not found menghasilkan error message.
-- Semua transaction information ditampilkan lengkap.
-- Product snapshot data ditampilkan dari OrderItem.
-- Customer tidak dapat melihat order milik Customer lain.
+- [x] Transaction detail berhasil ditampilkan.
+- [x] Order not found menghasilkan error message.
+- [x] Semua transaction information ditampilkan lengkap.
+- [x] Product snapshot data ditampilkan dari OrderItem.
+- [x] Customer tidak dapat melihat order milik Customer lain.
 
 ---
 
@@ -3986,21 +3990,21 @@ Saat mengerjakan UC-17, hanya boleh mengimplementasikan detail view untuk existi
 
 ### Positive Case
 
-- Order detail valid displayed.
-- OrderItems snapshot displayed.
-- Payment information displayed.
-- Total correct.
+- [x] Order detail valid displayed.
+- [x] OrderItems snapshot displayed.
+- [x] Payment information displayed.
+- [x] Total correct.
 
 ### Negative Case
 
-- Order not found handled.
-- Unauthorized order access rejected.
-- Invalid orderId handled.
+- [x] Order not found handled.
+- [x] Unauthorized order access rejected.
+- [x] Invalid orderId handled.
 
 ### Error Case
 
-- Database error handled.
-- Network error handled.
+- [x] Database error handled.
+- [x] Network error handled.
 
 ---
 
@@ -4008,11 +4012,11 @@ Saat mengerjakan UC-17, hanya boleh mengimplementasikan detail view untuk existi
 
 Setelah UC-17 selesai:
 
-- Endpoint GET /orders/{id} berfungsi dan teruji.
-- OrderDetailPage menampilkan complete transaction detail.
-- Order module selesai.
-- Semua 17 Use Case telah memiliki panduan implementasi lengkap.
-- Project siap untuk implementasi end-to-end berdasarkan PROJECT_SPEC.md dan IMPLEMENTATION_TASKLIST.md.
+- [x] Endpoint GET /orders/{id} berfungsi dan teruji.
+- [x] OrderDetailPage menampilkan complete transaction detail.
+- [x] Order module selesai.
+- [x] Semua 17 Use Case telah memiliki panduan implementasi lengkap.
+- [x] Project siap untuk implementasi end-to-end berdasarkan PROJECT_SPEC.md dan IMPLEMENTATION_TASKLIST.md.
 
 ---
 

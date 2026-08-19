@@ -63,6 +63,7 @@ public class SampleDataInitializer {
                     createProduct(
                             "Minimalist Ceramic Vase",
                             "Elegant ceramic vase - perfect for displaying fresh or dried flowers",
+                            "Elegant ceramic design for fresh or dried flowers.",
                             new BigDecimal("29.00"),
                             35,
                             "Home & Living",
@@ -75,6 +76,7 @@ public class SampleDataInitializer {
                     createProduct(
                             "Minimalist Ceramic Pot",
                             "Beautiful ceramic planter for indoor plants and succulents",
+                            "Stylish ceramic planter perfect for indoor succulents.",
                             new BigDecimal("24.00"),
                             40,
                             "Home & Living",
@@ -86,6 +88,7 @@ public class SampleDataInitializer {
                     createProduct(
                             "Atomic Habits",
                             "Self-help book by James Clear about building tiny habits for success",
+                            "Practical guide to building habits for lasting success.",
                             new BigDecimal("16.00"),
                             60,
                             "Books",
@@ -97,6 +100,7 @@ public class SampleDataInitializer {
                     createProduct(
                             "Acacia Wood Cutting Board",
                             "Natural wood cutting board - perfect for kitchen prep and serving",
+                            "Durable natural wood board for kitchen prep & serving.",
                             new BigDecimal("39.00"),
                             30,
                             "Home & Living",
@@ -109,6 +113,7 @@ public class SampleDataInitializer {
                     createProduct(
                             "The Ordinary Niacinamide 10%",
                             "Skincare serum for clear, smooth skin and reduced pore appearance",
+                            "Potent serum for smoother skin and reduced pores.",
                             new BigDecimal("12.00"),
                             50,
                             "Beauty",
@@ -120,6 +125,7 @@ public class SampleDataInitializer {
                     createProduct(
                             "Nike Air Force 1 '07",
                             "Classic white sneakers - timeless style for everyday wear",
+                            "Timeless white sneakers for comfort and style.",
                             new BigDecimal("99.00"),
                             25,
                             "Fashion",
@@ -132,6 +138,7 @@ public class SampleDataInitializer {
                     createProduct(
                             "Apple Watch Series 9",
                             "Advanced smartwatch with health tracking and fitness features",
+                            "Advanced smartwatch for health and fitness tracking.",
                             new BigDecimal("399.00"),
                             10,
                             "Electronics",
@@ -143,6 +150,7 @@ public class SampleDataInitializer {
                     createProduct(
                             "Scented Candle",
                             "Aromatherapy candle with natural fragrance for relaxation",
+                            "Aromatherapy candle with natural, relaxing fragrance.",
                             new BigDecimal("18.00"),
                             45,
                             "Beauty",
@@ -154,6 +162,7 @@ public class SampleDataInitializer {
                     createProduct(
                             "Sony WH-1000XM5",
                             "Premium wireless headphones with industry-leading noise cancellation",
+                            "Industry-leading noise canceling wireless headphones.",
                             new BigDecimal("349.00"),
                             15,
                             "Electronics",
@@ -166,6 +175,7 @@ public class SampleDataInitializer {
                     createProduct(
                             "Canon EOS R50",
                             "Mirrorless camera for photography enthusiasts and professionals",
+                            "Compact mirrorless camera for enthusiast photography.",
                             new BigDecimal("749.00"),
                             5,
                             "Electronics",
@@ -178,6 +188,7 @@ public class SampleDataInitializer {
                     createProduct(
                             "Leather Backpack",
                             "Durable brown leather backpack for everyday use and travel",
+                            "Premium brown leather backpack for travel & work.",
                             new BigDecimal("59.00"),
                             20,
                             "Fashion",
@@ -190,6 +201,7 @@ public class SampleDataInitializer {
                     createProduct(
                             "New York Cap",
                             "Classic baseball cap with embroidered New York logo",
+                            "Classic baseball cap with iconic embroidered logo.",
                             new BigDecimal("25.00"),
                             55,
                             "Fashion",
@@ -337,11 +349,12 @@ public class SampleDataInitializer {
         return reviewRepository.save(review);
     }
 
-    private Product createProduct(String name, String description, BigDecimal price, Integer stock,
+    private Product createProduct(String name, String description, String shortDescription, BigDecimal price, Integer stock,
                                    String category, BigDecimal rating, Integer soldCount, String... imageUrls) {
         Product product = Product.builder()
                 .name(name)
                 .description(description)
+                .shortDescription(shortDescription)
                 .price(price)
                 .stock(stock)
                 .category(category)

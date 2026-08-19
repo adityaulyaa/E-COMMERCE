@@ -202,7 +202,7 @@ export default function ProductDetailPage() {
 
             <div className="py-4 border-t border-b border-gray-200 dark:border-gray-700">
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                Industry-leading noise canceling with exceptional sound quality. Up to 30-hour battery life and comfortable all-day fit.
+                {product.shortDescription}
               </p>
             </div>
 

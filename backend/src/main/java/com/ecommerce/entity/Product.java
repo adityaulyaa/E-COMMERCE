@@ -34,6 +34,9 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(length = 500)
+    private String shortDescription;
+
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
